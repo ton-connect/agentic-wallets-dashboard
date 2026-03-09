@@ -1,0 +1,50 @@
+{
+  "name": "agentic-wallets-dashboard",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "packageManager": "pnpm@10.15.0",
+  "scripts": {
+    "dev": "vite --port 5175",
+    "build": "pnpm typecheck && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "clean": "rm -rf node_modules dist"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "5.90.20",
+    "@tailwindcss/vite": "4.1.18",
+    "@ton/appkit": "file:./vendor/ton-appkit-0.0.2.tgz",
+    "@ton/appkit-react": "file:./vendor/ton-appkit-react-0.0.3.tgz",
+    "@ton/core": "0.63.0",
+    "@ton/crypto": "3.3.0",
+    "@ton/walletkit": "file:./vendor/ton-walletkit-0.0.9.tgz",
+    "@tonconnect/sdk": "3.4.1",
+    "@tonconnect/ui": "2.4.1",
+    "@tonconnect/ui-react": "2.4.1",
+    "buffer": "6.0.3",
+    "lucide-react": "0.562.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-router-dom": "7.13.0",
+    "sonner": "2.0.7",
+    "tailwindcss": "4.1.18",
+    "zustand": "5.0.10"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.13",
+    "@types/react": "19.2.8",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "5.1.4",
+    "typescript": "5.9.3",
+    "vite": "7.3.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "@ton/appkit": "file:./vendor/ton-appkit-0.0.2.tgz",
+      "@ton/walletkit": "file:./vendor/ton-walletkit-0.0.9.tgz",
+      "@tonconnect/bridge-sdk": "file:./vendor/tonconnect-bridge-sdk-0.2.6.tgz"
+    }
+  }
+}
