@@ -96,8 +96,40 @@ interface CreateDeepLinkPayload {
     operatorPublicKey?: string;
     agentName?: string;
     source?: string;
+    callbackUrl?: string;
     tonDeposit?: string;
     assets: CreateDeepLinkAssetInput[];
+}
+
+interface DeployCallbackPayload {
+    event: 'agent_wallet_deployed';
+    deployedAt: string;
+    indexed: boolean;
+    network: {
+        chainId: string;
+        collectionAddress: string;
+    };
+    wallet: {
+        address: string;
+        ownerAddress: string;
+        originOperatorPublicKey: string;
+        operatorPublicKey: string;
+        deployedByUser: boolean;
+        name: string;
+        source: string;
+    };
+    funding: {
+        tonDeposit: string;
+        tonDepositNano: string;
+        assets: Array<{
+            kind: DepositAssetKind;
+            address: string;
+            label: string;
+            amount?: string;
+            amountBaseUnits?: string;
+            decimals?: number;
+        }>;
+    };
 }
 
 function getFirstQueryParam(searchParams: URLSearchParams, keys: string[]): string | undefined {
@@ -204,9 +236,44 @@ function parseCreateDeepLink(searchParams: URLSearchParams): CreateDeepLinkPaylo
         ]),
         agentName: getFirstQueryParam(searchParams, ['agentName', 'name']),
         source: getFirstQueryParam(searchParams, ['source']),
+        callbackUrl: getFirstQueryParam(searchParams, ['callbackUrl', 'callback', 'webhookUrl', 'webhook']),
         tonDeposit: getFirstQueryParam(searchParams, ['tonDeposit', 'ton', 'tonAmount']),
         assets,
     };
+}
+
+function parseCallbackUrl(value: string): string {
+    const trimmed = value.trim();
+    if (!trimmed) {
+        return '';
+    }
+
+    let parsed: URL;
+    try {
+        parsed = new URL(trimmed);
+    } catch {
+        throw new Error('Callback url must be a valid absolute URL');
+    }
+
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+        throw new Error('Callback url must start with http:// or https://');
+    }
+
+    return parsed.toString();
+}
+
+async function sendDeployCallback(callbackUrl: string, payload: DeployCallbackPayload): Promise<void> {
+    const response = await fetch(callbackUrl, {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Callback response status ${response.status}`);
+    }
 }
 
 export function CreateAgentPage() {
@@ -225,6 +292,7 @@ export function CreateAgentPage() {
     const [originOperatorPublicKey, setOriginOperatorPublicKey] = useState('');
     const [agentName, setAgentName] = useState('');
     const [source, setSource] = useState('');
+    const [callbackUrl, setCallbackUrl] = useState('');
     const [tonDeposit, setTonDeposit] = useState('0.2');
     const [assetDeposits, setAssetDeposits] = useState<DepositAssetDraft[]>([]);
     const [openSelectorId, setOpenSelectorId] = useState<string | null>(null);
@@ -303,6 +371,9 @@ export function CreateAgentPage() {
         }
         if (deepLinkPayload.source) {
             setSource(deepLinkPayload.source);
+        }
+        if (deepLinkPayload.callbackUrl) {
+            setCallbackUrl(deepLinkPayload.callbackUrl);
         }
         if (deepLinkPayload.tonDeposit) {
             setTonDeposit(deepLinkPayload.tonDeposit);
@@ -433,6 +504,7 @@ export function CreateAgentPage() {
             const originKey = parseUint256PublicKey(originOperatorPublicKey);
             const name = agentName.trim();
             const sourceValue = source.trim();
+            const callbackUrlValue = parseCallbackUrl(callbackUrl);
             if (!name || name.length > 64) {
                 throw new Error('agentName length must be 1..64');
             }
@@ -499,6 +571,7 @@ export function CreateAgentPage() {
                 throw new Error(`You can add up to ${maxAssetMessages} assets (1 message reserved for deploy + TON)`);
             }
 
+            const callbackAssets: DeployCallbackPayload['funding']['assets'] = [];
             const assetMessages = [];
             for (const deposit of assetDeposits) {
                 const asset = getAssetById(deposit.assetId);
@@ -523,6 +596,14 @@ export function CreateAgentPage() {
                     if (!tx.messages[0]) {
                         throw new Error(`Failed to build jetton transfer message for ${asset.label}`);
                     }
+                    callbackAssets.push({
+                        kind: asset.kind,
+                        address: asset.address,
+                        label: asset.label,
+                        amount: formatUnitsTrimmed(parsedAmount, asset.decimals ?? 9),
+                        amountBaseUnits: parsedAmount.toString(),
+                        decimals: asset.decimals ?? 9,
+                    });
                     assetMessages.push(tx.messages[0]);
                     continue;
                 }
@@ -535,6 +616,11 @@ export function CreateAgentPage() {
                 if (!tx.messages[0]) {
                     throw new Error(`Failed to build NFT transfer message for ${asset.label}`);
                 }
+                callbackAssets.push({
+                    kind: asset.kind,
+                    address: asset.address,
+                    label: asset.label,
+                });
                 assetMessages.push(tx.messages[0]);
             }
 
@@ -587,6 +673,39 @@ export function CreateAgentPage() {
                 queryClient.invalidateQueries({ queryKey: ['nfts'] }),
             ]);
 
+            if (callbackUrlValue) {
+                const callbackPayload: DeployCallbackPayload = {
+                    event: 'agent_wallet_deployed',
+                    deployedAt: new Date().toISOString(),
+                    indexed: isIndexed,
+                    network: {
+                        chainId: network.chainId,
+                        collectionAddress: collection.toString(),
+                    },
+                    wallet: {
+                        address: localAddress.toString(),
+                        ownerAddress,
+                        originOperatorPublicKey: `0x${originKey.toString(16)}`,
+                        operatorPublicKey: `0x${originKey.toString(16)}`,
+                        deployedByUser: true,
+                        name,
+                        source: sourceValue,
+                    },
+                    funding: {
+                        tonDeposit: formatUnitsTrimmed(tonDepositNano, 9),
+                        tonDepositNano: tonDepositNano.toString(),
+                        assets: callbackAssets,
+                    },
+                };
+
+                try {
+                    await sendDeployCallback(callbackUrlValue, callbackPayload);
+                } catch (error) {
+                    const message = error instanceof Error ? error.message : 'Unknown callback error';
+                    toast.warning(`Wallet created, but callback failed: ${message}`);
+                }
+            }
+
             if (isIndexed) {
                 toast.success(`Deploy + first fund completed. Agent address: ${localAddress.toString()}`);
                 navigate('/');
@@ -627,6 +746,13 @@ export function CreateAgentPage() {
                     />
                     <Field label="Agent name" value={agentName} onChange={setAgentName} placeholder="Research Agent" />
                     <Field label="Source" value={source} onChange={setSource} placeholder="telegram-bot" />
+                    <Field
+                        label="Callback url"
+                        value={callbackUrl}
+                        onChange={setCallbackUrl}
+                        placeholder="https://example.com/agent-wallet-created"
+                        type="url"
+                    />
                     <div>
                         <div className="mb-1.5 flex items-center justify-between gap-3">
                             <label className="block text-xs text-neutral-500">Initial TON deposit</label>

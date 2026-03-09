@@ -16,11 +16,12 @@ import { useAgentOperations } from '@/features/agents';
 
 interface ChangePublicKeyModalProps {
     agent: AgentWallet | null;
+    initialPublicKey?: string | null;
     onClose: () => void;
     onSuccess?: () => void | Promise<void>;
 }
 
-export function ChangePublicKeyModal({ agent, onClose, onSuccess }: ChangePublicKeyModalProps) {
+export function ChangePublicKeyModal({ agent, initialPublicKey, onClose, onSuccess }: ChangePublicKeyModalProps) {
     const { changeAgentPublicKey, isPending } = useAgentOperations();
     const [publicKey, setPublicKey] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,8 +30,8 @@ export function ChangePublicKeyModal({ agent, onClose, onSuccess }: ChangePublic
         if (!agent) {
             return;
         }
-        setPublicKey(agent.operatorPubkey);
-    }, [agent]);
+        setPublicKey(initialPublicKey?.trim() || agent.operatorPubkey);
+    }, [agent, initialPublicKey]);
 
     if (!agent) return null;
 

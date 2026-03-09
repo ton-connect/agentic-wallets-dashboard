@@ -6,10 +6,10 @@
  *
  */
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAppKit, useBalanceByAddress, useNetwork } from '@ton/appkit-react';
 import { ArrowLeft, AlertTriangle, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
@@ -30,10 +30,63 @@ import { ActivityFeedV2 } from '@/components/dashboard/activity-feed-v2';
 import { getAgentWalletState } from '@/features/agents/lib/agentic-wallet';
 import { extractNameFromMetadata } from '@/features/agents/lib/metadata';
 import { isSameTonAddress } from '@/features/agents/lib/address';
+import { parseUint256PublicKey } from '@/features/agents/lib/public-key';
+
+const CHANGE_PUBLIC_KEY_PARAM_KEYS = [
+    'nextOperatorPublicKey',
+    'newOperatorPublicKey',
+    'operatorPublicKey',
+    'operatorPubkey',
+    'operator',
+    'pubkey',
+] as const;
+
+const CHANGE_PUBLIC_KEY_FLAG_KEYS = [
+    'changePublicKey',
+    'change-public-key',
+    'updateOperatorPublicKey',
+    'update-operator-public-key',
+] as const;
+
+const CHANGE_PUBLIC_KEY_ACTION_VALUES = new Set([
+    'change-public-key',
+    'changePublicKey',
+    'update-public-key',
+    'updateOperatorPublicKey',
+]);
+
+function getFirstQueryParam(searchParams: URLSearchParams, keys: readonly string[]): string | undefined {
+    for (const key of keys) {
+        const value = searchParams.get(key);
+        if (value && value.trim()) {
+            return value.trim();
+        }
+    }
+    return undefined;
+}
+
+function parseChangePublicKeyDeepLink(searchParams: URLSearchParams): {
+    nextPublicKey?: string;
+    shouldOpenModal: boolean;
+} {
+    const action = searchParams.get('action')?.trim();
+    const modal = searchParams.get('modal')?.trim();
+    const nextPublicKey = getFirstQueryParam(searchParams, CHANGE_PUBLIC_KEY_PARAM_KEYS);
+    const shouldOpenByAction =
+        (action ? CHANGE_PUBLIC_KEY_ACTION_VALUES.has(action) : false) ||
+        (modal ? CHANGE_PUBLIC_KEY_ACTION_VALUES.has(modal) : false) ||
+        CHANGE_PUBLIC_KEY_FLAG_KEYS.some((key) => searchParams.has(key));
+
+    return {
+        nextPublicKey,
+        shouldOpenModal: shouldOpenByAction || Boolean(nextPublicKey),
+    };
+}
 
 export function AgentDetailPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
     const appKit = useAppKit();
     const markKnown = useAgentsStore((s) => s.markKnown);
     const { agents, refresh, isLoading: isAgentsLoading } = useAgents();
@@ -94,12 +147,76 @@ export function AgentDetailPage() {
     const [showRename, setShowRename] = useState(false);
     const [showChangePublicKey, setShowChangePublicKey] = useState(false);
     const [showUnexpected, setShowUnexpected] = useState(false);
+    const [deepLinkedPublicKey, setDeepLinkedPublicKey] = useState<string | null>(null);
+    const changePublicKeyDeepLink = useMemo(() => parseChangePublicKeyDeepLink(searchParams), [searchParams]);
+
+    const clearChangePublicKeyDeepLink = useCallback(() => {
+        let hasUpdates = false;
+        const nextSearchParams = new URLSearchParams(searchParams);
+
+        for (const key of CHANGE_PUBLIC_KEY_PARAM_KEYS) {
+            if (nextSearchParams.has(key)) {
+                nextSearchParams.delete(key);
+                hasUpdates = true;
+            }
+        }
+
+        for (const key of CHANGE_PUBLIC_KEY_FLAG_KEYS) {
+            if (nextSearchParams.has(key)) {
+                nextSearchParams.delete(key);
+                hasUpdates = true;
+            }
+        }
+
+        const action = nextSearchParams.get('action')?.trim();
+        if (action && CHANGE_PUBLIC_KEY_ACTION_VALUES.has(action)) {
+            nextSearchParams.delete('action');
+            hasUpdates = true;
+        }
+
+        const modal = nextSearchParams.get('modal')?.trim();
+        if (modal && CHANGE_PUBLIC_KEY_ACTION_VALUES.has(modal)) {
+            nextSearchParams.delete('modal');
+            hasUpdates = true;
+        }
+
+        if (hasUpdates) {
+            setSearchParams(nextSearchParams, { replace: true });
+        }
+    }, [searchParams, setSearchParams]);
+
+    const handleCloseChangePublicKey = useCallback(() => {
+        setShowChangePublicKey(false);
+        setDeepLinkedPublicKey(null);
+        clearChangePublicKeyDeepLink();
+    }, [clearChangePublicKeyDeepLink]);
 
     useEffect(() => {
         if (agent) {
             markKnown(agent.id);
         }
     }, [agent, markKnown]);
+
+    useEffect(() => {
+        if (!agent || showChangePublicKey || !changePublicKeyDeepLink.shouldOpenModal) {
+            return;
+        }
+
+        if (changePublicKeyDeepLink.nextPublicKey) {
+            try {
+                parseUint256PublicKey(changePublicKeyDeepLink.nextPublicKey);
+            } catch (error) {
+                const message = error instanceof Error ? error.message : 'Invalid operator public key in deep link';
+                toast.error(message);
+                clearChangePublicKeyDeepLink();
+                return;
+            }
+        }
+
+        setDeepLinkedPublicKey(changePublicKeyDeepLink.nextPublicKey ?? null);
+        setShowChangePublicKey(true);
+        clearChangePublicKeyDeepLink();
+    }, [agent, changePublicKeyDeepLink, clearChangePublicKeyDeepLink, showChangePublicKey]);
 
     if (!agent) {
         if (isAgentsLoading || isFallbackAgentLoading) {
@@ -271,7 +388,8 @@ export function AgentDetailPage() {
             <RenameModal agent={showRename ? agent : null} onClose={() => setShowRename(false)} onSuccess={refresh} />
             <ChangePublicKeyModal
                 agent={showChangePublicKey ? agent : null}
-                onClose={() => setShowChangePublicKey(false)}
+                initialPublicKey={deepLinkedPublicKey}
+                onClose={handleCloseChangePublicKey}
                 onSuccess={refresh}
             />
             <UnexpectedActivityModal
