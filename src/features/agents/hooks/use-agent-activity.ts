@@ -57,7 +57,7 @@ export interface AgentActivityItem {
 
 const OP_CHANGE_OPERATOR = '0xea4e36cf';
 const OP_CHANGE_NFT_CONTENT = '0x1a0b9d51';
-const OP_WALLET_EXTENSION_ACTION = '0x6578746e';
+const OP_WALLET_EXTENSION_ACTION = '0xed84cbf0';
 const OP_DEPLOY_SUB_WALLET = '0x0609e47b';
 const TON_ICON_URL = '/icons/ton.svg';
 const NFT_PREFETCH_CONCURRENCY = 6;

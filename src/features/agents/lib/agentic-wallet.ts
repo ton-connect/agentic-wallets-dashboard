@@ -178,7 +178,7 @@ export function buildWalletStateInit(walletCodeBoc: string, nftItemIndex: bigint
         throw new Error('VITE_AGENTIC_WALLET_CODE_BOC is not configured');
     }
 
-    const code = Cell.fromBase64(walletCodeBoc);
+    const code = Cell.fromHex(walletCodeBoc);
     const data = agenticWalletConfigToCell(nftItemIndex, collectionAddress);
     const init = { code, data };
 
