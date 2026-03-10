@@ -31,6 +31,7 @@ import { getAgentWalletState } from '@/features/agents/lib/agentic-wallet';
 import { extractNameFromMetadata } from '@/features/agents/lib/metadata';
 import { isSameTonAddress } from '@/features/agents/lib/address';
 import { parseUint256PublicKey } from '@/features/agents/lib/public-key';
+import { formatUiAmountFixed } from '@/features/agents/lib/amount';
 
 const CHANGE_PUBLIC_KEY_PARAM_KEYS = [
     'nextOperatorPublicKey',
@@ -237,7 +238,7 @@ export function AgentDetailPage() {
         );
     }
 
-    const balanceStr = balance != null ? parseFloat(balance).toFixed(2) : '—';
+    const balanceStr = balance != null ? formatUiAmountFixed(balance, 2) : '—';
     const isZero = balance != null && parseFloat(balance) === 0;
     const isRevoked = agent.status === 'revoked';
     const createdDate = new Date(agent.createdAt).toLocaleDateString('en-US', {

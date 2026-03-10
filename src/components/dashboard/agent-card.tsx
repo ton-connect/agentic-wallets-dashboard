@@ -15,6 +15,7 @@ import { StatusDot } from '@/components/shared/status-dot';
 import { CopyableAddress } from '@/components/shared/copyable-address';
 import { JettonBalances } from '@/components/shared/jetton-balances';
 import { NftBalances } from '@/components/shared/nft-balances';
+import { formatUnitsFixed } from '@/features/agents/lib/amount';
 
 interface AgentCardProps {
     agent: AgentWallet;
@@ -24,17 +25,9 @@ interface AgentCardProps {
     onRevoke?: () => void;
 }
 
-function formatTonWithTwoDecimals(nano: bigint): string {
-    const abs = nano < 0n ? -nano : nano;
-    const sign = nano < 0n ? '-' : '';
-    const whole = abs / 1_000_000_000n;
-    const fractional = (abs % 1_000_000_000n) / 10_000_000n;
-    return `${sign}${whole.toString()}.${fractional.toString().padStart(2, '0')}`;
-}
-
 export function AgentCard({ agent, balanceNano, onFund, onWithdraw, onRevoke }: AgentCardProps) {
     const network = useNetwork();
-    const balanceStr = balanceNano != null ? formatTonWithTwoDecimals(balanceNano) : '—';
+    const balanceStr = balanceNano != null ? formatUnitsFixed(balanceNano, 9, 2) : '—';
     const isZero = balanceNano === 0n;
     const isRevoked = agent.status === 'revoked';
 

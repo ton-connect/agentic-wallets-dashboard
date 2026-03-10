@@ -63,3 +63,7 @@ export function formatUiAmountFixed(input: string, fractionDigits: number): stri
     const fraction = fractionRaw.padEnd(fractionDigits, '0').slice(0, fractionDigits);
     return fractionDigits > 0 ? `${whole || '0'}.${fraction}` : whole || '0';
 }
+
+export function formatUnitsFixed(units: bigint, decimals: number, fractionDigits: number): string {
+    return formatUiAmountFixed(formatUnitsTrimmed(units, decimals), fractionDigits);
+}
