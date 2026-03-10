@@ -1,99 +1,83 @@
 # Agentic Wallets Dashboard
 
-## Technical Overview
+**TON Agentic wallet** is a wallet designed specifically for AI agents. It allows an agent to interact autonomously with the TON blockchain while keeping the user in full control of the wallet.
 
-Standalone-репозиторий для `agentic-wallets-dashboard`.
+This dashboard lets you manage agentic wallets, create new ones, deposit and withdraw assets, change the operator key, revoke access, and view an activity feed for each agent.
 
-Локально зафиксированные tarball-пакеты лежат в `vendor/`:
-- `@ton/appkit`
-- `@ton/walletkit`
-- `@ton/appkit-react`
-- `@tonconnect/bridge-sdk` (переопределен локально, чтобы цепочка `walletkit` не ходила за ним в GitHub)
+## Run
 
-## Запуск
-
-Из корня репозитория:
+From the repository root:
 
 ```bash
 pnpm install && pnpm dev
 ```
 
-Приложение стартует на `http://localhost:5175`.
+The app starts at `http://localhost:5175`.
 
-## Продукт
+## Routes
 
-Веб-приложение для управления `agentic wallet` в сети TON:
-- просмотр найденных agent-кошельков владельца;
-- создание нового agent-кошелька с первичным фондированием;
-- пополнение, вывод активов, смена ключа оператора, revoke;
-- просмотр activity-ленты по агенту.
+- `/` — dashboard with the list of agents.
+- `/create` — agent creation form.
+- `/agent/:id` — page for a specific agent.
 
-Приложение построено на `React + Vite + @tanstack/react-query + @ton/appkit-react`.
+## Core Functionality
 
-## Роуты
+1. Detecting the owner's agents:
+- load the owner's NFTs;
+- filter by the configured collection;
+- additionally load the wallets' on-chain state.
 
-- `/` — дашборд со списком агентов.
-- `/create` — форма создания агента.
-- `/agent/:id` — карточка конкретного агента.
+2. Creating an agent (`/create`):
+- enter the `origin operator public key`, name, and source;
+- calculate the index and deterministic agent wallet address;
+- deploy and perform the initial funding with TON and/or assets in a single flow.
 
-## Основной функционал
-
-1. Обнаружение агентов владельца:
-- загрузка NFT владельца;
-- фильтрация по configured collection;
-- дозагрузка on-chain state кошельков.
-
-2. Создание агента (`/create`):
-- ввод `origin operator public key`, имени и источника;
-- расчёт индекса и детерминированного адреса agent-кошелька;
-- deploy + первичное фондирование TON и/или ассетами в одном флоу.
-
-3. Операции по агенту:
+3. Agent operations:
 - `fund` (TON / jetton / NFT);
-- `withdraw all` (или выборочно, в зависимости от UI-модалки);
-- `revoke` (установка operator key в `0`);
+- `withdraw all` (or selectively, depending on the UI modal);
+- `revoke` (set the operator key to `0`);
 - `change public key`;
 - `rename`.
 
 4. Activity feed:
-- классификация действий (`ton`, `jetton`, `nft`, `swap`, `contract`, `agent_ops`);
-- дедуп по hash;
-- периодический polling (`VITE_AGENTIC_ACTIVITY_POLL_MS`).
+- classify actions (`ton`, `jetton`, `nft`, `swap`, `contract`, `agent_ops`);
+- deduplicate by hash;
+- periodic polling (`VITE_AGENTIC_ACTIVITY_POLL_MS`).
 
-## Диплинки
+## Deep Links
 
-### Создание кошелька (`/create`)
+### Wallet Creation (`/create`)
 
-Страница создания агента поддерживает автозаполнение формы через query-параметры URL.
+The agent creation page supports form prefill via URL query parameters.
 
-Базовый формат:
+Base format:
 
 ```text
 /create?...
 ```
 
-Поддерживаемые scalar-параметры:
-- `network`: ожидаемая сеть для подключенного кошелька. Поддерживаются `mainnet`, `testnet`, `-239`, `239`, `-3`, `3`. Если параметр не совпадает с сетью подключенного кошелька, создание агента завершается ошибкой
-- `originOperatorPublicKey` (алиасы: `operatorPublicKey`, `operatorPubkey`, `operator`, `pubkey`)
-- `agentName` (алиас: `name`)
+Supported scalar parameters:
+- `network`: expected network for the connected wallet. Supported values are `mainnet`, `testnet`, `-239`, `239`, `-3`, `3`. If the parameter does not match the connected wallet's network, agent creation fails with an error.
+- `originOperatorPublicKey` (aliases: `operatorPublicKey`, `operatorPubkey`, `operator`, `pubkey`)
+- `agentName` (alias: `name`)
 - `source`
-- `callbackUrl` (алиасы: `callback`, `webhookUrl`, `webhook`)
-- `tonDeposit` (алиасы: `ton`, `tonAmount`)
+- `callbackUrl` (aliases: `callback`, `webhookUrl`, `webhook`)
+- `tonDeposit` (aliases: `ton`, `tonAmount`)
 
-Поддерживаемые параметры ассетов:
-- `assets=<json-array>`: URL-encoded JSON-массив объектов вида `{"kind":"jetton","address":"EQ...","amount":"12.5"}` или `{"kind":"nft","address":"EQ..."}`; дополнительно поддержаны `symbol` и `label` для fallback-мэтчинга
-- повторяемый `asset`: `asset=jetton:<address>:<amount>` или `asset=nft:<address>`
-- повторяемые `jetton` / `nft`: `jetton=<address>:<amount>` и `nft=<address>`
+Supported asset parameters:
+- `assets=<json-array>`: a URL-encoded JSON array of objects like `{"kind":"jetton","address":"EQ...","amount":"12.5"}` or `{"kind":"nft","address":"EQ..."}`; `symbol` and `label` are also supported for fallback matching
+- repeated `asset`: `asset=jetton:<address>:<amount>` or `asset=nft:<address>`
+- repeated `jetton` / `nft`: `jetton=<address>:<amount>` and `nft=<address>`
 
-Поведение автозаполнения:
-- scalar-поля применяются один раз при открытии страницы
-- ассеты применяются после загрузки jetton/NFT владельца
-- мэтчинг ассетов идет сначала по адресу, а для `assets=<json-array>` возможен fallback по `symbol` и `label`
-- неизвестные или недоступные ассеты игнорируются
-- для `jetton` подставляется `amount`, для `nft` amount не используется
-- действует ограничение по числу ассетов: `max outgoing messages - 1`
+Prefill behavior:
+- scalar fields are applied once when the page opens;
+- assets are applied after the owner's jettons/NFTs are loaded;
+- asset matching is done by address first, and for `assets=<json-array>` a fallback by `symbol` and `label` is possible;
+- unknown or unavailable assets are ignored;
+- `amount` is used for `jetton`, while it is ignored for `nft`;
+- the asset count is limited by `max outgoing messages - 1`.
 
-Примеры:
+Examples:
 
 ```text
 /create?network=mainnet&operator=0x1234&name=Research%20Agent&source=telegram-bot&ton=0.2
@@ -101,34 +85,34 @@ pnpm install && pnpm dev
 /create?network=-239&originOperatorPublicKey=0x1234&agentName=A1&source=api&callbackUrl=https%3A%2F%2Fexample.com%2Fagent-wallet-created&tonDeposit=0.35&assets=%5B%7B%22kind%22%3A%22jetton%22%2C%22address%22%3A%22EQC...%22%2C%22amount%22%3A%2212.5%22%7D%2C%7B%22kind%22%3A%22nft%22%2C%22address%22%3A%22EQD...%22%7D%5D
 ```
 
-### Смена `operatorPublicKey` (`/agent/:id`)
+### Changing `operatorPublicKey` (`/agent/:id`)
 
-Страница агента поддерживает диплинк, который сразу открывает модалку смены ключа и может предзаполнить новое значение.
+The agent page supports a deep link that opens the key change modal immediately and can optionally prefill the new value.
 
-Поддерживаемые query-параметры:
-- значение нового ключа: `nextOperatorPublicKey`, `newOperatorPublicKey`, `operatorPublicKey`, `operatorPubkey`, `operator`, `pubkey`
-- явный флаг открытия модалки: `action=change-public-key`, `modal=change-public-key`, `changePublicKey`, `change-public-key`, `updateOperatorPublicKey`, `update-operator-public-key`
+Supported query parameters:
+- new key value: `nextOperatorPublicKey`, `newOperatorPublicKey`, `operatorPublicKey`, `operatorPubkey`, `operator`, `pubkey`
+- explicit modal open flag: `action=change-public-key`, `modal=change-public-key`, `changePublicKey`, `change-public-key`, `updateOperatorPublicKey`, `update-operator-public-key`
 
-Примеры:
+Examples:
 
 ```text
 /agent/EQ...?operatorPublicKey=0x1234
 /agent/EQ...?action=change-public-key&operatorPublicKey=0x1234
 ```
 
-Ключ можно передавать в hex-формате (`0x...`) или в decimal. После открытия модалки служебные query-параметры удаляются из URL.
+The key can be passed in hex format (`0x...`) or decimal. After the modal opens, the service query parameters are removed from the URL.
 
-## Дополнительно
+## Additional Commands
 
 - production build: `pnpm build`
 - preview build: `pnpm preview`
 - typecheck: `pnpm typecheck`
-  
-## Конфигурация окружения
 
-Файл: `src/core/configs/env.ts`.
+## Environment Configuration
 
-Ключевые переменные:
+File: `src/core/configs/env.ts`.
+
+Key variables:
 - `VITE_TON_API_KEY`
 - `VITE_TON_API_TESTNET_KEY`
 - `VITE_TON_API_MIN_REQUEST_INTERVAL_MS`
