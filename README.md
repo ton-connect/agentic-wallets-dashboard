@@ -73,6 +73,7 @@ pnpm install && pnpm dev
 ```
 
 Поддерживаемые scalar-параметры:
+- `network`: ожидаемая сеть для подключенного кошелька. Поддерживаются `mainnet`, `testnet`, `-239`, `239`, `-3`, `3`. Если параметр не совпадает с сетью подключенного кошелька, создание агента завершается ошибкой
 - `originOperatorPublicKey` (алиасы: `operatorPublicKey`, `operatorPubkey`, `operator`, `pubkey`)
 - `agentName` (алиас: `name`)
 - `source`
@@ -95,9 +96,9 @@ pnpm install && pnpm dev
 Примеры:
 
 ```text
-/create?operator=0x1234&name=Research%20Agent&source=telegram-bot&ton=0.2
-/create?pubkey=0x1234&agentName=Ops%20Agent&asset=jetton:EQC...:15.75&asset=nft:EQD...
-/create?originOperatorPublicKey=0x1234&agentName=A1&source=api&callbackUrl=https%3A%2F%2Fexample.com%2Fagent-wallet-created&tonDeposit=0.35&assets=%5B%7B%22kind%22%3A%22jetton%22%2C%22address%22%3A%22EQC...%22%2C%22amount%22%3A%2212.5%22%7D%2C%7B%22kind%22%3A%22nft%22%2C%22address%22%3A%22EQD...%22%7D%5D
+/create?network=mainnet&operator=0x1234&name=Research%20Agent&source=telegram-bot&ton=0.2
+/create?network=testnet&pubkey=0x1234&agentName=Ops%20Agent&asset=jetton:EQC...:15.75&asset=nft:EQD...
+/create?network=-239&originOperatorPublicKey=0x1234&agentName=A1&source=api&callbackUrl=https%3A%2F%2Fexample.com%2Fagent-wallet-created&tonDeposit=0.35&assets=%5B%7B%22kind%22%3A%22jetton%22%2C%22address%22%3A%22EQC...%22%2C%22amount%22%3A%2212.5%22%7D%2C%7B%22kind%22%3A%22nft%22%2C%22address%22%3A%22EQD...%22%7D%5D
 ```
 
 ### Смена `operatorPublicKey` (`/agent/:id`)

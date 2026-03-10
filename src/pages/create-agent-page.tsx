@@ -93,6 +93,7 @@ interface CreateDeepLinkAssetInput {
 }
 
 interface CreateDeepLinkPayload {
+    network?: string;
     operatorPublicKey?: string;
     agentName?: string;
     source?: string;
@@ -227,6 +228,7 @@ function parseCreateDeepLink(searchParams: URLSearchParams): CreateDeepLinkPaylo
     }
 
     return {
+        network: getFirstQueryParam(searchParams, ['network']),
         operatorPublicKey: getFirstQueryParam(searchParams, [
             'originOperatorPublicKey',
             'operatorPublicKey',
@@ -240,6 +242,32 @@ function parseCreateDeepLink(searchParams: URLSearchParams): CreateDeepLinkPaylo
         tonDeposit: getFirstQueryParam(searchParams, ['tonDeposit', 'ton', 'tonAmount']),
         assets,
     };
+}
+
+function normalizeRequestedNetworkChainId(value: string | undefined): string | undefined {
+    const normalized = value?.trim().toLowerCase();
+    if (!normalized) {
+        return undefined;
+    }
+
+    if (normalized === '-239' || normalized === '239' || normalized === 'mainnet') {
+        return '-239';
+    }
+    if (normalized === '-3' || normalized === '3' || normalized === 'testnet') {
+        return '-3';
+    }
+
+    throw new Error('Unsupported network parameter. Use mainnet, testnet, -239, or -3');
+}
+
+function formatNetworkLabel(chainId: string): string {
+    if (chainId === '-239') {
+        return 'mainnet';
+    }
+    if (chainId === '-3') {
+        return 'testnet';
+    }
+    return chainId;
 }
 
 function parseCallbackUrl(value: string): string {
@@ -494,6 +522,12 @@ export function CreateAgentPage() {
             setIsAwaitingIndexing(true);
             if (!network || !ownerAddress) {
                 throw new Error('Connect wallet first');
+            }
+            const requestedNetworkChainId = normalizeRequestedNetworkChainId(deepLinkPayload.network);
+            if (requestedNetworkChainId && requestedNetworkChainId !== network.chainId) {
+                throw new Error(
+                    `Connected wallet network is ${formatNetworkLabel(network.chainId)}, but ${formatNetworkLabel(requestedNetworkChainId)} is required`,
+                );
             }
             if (!collectionAddress) {
                 throw new Error('Collection address is not configured for current network');
