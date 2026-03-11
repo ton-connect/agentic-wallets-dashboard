@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAgents } from '@/features/agents';
 import type { AgentWallet } from '@/features/agents';
 import { ConnectPrompt } from '@/components/dashboard/connect-prompt';
-import { EmptyState } from '@/components/dashboard/empty-state';
+import { EmptyState, LoadingState } from '@/components/dashboard/empty-state';
 import { AgentStatsBar } from '@/components/dashboard/agent-stats-bar';
 import { NotificationBanner } from '@/components/dashboard/notification-banner';
 import { AgentCard } from '@/components/dashboard/agent-card';
@@ -88,11 +88,7 @@ export function DashboardPage() {
     }
 
     if (isLoading) {
-        return (
-            <div className="flex min-h-[50vh] items-center justify-center">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-white/10 border-t-amber-500" />
-            </div>
-        );
+        return <LoadingState />;
     }
 
     if (agents.length === 0) {

@@ -129,7 +129,6 @@ export function useAgents() {
 
     const {
         data: chainState,
-        isLoading: isChainLoading,
         error: chainError,
         refetch: refetchChain,
     } = useQuery({
@@ -266,7 +265,7 @@ export function useAgents() {
         activeAgents,
         revokedAgents,
         newAgents,
-        isLoading: isNftsLoading || isChainLoading,
+        isLoading: isNftsLoading && !nftsResponse,
         error: nftsError ?? chainError,
         refresh,
         collectionAddress: collectionAddress || null,
