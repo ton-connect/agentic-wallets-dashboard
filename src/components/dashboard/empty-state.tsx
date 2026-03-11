@@ -6,61 +6,135 @@
  *
  */
 
-function EmptyIllustration() {
+function WalletIllustration({ animate }: { animate?: boolean }) {
     return (
-        <svg viewBox="0 0 240 160" fill="none" className="mx-auto h-auto w-full max-w-[200px]" aria-hidden="true">
-            <rect x="70" y="20" width="100" height="48" rx="12" stroke="white" strokeWidth="1" strokeOpacity="0.35" />
+        <svg viewBox="0 0 280 200" fill="none" className="mx-auto h-auto w-full max-w-xs" aria-hidden="true">
+            <rect x="90" y="40" width="100" height="56" rx="12" stroke="white" strokeWidth="1" strokeOpacity="0.4" />
             <text
-                x="120"
-                y="42"
+                x="140"
+                y="64"
                 textAnchor="middle"
                 fill="white"
-                fontSize="9"
+                fontSize="10"
                 fontWeight="600"
                 fontFamily="system-ui"
-                opacity="0.6"
+                opacity="0.7"
             >
                 Your Wallet
             </text>
-            <text x="120" y="56" textAnchor="middle" fill="#f59e0b" fontSize="7" fontFamily="monospace" opacity="0.7">
+            <text x="140" y="80" textAnchor="middle" fill="#f59e0b" fontSize="8" fontFamily="monospace" opacity="0.7">
                 connected
             </text>
 
-            <path d="M120 68 L120 90" stroke="white" strokeWidth="1" strokeOpacity="0.15" strokeDasharray="3 3" />
+            <path d="M110 96 C110 130 60 130 60 152" stroke="white" strokeWidth="1" strokeOpacity="0.2" />
+            <path d="M140 96 C140 120 140 135 140 152" stroke="white" strokeWidth="1" strokeOpacity="0.3" />
+            <path d="M170 96 C170 130 220 130 220 152" stroke="white" strokeWidth="1" strokeOpacity="0.2" />
 
-            <rect
-                x="70"
-                y="90"
-                width="100"
-                height="48"
-                rx="12"
-                stroke="white"
-                strokeWidth="1"
-                strokeOpacity="0.15"
-                strokeDasharray="6 4"
-            />
-            <text x="120" y="118" textAnchor="middle" fill="white" fontSize="8" fontFamily="system-ui" opacity="0.3">
-                No agents yet
-            </text>
+            {animate && (
+                <>
+                    <circle r="2" fill="#f59e0b" opacity="0.8">
+                        <animateMotion dur="3s" repeatCount="indefinite" path="M140 96 C140 120 140 135 140 152" />
+                    </circle>
+                    <circle r="1.5" fill="white" opacity="0.4">
+                        <animateMotion dur="4s" repeatCount="indefinite" path="M110 96 C110 130 60 130 60 152" begin="1s" />
+                    </circle>
+                    <circle r="1.5" fill="white" opacity="0.4">
+                        <animateMotion dur="4s" repeatCount="indefinite" path="M170 96 C170 130 220 130 220 152" begin="2s" />
+                    </circle>
+                </>
+            )}
 
-            <circle cx="120" cy="80" r="3" fill="white" fillOpacity="0.15">
-                <animate attributeName="r" values="3;4;3" dur="2s" repeatCount="indefinite" />
-                <animate attributeName="fillOpacity" values="0.15;0.3;0.15" dur="2s" repeatCount="indefinite" />
-            </circle>
+            {[60, 140, 220].map((x) => (
+                <g key={x}>
+                    <rect
+                        x={x - 30}
+                        y="152"
+                        width="60"
+                        height="32"
+                        rx="8"
+                        stroke="white"
+                        strokeWidth="1"
+                        strokeOpacity="0.2"
+                        strokeDasharray="4 4"
+                    />
+                    <text
+                        x={x}
+                        y="172"
+                        textAnchor="middle"
+                        fill="white"
+                        fontSize="7"
+                        fontFamily="monospace"
+                        opacity="0.3"
+                    >
+                        agent
+                    </text>
+                </g>
+            ))}
         </svg>
+    );
+}
+
+export function LoadingState() {
+    return (
+        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-8 animate-fade-in">
+            <WalletIllustration animate />
+            <div className="text-center">
+                <h2 className="text-2xl font-bold tracking-tight">Looking for your wallets...</h2>
+                <p className="mt-2 max-w-sm text-sm text-neutral-400">
+                    Checking on-chain data for agentic wallets linked to your address.
+                </p>
+            </div>
+            <div className="flex h-9 items-center justify-center">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-white/10 border-t-amber-500" />
+            </div>
+        </div>
     );
 }
 
 export function EmptyState() {
     return (
-        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-6 animate-fade-in">
-            <EmptyIllustration />
+        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-8 animate-fade-in">
+            <WalletIllustration />
             <div className="text-center">
-                <h2 className="text-xl font-semibold tracking-tight">No agents connected</h2>
-                <p className="mt-2 max-w-md text-sm leading-relaxed text-neutral-400">
-                    Agent wallets from the configured SBT collection will appear here automatically. You can also use
-                    the Create flow to deploy and fund a new agent wallet.
+                <h2 className="text-2xl font-bold tracking-tight">No agents connected</h2>
+                <p className="mt-2 max-w-sm text-sm text-neutral-400">
+                    Get started in two steps:
                 </p>
+            </div>
+            <div className="h-9">
+            <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4 text-sm">
+                    <div className="flex items-start gap-3">
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-amber-500/10 font-mono text-[10px] font-bold text-amber-500">
+                            1
+                        </span>
+                        <div>
+                            <p className="text-neutral-300">Add to your MCP client</p>
+                            <code className="mt-1 block font-mono text-xs text-neutral-500">
+                                $ npx @ton/mcp@alpha
+                            </code>
+                        </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-amber-500/10 font-mono text-[10px] font-bold text-amber-500">
+                            2
+                        </span>
+                        <div>
+                            <p className="text-neutral-300">Ask your AI agent</p>
+                            <p className="mt-1 font-mono text-xs text-neutral-500">
+                                &gt; Create agentic wallet
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <a
+                    href="/"
+                    className="text-sm text-neutral-500 transition-colors hover:text-white"
+                >
+                    Learn more
+                </a>
+            </div>
             </div>
         </div>
     );

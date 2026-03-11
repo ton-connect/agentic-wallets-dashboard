@@ -742,7 +742,7 @@ export function CreateAgentPage() {
 
             if (isIndexed) {
                 toast.success(`Deploy + first fund completed. Agent address: ${localAddress.toString()}`);
-                navigate('/');
+                navigate('/dashboard');
             } else {
                 toast.message(`Transaction sent. Wallet ${localAddress.toString()} will appear after indexing.`);
                 navigate(`/agent/${localAddress.toString()}`);
@@ -758,7 +758,7 @@ export function CreateAgentPage() {
     return (
         <div className="animate-fade-in">
             <Link
-                to="/"
+                to="/dashboard"
                 className="mb-6 inline-flex items-center gap-1.5 text-xs text-neutral-500 transition-colors hover:text-white"
             >
                 <ArrowLeft size={14} />

@@ -231,7 +231,7 @@ export function AgentDetailPage() {
         return (
             <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 animate-fade-in">
                 <p className="text-neutral-500">Agent not found</p>
-                <button onClick={() => navigate('/')} className="text-sm text-amber-500 hover:text-amber-400">
+                <button onClick={() => navigate('/dashboard')} className="text-sm text-amber-500 hover:text-amber-400">
                     Back to dashboard
                 </button>
             </div>
@@ -250,7 +250,7 @@ export function AgentDetailPage() {
     return (
         <div className="animate-fade-in">
             <Link
-                to="/"
+                to="/dashboard"
                 className="mb-6 inline-flex items-center gap-1.5 text-xs text-neutral-500 transition-colors hover:text-white"
             >
                 <ArrowLeft size={14} />
