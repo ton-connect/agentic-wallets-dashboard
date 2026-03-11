@@ -78,6 +78,10 @@ export function LandingForDevelopers() {
                             master key, agent keeps the operator key.
                         </p>
 
+                        <p className="text-xs leading-relaxed text-amber-500/60">
+                            Developer preview — contracts are not yet audited. Use testnet for experimentation.
+                        </p>
+
                         <div className="flex flex-wrap gap-3">
                             <a
                                 href="https://github.com/ton-connect/kit/tree/main/packages/mcp"

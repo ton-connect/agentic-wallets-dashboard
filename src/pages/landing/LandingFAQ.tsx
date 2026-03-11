@@ -14,7 +14,7 @@ import { ChevronDown } from 'lucide-react';
 const faqs = [
     {
         question: 'What if the agent steals the money?',
-        answer: 'The agent can only spend what you sent to its wallet. Your main wallet is completely separate and inaccessible to the agent. Worst case — you lose the funded amount, nothing more.',
+        answer: 'The agent can only spend what you sent to its wallet. Your main wallet is completely separate. However, if the agent behaves incorrectly or executes harmful transactions, it can spend the entire balance of its wallet before you react. The risk is capped to the funded amount — but that amount is still real money. Fund agents with what you\'re comfortable losing.',
     },
     {
         question: 'How do I disconnect an agent?',
@@ -31,6 +31,10 @@ const faqs = [
     {
         question: 'How do I integrate as a developer?',
         answer: 'Add @ton/mcp to your MCP client (Cursor, Claude Desktop, Windsurf, etc.) and ask your AI agent to "create agentic wallet". The agent handles key generation, deployment, and onboarding. See the GitHub repo for full docs.',
+    },
+    {
+        question: 'Are the smart contracts audited?',
+        answer: 'Not yet. This is a developer preview. The contracts are open source and available for review on GitHub, but a formal audit has not been completed. We recommend using testnet for experimentation until the audit is done.',
     },
 ];
 

@@ -103,8 +103,8 @@ export function LandingHero() {
                     </div>
 
                     <p className="max-w-lg text-lg leading-relaxed text-neutral-400">
-                        Create a wallet for your agent in 3 steps. User keeps the master key. Agent keeps the operator
-                        key. On-chain, permissionless, no vendor lock-in.
+                        Give AI agents autonomous access to TON — transfers, swaps, DeFi,
+                        payments — while you keep full control of the funds.
                     </p>
 
                     <div className="flex flex-wrap gap-4">

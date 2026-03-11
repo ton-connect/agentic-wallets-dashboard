@@ -85,18 +85,19 @@ export function LandingProblem() {
                             The Problem
                         </p>
                         <h2 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-                            AI agents can trade.{' '}
+                            AI agents can interact with services.{' '}
                             <span className="text-neutral-500">
                                 But they can&apos;t hold money without holding your&nbsp;keys.
                             </span>
                         </h2>
                         <p className="mt-6 max-w-lg text-base leading-relaxed text-neutral-400">
-                            Every time an agent needs to execute a transaction, it stops and waits for you to press a
-                            button. That&apos;s like hiring a trader but making them call you for every single deal.
+                            AI agents are becoming users of digital services — paying for APIs,
+                            interacting with DeFi protocols, communicating with other agents. But
+                            today, every transaction stops and waits for you to press a button.
                         </p>
                         <p className="mt-4 max-w-lg text-base leading-relaxed text-neutral-400">
-                            You need infrastructure that lets agents act autonomously while you keep full control over
-                            the funds.
+                            In the Telegram and TON ecosystem, agents need a building block that
+                            gives them access to funds and services — without requiring your keys.
                         </p>
                     </div>
                     <div className="flex justify-center">
