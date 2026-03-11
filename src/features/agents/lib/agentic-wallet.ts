@@ -16,7 +16,7 @@ import {
 } from '@ton/walletkit';
 import type { TransactionRequest } from '@ton/appkit';
 
-const OP_EXTENSION_ACTION_REQUEST = 0x6578746e;
+const OP_EXTENSION_ACTION_REQUEST = 0xed84cbf0;
 const OP_DEPLOY_WALLET = 0x0609e47b;
 const OP_CHANGE_OPERATOR = 0xea4e36cf;
 const OP_CHANGE_NFT_CONTENT = 0x1a0b9d51;
