@@ -17,8 +17,8 @@ export const MOCK_NFT_ITEMS: NFT[] = [
         address: 'EQBvW8Z5huBkMJYdnfAEM5JqTNkuFX5diqRQIGuJmGwxU3Yp',
         index: '0',
         info: {
-            name: 'DeDust Trader',
-            description: 'Created by DeDust Bot',
+            name: 'Trader',
+            description: 'Created by Trader Bot',
         },
         attributes: [
             { traitType: 'operator_pubkey', value: 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2' },

@@ -16,6 +16,7 @@ import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { DashboardPage } from '@/pages/dashboard-page';
 import { AgentDetailPage } from '@/pages/agent-detail-page';
 import { CreateAgentPage } from '@/pages/create-agent-page';
+import { LandingPage } from '@/pages/landing';
 
 import '@ton/appkit-react/styles.css';
 
@@ -35,13 +36,33 @@ export function App() {
         <QueryClientProvider client={queryClient}>
             <AppKitProvider appKit={appKit}>
                 <BrowserRouter>
-                    <DashboardLayout>
-                        <Routes>
-                            <Route path="/" element={<DashboardPage />} />
-                            <Route path="/create" element={<CreateAgentPage />} />
-                            <Route path="/agent/:id" element={<AgentDetailPage />} />
-                        </Routes>
-                    </DashboardLayout>
+                    <Routes>
+                        <Route path="/" element={<LandingPage />} />
+                        <Route
+                            path="/dashboard"
+                            element={
+                                <DashboardLayout>
+                                    <DashboardPage />
+                                </DashboardLayout>
+                            }
+                        />
+                        <Route
+                            path="/create"
+                            element={
+                                <DashboardLayout>
+                                    <CreateAgentPage />
+                                </DashboardLayout>
+                            }
+                        />
+                        <Route
+                            path="/agent/:id"
+                            element={
+                                <DashboardLayout>
+                                    <AgentDetailPage />
+                                </DashboardLayout>
+                            }
+                        />
+                    </Routes>
                 </BrowserRouter>
                 <Toaster
                     position="top-right"
