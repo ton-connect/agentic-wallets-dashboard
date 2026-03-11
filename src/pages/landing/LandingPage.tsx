@@ -12,8 +12,6 @@ import {
     LandingProblem,
     LandingHowItWorks,
     LandingValueProps,
-    LandingTrust,
-    LandingUseCases,
     LandingForDevelopers,
     LandingForUsers,
     LandingFAQ,
