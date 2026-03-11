@@ -42,7 +42,7 @@ const pillars: { title: string; description: string; icon: ReactNode }[] = [
     },
     {
         title: 'Control',
-        description: 'Withdraw funds or revoke access. One tap. On-chain, atomic. The owner always wins.',
+        description: 'Withdraw funds or revoke access. One tap. On-chain. The owner always wins.',
         icon: (
             <svg viewBox="0 0 48 48" fill="none" className="h-5 w-5" aria-hidden="true">
                 <path d="M24 8V24" stroke="#f59e0b" strokeWidth="1.2" strokeLinecap="round" />
