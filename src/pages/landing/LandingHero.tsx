@@ -7,6 +7,7 @@
  */
 
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 function WalletHierarchySVG() {
     return (
@@ -108,13 +109,13 @@ export function LandingHero() {
                     </p>
 
                     <div className="flex flex-wrap gap-4">
-                        <a
-                            href="/getting-started"
+                        <Link
+                            to="/getting-started"
                             className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-6 py-3 text-sm font-medium text-black transition-colors hover:bg-amber-400"
                         >
                             For Developers
                             <ArrowRight size={16} />
-                        </a>
+                        </Link>
                         <a
                             href="#for-users"
                             className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white/[0.04]"

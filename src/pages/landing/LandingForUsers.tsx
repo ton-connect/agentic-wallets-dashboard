@@ -7,6 +7,7 @@
  */
 
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 function DashboardMockup() {
     return (
@@ -113,13 +114,13 @@ export function LandingForUsers() {
                         </div>
 
                         <div className="pt-2">
-                            <a
-                                href="/dashboard"
+                            <Link
+                                to="/dashboard"
                                 className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-medium text-black transition-colors hover:bg-amber-400"
                             >
                                 Try Dashboard
                                 <ArrowRight size={14} />
-                            </a>
+                            </Link>
                         </div>
                     </div>
 

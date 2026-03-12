@@ -17,23 +17,26 @@ import { WalletButton } from '@/components/shared/wallet-button';
 type NavItem = {
     label: string;
     href: string;
+    sectionId?: string;
 };
 
 const sectionNavItems: NavItem[] = [
-    { label: 'What is it?', href: '#what-is-it' },
-    { label: 'How It Works', href: '#how-it-works' },
-    { label: 'For Developers', href: '#for-developers' },
-    { label: 'For Users', href: '#for-users' },
-    { label: 'FAQ', href: '#faq' },
+    { label: 'What is it?', href: '#what-is-it', sectionId: 'what-is-it' },
+    { label: 'How It Works', href: '#how-it-works', sectionId: 'how-it-works' },
+    { label: 'For Developers', href: '#for-developers', sectionId: 'for-developers' },
+    { label: 'For Users', href: '#for-users', sectionId: 'for-users' },
+    { label: 'FAQ', href: '#faq', sectionId: 'faq' },
 ];
 
 const MOBILE_MENU_ANIMATION_MS = 240;
+const DASHBOARD_HREF = '/dashboard';
 
 export function SiteHeader() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
+    const [activeHref, setActiveHref] = useState<string | null>(null);
     const headerRef = useRef<HTMLElement>(null);
-    const { pathname } = useLocation();
+    const { pathname, hash } = useLocation();
     const isLandingPage = pathname === '/';
 
     const navItems = useMemo(() => {
@@ -42,7 +45,7 @@ export function SiteHeader() {
             href: isLandingPage ? item.href : `/${item.href}`,
         }));
 
-        return [...normalizedSectionLinks, { label: 'Dashboard', href: '/dashboard' }];
+        return [...normalizedSectionLinks, { label: 'Dashboard', href: DASHBOARD_HREF }];
     }, [isLandingPage]);
 
     const closeMobileMenu = () => setMobileOpen(false);
@@ -63,6 +66,55 @@ export function SiteHeader() {
     useEffect(() => {
         closeMobileMenu();
     }, [pathname]);
+
+    useEffect(() => {
+        if (pathname === DASHBOARD_HREF || pathname.startsWith('/agent/') || pathname === '/create') {
+            setActiveHref(DASHBOARD_HREF);
+            return;
+        }
+
+        if (!isLandingPage) {
+            setActiveHref(null);
+            return;
+        }
+
+        if (hash) {
+            setActiveHref(hash);
+        }
+
+        const sectionIds = sectionNavItems
+            .map((item) => item.sectionId)
+            .filter((sectionId): sectionId is string => Boolean(sectionId));
+
+        const syncActiveSection = () => {
+            const headerHeight = headerRef.current?.offsetHeight ?? 73;
+            const scrollAnchor = window.scrollY + headerHeight + 32;
+
+            let currentSectionId: string | null = null;
+
+            for (const sectionId of sectionIds) {
+                const section = document.getElementById(sectionId);
+                if (!section) {
+                    continue;
+                }
+
+                if (section.offsetTop <= scrollAnchor) {
+                    currentSectionId = sectionId;
+                }
+            }
+
+            setActiveHref(currentSectionId ? `#${currentSectionId}` : null);
+        };
+
+        syncActiveSection();
+        window.addEventListener('scroll', syncActiveSection, { passive: true });
+        window.addEventListener('resize', syncActiveSection);
+
+        return () => {
+            window.removeEventListener('scroll', syncActiveSection);
+            window.removeEventListener('resize', syncActiveSection);
+        };
+    }, [hash, isLandingPage, pathname]);
 
     useEffect(() => {
         document.body.classList.toggle('overflow-hidden', mobileOpen);
@@ -108,13 +160,13 @@ export function SiteHeader() {
 
                 <nav className="hidden items-center gap-8 md:flex">
                     {navItems.map((item) => (
-                        <a
+                        <Link
                             key={item.href}
-                            href={item.href}
-                            className="text-sm text-neutral-400 transition-colors hover:text-white"
+                            to={item.href}
+                            className={`text-sm transition-colors hover:text-white ${activeHref === item.href ? 'text-white' : 'text-neutral-400'}`}
                         >
                             {item.label}
-                        </a>
+                        </Link>
                     ))}
                 </nav>
 
@@ -170,14 +222,14 @@ export function SiteHeader() {
                     >
                         <div className="flex flex-col gap-5">
                             {navItems.map((item) => (
-                                <a
+                                <Link
                                     key={item.href}
-                                    href={item.href}
-                                    className="text-[17px] text-neutral-300 transition-colors hover:text-white"
+                                    to={item.href}
+                                    className={`text-[17px] transition-colors hover:text-white ${activeHref === item.href ? 'text-white' : 'text-neutral-300'}`}
                                     onClick={closeMobileMenu}
                                 >
                                     {item.label}
-                                </a>
+                                </Link>
                             ))}
                         </div>
                     </nav>
