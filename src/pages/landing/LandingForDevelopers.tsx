@@ -6,12 +6,21 @@
  *
  */
 
-import { ArrowRight, MessageSquare, Terminal } from 'lucide-react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Check, Copy, MessageSquare, Terminal } from 'lucide-react';
 
-const configCommand = 'npx @ton/mcp@alpha';
-
+const configCommand = 'npx skills add ton-connect/kit/packages/mcp';
 
 export function LandingForDevelopers() {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async () => {
+        await navigator.clipboard.writeText(configCommand);
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 2000);
+    };
+
     return (
         <section id="for-developers" className="border-b border-white/[0.06] py-24">
             <div className="mx-auto max-w-6xl px-6">
@@ -26,14 +35,35 @@ export function LandingForDevelopers() {
                                     Add to your MCP client
                                 </span>
                             </div>
-                            <div className="flex items-center gap-3 px-5 py-4">
-                                <span className="font-mono text-xs text-amber-500/60">$</span>
-                                <code className="font-mono text-sm text-neutral-200">{configCommand}</code>
+                            <div className="flex items-center justify-between gap-4 px-5 py-4">
+                                <div className="flex min-w-0 items-center gap-3">
+                                    <span className="font-mono text-xs text-amber-500/60">$</span>
+                                    <code className="truncate font-mono text-sm text-neutral-200">{configCommand}</code>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={handleCopy}
+                                    aria-label={copied ? 'Copied' : 'Copy command'}
+                                    title={copied ? 'Copied' : 'Copy command'}
+                                    className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/[0.08] text-neutral-500 transition-colors hover:border-white/[0.14] hover:text-neutral-200"
+                                >
+                                    {copied ? (
+                                        <Check size={14} className="text-emerald-500" />
+                                    ) : (
+                                        <Copy size={14} />
+                                    )}
+                                </button>
                             </div>
-                            <div className="border-t border-white/[0.04] px-5 py-3">
+                            <div className="flex items-center justify-between border-t border-white/[0.04] px-5 py-3">
                                 <p className="text-[10px] text-neutral-700">
                                     Cursor · Claude Desktop · Windsurf · any MCP-compatible client
                                 </p>
+                                <Link
+                                    to="/getting-started"
+                                    className="text-[10px] font-medium text-amber-500/60 transition-colors hover:text-amber-500"
+                                >
+                                    See full setup guide →
+                                </Link>
                             </div>
                         </div>
 
@@ -74,7 +104,7 @@ export function LandingForDevelopers() {
                             Add one config block to your MCP client. Ask your agent
                             to <span className="text-neutral-300">create agentic wallet</span> and
                             follow the instructions. Your AI agent gets TON wallet capabilities —
-                            transfers, swaps, sub-wallet deploys, NFTs. User keeps the
+                            transfers, swaps, NFTs. User keeps the
                             master key, agent keeps the operator key.
                         </p>
 
@@ -83,15 +113,13 @@ export function LandingForDevelopers() {
                         </p>
 
                         <div className="flex flex-wrap gap-3">
-                            <a
-                                href="https://github.com/ton-connect/kit/tree/main/packages/mcp"
-                                target="_blank"
-                                rel="noopener noreferrer"
+                            <Link
+                                to="/getting-started"
                                 className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-medium text-black transition-colors hover:bg-amber-400"
                             >
                                 Get started
                                 <ArrowRight size={14} />
-                            </a>
+                            </Link>
                             <a
                                 href="https://github.com/the-ton-tech/agentic-wallet-contract"
                                 target="_blank"

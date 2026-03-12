@@ -56,6 +56,12 @@ Base format:
 /create?...
 ```
 
+Compact format:
+
+```text
+/create?data=<base64url(JSON.stringify(payload))>
+```
+
 Supported scalar parameters:
 - `network`: expected network for the connected wallet. Supported values are `mainnet`, `testnet`, `-239`, `239`, `-3`, `3`. If the parameter does not match the connected wallet's network, agent creation fails with an error.
 - `originOperatorPublicKey` (aliases: `operatorPublicKey`, `operatorPubkey`, `operator`, `pubkey`)
@@ -68,6 +74,7 @@ Supported asset parameters:
 - `assets=<json-array>`: a URL-encoded JSON array of objects like `{"kind":"jetton","address":"EQ...","amount":"12.5"}` or `{"kind":"nft","address":"EQ..."}`; `symbol` and `label` are also supported for fallback matching
 - repeated `asset`: `asset=jetton:<address>:<amount>` or `asset=nft:<address>`
 - repeated `jetton` / `nft`: `jetton=<address>:<amount>` and `nft=<address>`
+- `data=<base64url(JSON)>`: a base64url-encoded JSON object containing the same scalar fields and asset fields as above; direct query parameters still work and override values from `data` when both are present
 
 Prefill behavior:
 - scalar fields are applied once when the page opens;
@@ -82,6 +89,7 @@ Examples:
 ```text
 /create?network=mainnet&operator=0x1234&name=Research%20Agent&source=telegram-bot&ton=0.2
 /create?network=testnet&pubkey=0x1234&agentName=Ops%20Agent&asset=jetton:EQC...:15.75&asset=nft:EQD...
+/create?data=eyJuZXR3b3JrIjoibWFpbm5ldCIsIm9wZXJhdG9yUHVibGljS2V5IjoiMHgxMjM0IiwiYWdlbnROYW1lIjoiUmVzZWFyY2ggQWdlbnQiLCJzb3VyY2UiOiJ0ZWxlZ3JhbS1ib3QiLCJ0b25EZXBvc2l0IjoiMC4yIn0
 /create?network=-239&originOperatorPublicKey=0x1234&agentName=A1&source=api&callbackUrl=https%3A%2F%2Fexample.com%2Fagent-wallet-created&tonDeposit=0.35&assets=%5B%7B%22kind%22%3A%22jetton%22%2C%22address%22%3A%22EQC...%22%2C%22amount%22%3A%2212.5%22%7D%2C%7B%22kind%22%3A%22nft%22%2C%22address%22%3A%22EQD...%22%7D%5D
 ```
 

@@ -6,8 +6,9 @@
  *
  */
 
+import { SiteHeader } from '@/components/layout/site-header';
+
 import {
-    LandingHeader,
     LandingHero,
     LandingProblem,
     LandingHowItWorks,
@@ -22,7 +23,7 @@ import {
 export function LandingPage() {
     return (
         <div className="min-h-screen bg-[#050505] text-white">
-            <LandingHeader />
+            <SiteHeader />
             <LandingHero />
             <LandingProblem />
             <LandingHowItWorks />

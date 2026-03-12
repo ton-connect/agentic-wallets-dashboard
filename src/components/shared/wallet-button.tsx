@@ -15,7 +15,13 @@ function formatAddress(address: string): string {
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
 }
 
-export function WalletButton() {
+interface WalletButtonProps {
+    variant?: 'default' | 'header';
+    fullWidth?: boolean;
+    onConnect?: () => void;
+}
+
+export function WalletButton({ variant = 'default', fullWidth = false, onConnect }: WalletButtonProps) {
     const address = useAddress();
     const network = useNetwork();
     const { mutate: connect } = useConnect();
@@ -34,14 +40,25 @@ export function WalletButton() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    const isHeaderVariant = variant === 'header';
+    const disconnectedClassName = isHeaderVariant
+        ? `rounded-full bg-amber-500 px-5 py-2 text-sm font-medium text-black transition-colors hover:bg-amber-400 ${fullWidth ? 'flex w-full items-center justify-center' : ''}`
+        : `rounded-lg bg-amber-500 px-3 py-2 text-xs font-semibold text-black transition-colors hover:bg-amber-400 sm:px-4 sm:text-sm ${fullWidth ? 'flex w-full items-center justify-center' : ''}`;
+    const connectedButtonClassName = isHeaderVariant
+        ? `flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-medium transition-colors hover:bg-white/[0.08] sm:gap-2 sm:px-4 ${fullWidth ? 'w-full justify-between' : ''}`
+        : `flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-2 text-sm font-medium transition-colors hover:bg-white/[0.08] sm:gap-2 sm:px-3 ${fullWidth ? 'w-full justify-between' : ''}`;
+
     if (!address) {
         return (
             <button
-                onClick={() => connect({ connectorId: TONCONNECT_DEFAULT_CONNECTOR_ID })}
-                className="rounded-lg bg-amber-500 px-3 py-2 text-xs font-semibold text-black transition-colors hover:bg-amber-400 sm:px-4 sm:text-sm"
+                onClick={() => {
+                    connect({ connectorId: TONCONNECT_DEFAULT_CONNECTOR_ID });
+                    onConnect?.();
+                }}
+                className={disconnectedClassName}
             >
-                <span className="sm:hidden">Connect</span>
-                <span className="hidden sm:inline">Connect Wallet</span>
+                <span className={isHeaderVariant ? '' : 'sm:hidden'}>Connect Wallet</span>
+                {!isHeaderVariant && <span className="hidden sm:inline">Connect Wallet</span>}
             </button>
         );
     }
@@ -58,7 +75,7 @@ export function WalletButton() {
         <div ref={ref} className="relative">
             <button
                 onClick={() => setMenuOpen((v) => !v)}
-                className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-2 text-sm font-medium transition-colors hover:bg-white/[0.08] sm:gap-2 sm:px-3"
+                className={connectedButtonClassName}
             >
                 <div className="h-5 w-5 rounded-full bg-gradient-to-br from-amber-400 to-amber-600" />
                 <span className="font-mono text-[11px] sm:text-xs">{formatAddress(formattedAddress)}</span>

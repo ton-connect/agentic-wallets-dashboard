@@ -35,6 +35,13 @@
 
 html {
     scrollbar-gutter: stable;
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
 }
 
 html, body {
@@ -44,6 +51,10 @@ html, body {
     color: white;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+:root {
+    --site-header-height: 73px;
 }
 
 /* Sonner toast overrides for dark theme */
@@ -80,4 +91,13 @@ html, body {
 
 .app-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(251, 191, 36, 0.85);
+}
+
+.stepper-no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.stepper-no-scrollbar::-webkit-scrollbar {
+    display: none;
 }
