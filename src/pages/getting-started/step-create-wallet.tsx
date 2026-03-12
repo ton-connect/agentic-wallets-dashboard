@@ -19,7 +19,8 @@ const flowSteps = [
 const keyPoints = [
     'The agent generates an operator key pair — it keeps the private key',
     'You deploy the wallet contract from your own TON wallet (you are the owner)',
-    'The agent receives a callback confirming deployment',
+    'The agent requests the address of the deployed wallet',
+    'You find the address in the dashboard and provide it to the agent',
     'The agent can now sign transactions with its operator key',
     'You can revoke access or withdraw funds at any time from the dashboard',
 ];
