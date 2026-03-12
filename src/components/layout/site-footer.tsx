@@ -34,8 +34,8 @@ const footerColumns = [
 
 export function SiteFooter() {
     return (
-        <footer className="py-16">
-            <div className="mx-auto max-w-6xl px-6">
+        <footer className="pb-16 pt-24 md:pt-28">
+            <div className="mx-auto max-w-6xl border-t border-white/[0.05] px-6 pt-10 md:pt-12">
                 <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-4">
                     <div>
                         <span className="text-lg font-semibold tracking-tight">Agentic Wallets</span>
@@ -66,7 +66,7 @@ export function SiteFooter() {
                     ))}
                 </div>
 
-                <div className="mt-12 border-t border-white/[0.06] pt-8 text-center text-xs text-neutral-700">
+                <div className="mt-12 pt-8 text-center text-xs text-neutral-700">
                     &copy; {new Date().getFullYear()} Agentic Wallets. Built on The Open Network.
                 </div>
             </div>

@@ -13,6 +13,7 @@ import { AppKitProvider } from '@ton/appkit-react';
 
 import { appKit } from '@/core/configs/app-kit';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
+import { ScrollRestoration } from '@/components/layout/scroll-restoration';
 import { DashboardPage } from '@/pages/dashboard-page';
 import { AgentDetailPage } from '@/pages/agent-detail-page';
 import { CreateAgentPage } from '@/pages/create-agent-page';
@@ -37,6 +38,7 @@ export function App() {
         <QueryClientProvider client={queryClient}>
             <AppKitProvider appKit={appKit}>
                 <BrowserRouter>
+                    <ScrollRestoration />
                     <Routes>
                         <Route path="/" element={<LandingPage />} />
                         <Route

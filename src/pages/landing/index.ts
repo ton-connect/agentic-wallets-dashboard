@@ -6,7 +6,6 @@
  *
  */
 
-export { LandingHeader } from './LandingHeader';
 export { LandingHero } from './LandingHero';
 export { LandingProblem } from './LandingProblem';
 export { LandingHowItWorks } from './LandingHowItWorks';
