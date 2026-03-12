@@ -7,6 +7,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import type { RefObject } from 'react';
 
 import {
     StepChooseClient,
@@ -27,7 +28,19 @@ const steps = [
 
 type StepId = (typeof steps)[number]['id'];
 
-function StepperSidebar({ activeStep }: { activeStep: StepId }) {
+type StepperSidebarProps = {
+    activeStep: StepId;
+    mobileStepperNavRef: RefObject<HTMLElement | null>;
+    mobileStepperScrollerRef: RefObject<HTMLDivElement | null>;
+    setMobileStepRef: (id: StepId) => (el: HTMLAnchorElement | null) => void;
+};
+
+function StepperSidebar({
+    activeStep,
+    mobileStepperNavRef,
+    mobileStepperScrollerRef,
+    setMobileStepRef,
+}: StepperSidebarProps) {
     return (
         <>
             {/* Desktop vertical stepper */}
@@ -77,8 +90,12 @@ function StepperSidebar({ activeStep }: { activeStep: StepId }) {
             </nav>
 
             {/* Mobile horizontal progress */}
-            <nav className="sticky top-[73px] z-40 -mx-6 border-b border-white/[0.06] bg-[#050505]/90 px-6 py-3 backdrop-blur-md lg:hidden">
-                <div className="flex gap-1 overflow-x-auto">
+            <nav
+                ref={mobileStepperNavRef}
+                style={{ top: 'var(--site-header-height, 73px)' }}
+                className="sticky z-40 -mx-6 border-b border-white/[0.06] bg-[#050505] px-6 py-3 lg:hidden"
+            >
+                <div ref={mobileStepperScrollerRef} className="stepper-no-scrollbar flex gap-1 overflow-x-auto">
                     {steps.map((step, i) => {
                         const isActive = step.id === activeStep;
                         const activeIndex = steps.findIndex((s) => s.id === activeStep);
@@ -86,6 +103,7 @@ function StepperSidebar({ activeStep }: { activeStep: StepId }) {
 
                         return (
                             <a
+                                ref={setMobileStepRef(step.id)}
                                 key={step.id}
                                 href={`#${step.id}`}
                                 className={`flex shrink-0 items-center gap-2 rounded-md px-2.5 py-1.5 transition-colors ${
@@ -124,12 +142,23 @@ function StepperSidebar({ activeStep }: { activeStep: StepId }) {
 export function GettingStartedPage() {
     const [activeStep, setActiveStep] = useState<StepId>(steps[0].id);
     const sectionRefs = useRef<Map<string, HTMLElement>>(new Map());
+    const mobileStepperNavRef = useRef<HTMLElement>(null);
+    const mobileStepperScrollerRef = useRef<HTMLDivElement>(null);
+    const mobileStepRefs = useRef<Map<StepId, HTMLAnchorElement>>(new Map());
 
     useEffect(() => {
         let frameId = 0;
 
         const updateActiveStep = () => {
-            const topOffset = window.innerWidth >= 1024 ? 140 : 120;
+            const headerHeight = Number.parseFloat(
+                getComputedStyle(document.documentElement)
+                    .getPropertyValue('--site-header-height')
+                    .trim(),
+            );
+            const mobileStepperHeight = mobileStepperNavRef.current?.offsetHeight ?? 0;
+            const topOffset = window.innerWidth >= 1024
+                ? 140
+                : (Number.isFinite(headerHeight) ? headerHeight : 73) + mobileStepperHeight;
             let nextActive: StepId = steps[0].id;
 
             for (const step of steps) {
@@ -167,11 +196,39 @@ export function GettingStartedPage() {
         };
     }, []);
 
+    useEffect(() => {
+        if (window.innerWidth >= 1024) {
+            return;
+        }
+
+        const activeItem = mobileStepRefs.current.get(activeStep);
+        const scroller = mobileStepperScrollerRef.current;
+        if (!activeItem || !scroller) {
+            return;
+        }
+
+        const nextScrollLeft = activeItem.offsetLeft - (scroller.clientWidth - activeItem.clientWidth) / 2;
+        scroller.scrollTo({
+            left: Math.max(0, nextScrollLeft),
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                ? 'auto'
+                : 'smooth',
+        });
+    }, [activeStep]);
+
     const setRef = (id: string) => (el: HTMLElement | null) => {
         if (el) {
             sectionRefs.current.set(id, el);
         } else {
             sectionRefs.current.delete(id);
+        }
+    };
+
+    const setMobileStepRef = (id: StepId) => (el: HTMLAnchorElement | null) => {
+        if (el) {
+            mobileStepRefs.current.set(id, el);
+        } else {
+            mobileStepRefs.current.delete(id);
         }
     };
 
@@ -192,7 +249,12 @@ export function GettingStartedPage() {
             </div>
 
             <div className="items-start gap-12 lg:flex">
-                <StepperSidebar activeStep={activeStep} />
+                <StepperSidebar
+                    activeStep={activeStep}
+                    mobileStepperNavRef={mobileStepperNavRef}
+                    mobileStepperScrollerRef={mobileStepperScrollerRef}
+                    setMobileStepRef={setMobileStepRef}
+                />
 
                 {/* Main content */}
                 <div className="min-w-0 flex-1">

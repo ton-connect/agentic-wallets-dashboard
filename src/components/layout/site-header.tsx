@@ -8,7 +8,7 @@
 
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 
@@ -32,6 +32,7 @@ const MOBILE_MENU_ANIMATION_MS = 240;
 export function SiteHeader() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
+    const headerRef = useRef<HTMLElement>(null);
     const { pathname } = useLocation();
     const isLandingPage = pathname === '/';
 
@@ -71,8 +72,34 @@ export function SiteHeader() {
         };
     }, [mobileOpen]);
 
+    useEffect(() => {
+        const header = headerRef.current;
+        if (!header) {
+            return undefined;
+        }
+
+        const root = document.documentElement;
+        const syncHeaderHeight = () => {
+            root.style.setProperty('--site-header-height', `${header.offsetHeight}px`);
+        };
+
+        syncHeaderHeight();
+
+        const resizeObserver = new ResizeObserver(syncHeaderHeight);
+        resizeObserver.observe(header);
+        window.addEventListener('resize', syncHeaderHeight);
+
+        return () => {
+            resizeObserver.disconnect();
+            window.removeEventListener('resize', syncHeaderHeight);
+        };
+    }, []);
+
     return (
-        <header className="sticky top-0 z-50 isolate border-b border-white/[0.06] bg-[#050505]/80 backdrop-blur-md">
+        <header
+            ref={headerRef}
+            className="sticky top-0 z-50 isolate border-b border-white/[0.06] bg-[#050505]/80 backdrop-blur-md"
+        >
             <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
                 <Link to="/" className="flex items-center gap-2.5 text-lg font-semibold tracking-tight">
                     <AgentLogo />
@@ -139,7 +166,7 @@ export function SiteHeader() {
                 <div className="absolute inset-x-0 top-full md:hidden">
                     <nav
                         id="mobile-navigation"
-                        className={`h-[calc(100dvh-73px)] overflow-y-auto border-t border-white/[0.06] bg-[#050505] px-6 py-6 shadow-[0_24px_80px_rgba(0,0,0,0.65)] transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${mobileOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 pointer-events-none opacity-0'}`}
+                        className={`h-[calc(100dvh-var(--site-header-height))] overflow-y-auto border-t border-white/[0.06] bg-[#050505] px-6 py-6 shadow-[0_24px_80px_rgba(0,0,0,0.65)] transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${mobileOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 pointer-events-none opacity-0'}`}
                     >
                         <div className="flex flex-col gap-5">
                             {navItems.map((item) => (

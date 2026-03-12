@@ -133,14 +133,44 @@ interface DeployCallbackPayload {
     };
 }
 
-function getFirstQueryParam(searchParams: URLSearchParams, keys: string[]): string | undefined {
+type CreateDeepLinkSource = URLSearchParams | Record<string, unknown>;
+
+function getFirstSourceValue(source: CreateDeepLinkSource, keys: readonly string[]): string | undefined {
     for (const key of keys) {
-        const value = searchParams.get(key);
-        if (value && value.trim()) {
+        const value = source instanceof URLSearchParams ? source.get(key) : source[key];
+        if (typeof value === 'string' && value.trim()) {
             return value.trim();
         }
     }
+
     return undefined;
+}
+
+function getSourceValues(source: CreateDeepLinkSource, key: string): string[] {
+    if (source instanceof URLSearchParams) {
+        return source.getAll(key).map((value) => value.trim()).filter(Boolean);
+    }
+
+    const value = source[key];
+    if (typeof value === 'string') {
+        const trimmed = value.trim();
+        return trimmed ? [trimmed] : [];
+    }
+
+    if (!Array.isArray(value)) {
+        return [];
+    }
+
+    return value
+        .filter((item): item is string => typeof item === 'string')
+        .map((item) => item.trim())
+        .filter(Boolean);
+}
+
+function decodeBase64UrlUtf8(value: string): string {
+    const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
+    const padding = (4 - (normalized.length % 4)) % 4;
+    return Buffer.from(`${normalized}${'='.repeat(padding)}`, 'base64').toString('utf8');
 }
 
 function parseAssetToken(value: string): CreateDeepLinkAssetInput | null {
@@ -171,44 +201,51 @@ function parseAssetToken(value: string): CreateDeepLinkAssetInput | null {
     return null;
 }
 
-function parseCreateDeepLink(searchParams: URLSearchParams): CreateDeepLinkPayload {
-    const assets: CreateDeepLinkAssetInput[] = [];
+function appendJsonAssets(value: unknown, assets: CreateDeepLinkAssetInput[]): void {
+    if (!Array.isArray(value)) {
+        return;
+    }
 
-    const jsonAssetsRaw = searchParams.get('assets');
-    if (jsonAssetsRaw) {
+    for (const item of value) {
+        const kind = item?.kind === 'nft' ? 'nft' : item?.kind === 'jetton' ? 'jetton' : null;
+        if (!kind) {
+            continue;
+        }
+
+        const address = typeof item?.address === 'string' ? item.address.trim() : undefined;
+        const amount = typeof item?.amount === 'string' ? item.amount.trim() : undefined;
+        const symbol = typeof item?.symbol === 'string' ? item.symbol.trim() : undefined;
+        const label = typeof item?.label === 'string' ? item.label.trim() : undefined;
+        assets.push({ kind, address, amount, symbol, label });
+    }
+}
+
+function appendSourceAssets(source: CreateDeepLinkSource, assets: CreateDeepLinkAssetInput[]): void {
+    const jsonAssetsRaw = source instanceof URLSearchParams ? source.get('assets') : source.assets;
+    if (typeof jsonAssetsRaw === 'string') {
         try {
-            const parsed = JSON.parse(jsonAssetsRaw);
-            if (Array.isArray(parsed)) {
-                for (const item of parsed) {
-                    const kind = item?.kind === 'nft' ? 'nft' : item?.kind === 'jetton' ? 'jetton' : null;
-                    if (!kind) {
-                        continue;
-                    }
-                    const address = typeof item?.address === 'string' ? item.address.trim() : undefined;
-                    const amount = typeof item?.amount === 'string' ? item.amount.trim() : undefined;
-                    const symbol = typeof item?.symbol === 'string' ? item.symbol.trim() : undefined;
-                    const label = typeof item?.label === 'string' ? item.label.trim() : undefined;
-                    assets.push({ kind, address, amount, symbol, label });
-                }
-            }
+            appendJsonAssets(JSON.parse(jsonAssetsRaw), assets);
         } catch {
             // ignore malformed JSON
         }
+    } else {
+        appendJsonAssets(jsonAssetsRaw, assets);
     }
 
-    for (const value of searchParams.getAll('asset')) {
+    for (const value of getSourceValues(source, 'asset')) {
         const parsed = parseAssetToken(value);
         if (parsed) {
             assets.push(parsed);
         }
     }
 
-    for (const value of searchParams.getAll('jetton')) {
+    for (const value of getSourceValues(source, 'jetton')) {
         const [addressPart, amountPart] = value.split(':');
         const address = addressPart?.trim();
         if (!address) {
             continue;
         }
+
         assets.push({
             kind: 'jetton',
             address,
@@ -216,31 +253,70 @@ function parseCreateDeepLink(searchParams: URLSearchParams): CreateDeepLinkPaylo
         });
     }
 
-    for (const value of searchParams.getAll('nft')) {
+    for (const value of getSourceValues(source, 'nft')) {
         const address = value.trim();
         if (!address) {
             continue;
         }
+
         assets.push({
             kind: 'nft',
             address,
         });
     }
+}
+
+function parseCreateDeepLinkSource(source: CreateDeepLinkSource): CreateDeepLinkPayload {
+    const assets: CreateDeepLinkAssetInput[] = [];
+    appendSourceAssets(source, assets);
 
     return {
-        network: getFirstQueryParam(searchParams, ['network']),
-        operatorPublicKey: getFirstQueryParam(searchParams, [
+        network: getFirstSourceValue(source, ['network']),
+        operatorPublicKey: getFirstSourceValue(source, [
             'originOperatorPublicKey',
             'operatorPublicKey',
             'operatorPubkey',
             'operator',
             'pubkey',
         ]),
-        agentName: getFirstQueryParam(searchParams, ['agentName', 'name']),
-        source: getFirstQueryParam(searchParams, ['source']),
-        callbackUrl: getFirstQueryParam(searchParams, ['callbackUrl', 'callback', 'webhookUrl', 'webhook']),
-        tonDeposit: getFirstQueryParam(searchParams, ['tonDeposit', 'ton', 'tonAmount']),
+        agentName: getFirstSourceValue(source, ['agentName', 'name']),
+        source: getFirstSourceValue(source, ['source']),
+        callbackUrl: getFirstSourceValue(source, ['callbackUrl', 'callback', 'webhookUrl', 'webhook']),
+        tonDeposit: getFirstSourceValue(source, ['tonDeposit', 'ton', 'tonAmount']),
         assets,
+    };
+}
+
+function parseCreateDeepLinkDataParam(searchParams: URLSearchParams): CreateDeepLinkPayload {
+    const encoded = searchParams.get('data')?.trim();
+    if (!encoded) {
+        return { assets: [] };
+    }
+
+    try {
+        const parsed = JSON.parse(decodeBase64UrlUtf8(encoded));
+        if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+            return { assets: [] };
+        }
+
+        return parseCreateDeepLinkSource(parsed as Record<string, unknown>);
+    } catch {
+        return { assets: [] };
+    }
+}
+
+function parseCreateDeepLink(searchParams: URLSearchParams): CreateDeepLinkPayload {
+    const encodedPayload = parseCreateDeepLinkDataParam(searchParams);
+    const queryPayload = parseCreateDeepLinkSource(searchParams);
+
+    return {
+        network: queryPayload.network ?? encodedPayload.network,
+        operatorPublicKey: queryPayload.operatorPublicKey ?? encodedPayload.operatorPublicKey,
+        agentName: queryPayload.agentName ?? encodedPayload.agentName,
+        source: queryPayload.source ?? encodedPayload.source,
+        callbackUrl: queryPayload.callbackUrl ?? encodedPayload.callbackUrl,
+        tonDeposit: queryPayload.tonDeposit ?? encodedPayload.tonDeposit,
+        assets: [...encodedPayload.assets, ...queryPayload.assets],
     };
 }
 
