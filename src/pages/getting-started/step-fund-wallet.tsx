@@ -12,17 +12,17 @@ const fundingMethods = [
     {
         icon: Coins,
         title: 'During creation',
-        description: 'Use the "Initial TON deposit" field on the /create page when deploying.',
+        description: 'Use the "Initial TON deposit" field on the deployment page.',
     },
     {
         icon: LayoutDashboard,
         title: 'From the dashboard',
-        description: 'Open your agent\'s page and use the Fund button to send TON.',
+        description: 'Open your agent\'s page and use the Fund button to send TON, Jettons or NFTs.',
     },
     {
         icon: Send,
         title: 'Direct transfer',
-        description: 'Send TON directly to the agent wallet address from any wallet.',
+        description: 'Send assets directly to the agentic wallet address from any wallet.',
     },
 ];
 

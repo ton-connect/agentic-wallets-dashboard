@@ -9,7 +9,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, MessageSquare, Terminal } from 'lucide-react';
 
-const configCommand = 'npx @ton/mcp@alpha';
+const configCommand = 'npx skills add ton-connect/kit/packages/mcp';
 
 
 export function LandingForDevelopers() {
@@ -81,7 +81,7 @@ export function LandingForDevelopers() {
                             Add one config block to your MCP client. Ask your agent
                             to <span className="text-neutral-300">create agentic wallet</span> and
                             follow the instructions. Your AI agent gets TON wallet capabilities —
-                            transfers, swaps, sub-wallet deploys, NFTs. User keeps the
+                            transfers, swaps, NFTs. User keeps the
                             master key, agent keeps the operator key.
                         </p>
 

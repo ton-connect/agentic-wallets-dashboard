@@ -24,9 +24,17 @@ const examples = [
         result: 'Agent returns TON + jetton balances',
     },
     {
-        command: 'Deploy a sub-wallet for my trading bot',
-        result: 'Agent deploys a child agentic wallet',
+        command: 'Get my last transactions',
+        result: 'Agent returns latest events on your wallets',
     },
+    {
+        command: 'Import agentic wallet',
+        result: 'Agent restores wallet previously managed by another agent'
+    }
+    // {
+    //     command: 'Deploy a sub-wallet for my trading bot',
+    //     result: 'Agent deploys a child agentic wallet',
+    // },
 ];
 
 export function StepStartUsing() {

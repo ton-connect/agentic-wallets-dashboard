@@ -18,7 +18,7 @@ const faqs = [
     },
     {
         question: 'How do I disconnect an agent?',
-        answer: 'One tap on "Revoke". The operator is deactivated and you can withdraw remaining funds. It\'s an atomic on-chain transaction — the agent can\'t spend between your withdrawal and deactivation.',
+        answer: 'Tap on "Revoke" and confirm the transaction. The operator is deactivated and you can safely withdraw remaining funds.',
     },
     {
         question: 'Is this safe?',
@@ -30,7 +30,7 @@ const faqs = [
     },
     {
         question: 'How do I integrate as a developer?',
-        answer: 'Add @ton/mcp to your MCP client (Cursor, Claude Desktop, Windsurf, etc.) and ask your AI agent to "create agentic wallet". The agent handles key generation, deployment, and onboarding. See the GitHub repo for full docs.',
+        answer: 'Install skills via `npx skills add ton-connect/kit/packages/mcp` and ask your AI-agent to "create agentic wallet". The agent handles key generation, deployment, and onboarding. Skills are compatible with any AI client (Cursor, OpenClaw, Claude Desktop, Codex, etc.). See the GitHub repo for full docs.',
     },
     {
         question: 'Are the smart contracts audited?',

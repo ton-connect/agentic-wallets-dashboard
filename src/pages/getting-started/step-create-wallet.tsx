@@ -12,8 +12,7 @@ const flowSteps = [
     'Agent generates keys',
     'You open dashboard link',
     'Connect TON wallet',
-    'Deploy wallet contract',
-    'Dashboard calls back to agent',
+    'Deploy agentic contract',
     'Agent imports wallet',
 ];
 
@@ -53,7 +52,7 @@ export function StepCreateWallet() {
                             <p>I'll set up a new agentic wallet for you.</p>
                             <p>Generating operator keys...</p>
                             <p>
-                                Please open this link to deploy the wallet from your TON wallet:{' '}
+                                Please open this link to deploy the wallet:{' '}
                                 <span className="text-amber-500/70">→ [Dashboard Create Link]</span>
                             </p>
                         </div>

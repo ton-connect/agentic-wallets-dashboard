@@ -18,18 +18,20 @@ import {
 } from './getting-started';
 
 const steps = [
-    { number: '01', title: 'Choose Client', id: 'choose-client' },
+    { number: '01', title: 'Add MCP', id: 'choose-client' },
     { number: '02', title: 'Create Wallet', id: 'create-wallet' },
     { number: '03', title: 'Fund Wallet', id: 'fund-wallet' },
     { number: '04', title: 'Start Using', id: 'start-using' },
     { number: '05', title: 'Dashboard', id: 'manage-dashboard' },
 ] as const;
 
-function StepperSidebar({ activeStep }: { activeStep: string }) {
+type StepId = (typeof steps)[number]['id'];
+
+function StepperSidebar({ activeStep }: { activeStep: StepId }) {
     return (
         <>
             {/* Desktop vertical stepper */}
-            <nav className="sticky top-24 hidden shrink-0 lg:block">
+            <nav className="sticky top-24 hidden shrink-0 self-start lg:block">
                 <div className="flex flex-col gap-1">
                     {steps.map((step, i) => {
                         const isActive = step.id === activeStep;
@@ -120,31 +122,48 @@ function StepperSidebar({ activeStep }: { activeStep: string }) {
 }
 
 export function GettingStartedPage() {
-    const [activeStep, setActiveStep] = useState<string>(steps[0].id);
+    const [activeStep, setActiveStep] = useState<StepId>(steps[0].id);
     const sectionRefs = useRef<Map<string, HTMLElement>>(new Map());
 
     useEffect(() => {
-        const observers: IntersectionObserver[] = [];
+        let frameId = 0;
 
-        for (const step of steps) {
-            const el = sectionRefs.current.get(step.id);
-            if (!el) continue;
+        const updateActiveStep = () => {
+            const topOffset = window.innerWidth >= 1024 ? 140 : 120;
+            let nextActive: StepId = steps[0].id;
 
-            const observer = new IntersectionObserver(
-                ([entry]) => {
-                    if (entry.isIntersecting) {
-                        setActiveStep(step.id);
-                    }
-                },
-                { rootMargin: '-20% 0px -60% 0px', threshold: 0 },
-            );
+            for (const step of steps) {
+                const el = sectionRefs.current.get(step.id);
+                if (!el) continue;
 
-            observer.observe(el);
-            observers.push(observer);
-        }
+                if (el.getBoundingClientRect().top <= topOffset) {
+                    nextActive = step.id;
+                } else {
+                    break;
+                }
+            }
+
+            const lastStep = steps[steps.length - 1];
+            if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8) {
+                nextActive = lastStep.id;
+            }
+
+            setActiveStep((current) => (current === nextActive ? current : nextActive));
+        };
+
+        const scheduleUpdate = () => {
+            cancelAnimationFrame(frameId);
+            frameId = window.requestAnimationFrame(updateActiveStep);
+        };
+
+        scheduleUpdate();
+        window.addEventListener('scroll', scheduleUpdate, { passive: true });
+        window.addEventListener('resize', scheduleUpdate);
 
         return () => {
-            for (const obs of observers) obs.disconnect();
+            cancelAnimationFrame(frameId);
+            window.removeEventListener('scroll', scheduleUpdate);
+            window.removeEventListener('resize', scheduleUpdate);
         };
     }, []);
 
@@ -167,12 +186,12 @@ export function GettingStartedPage() {
                     Set up your first agentic wallet
                 </h1>
                 <p className="mt-3 max-w-2xl text-base leading-relaxed text-neutral-400">
-                    Follow these five steps to connect your MCP client, create a wallet, and start
+                    Follow these five steps to add TON MCP skills, create a wallet, and start
                     giving your AI agent autonomous access to TON.
                 </p>
             </div>
 
-            <div className="flex gap-12">
+            <div className="items-start gap-12 lg:flex">
                 <StepperSidebar activeStep={activeStep} />
 
                 {/* Main content */}
