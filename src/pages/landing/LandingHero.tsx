@@ -109,7 +109,7 @@ export function LandingHero() {
 
                     <div className="flex flex-wrap gap-4">
                         <a
-                            href="#for-developers"
+                            href="/getting-started"
                             className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-6 py-3 text-sm font-medium text-black transition-colors hover:bg-amber-400"
                         >
                             For Developers

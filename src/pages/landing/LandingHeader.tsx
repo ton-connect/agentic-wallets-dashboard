@@ -16,6 +16,7 @@ const navLinks = [
     { label: 'How It Works', href: '#how-it-works' },
     { label: 'For Developers', href: '#for-developers' },
     { label: 'For Users', href: '#for-users' },
+    { label: 'Getting Started', href: '/getting-started' },
     { label: 'FAQ', href: '#faq' },
 ];
 
@@ -53,7 +54,7 @@ export function LandingHeader() {
                         </a>
                     ))}
                     <a
-                        href="#get-started"
+                        href="/getting-started"
                         className="rounded-full bg-amber-500 px-5 py-2 text-sm font-medium text-black transition-colors hover:bg-amber-400"
                     >
                         Get Started
@@ -78,7 +79,7 @@ export function LandingHeader() {
                         </a>
                     ))}
                     <a
-                        href="#get-started"
+                        href="/getting-started"
                         className="mt-2 inline-block rounded-full bg-amber-500 px-5 py-2 text-center text-sm font-medium text-black transition-colors hover:bg-amber-400"
                         onClick={() => setMobileOpen(false)}
                     >

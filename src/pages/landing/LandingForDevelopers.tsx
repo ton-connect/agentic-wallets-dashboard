@@ -6,6 +6,7 @@
  *
  */
 
+import { Link } from 'react-router-dom';
 import { ArrowRight, MessageSquare, Terminal } from 'lucide-react';
 
 const configCommand = 'npx @ton/mcp@alpha';
@@ -30,10 +31,16 @@ export function LandingForDevelopers() {
                                 <span className="font-mono text-xs text-amber-500/60">$</span>
                                 <code className="font-mono text-sm text-neutral-200">{configCommand}</code>
                             </div>
-                            <div className="border-t border-white/[0.04] px-5 py-3">
+                            <div className="flex items-center justify-between border-t border-white/[0.04] px-5 py-3">
                                 <p className="text-[10px] text-neutral-700">
                                     Cursor · Claude Desktop · Windsurf · any MCP-compatible client
                                 </p>
+                                <Link
+                                    to="/getting-started"
+                                    className="text-[10px] font-medium text-amber-500/60 transition-colors hover:text-amber-500"
+                                >
+                                    See full setup guide →
+                                </Link>
                             </div>
                         </div>
 
@@ -83,15 +90,13 @@ export function LandingForDevelopers() {
                         </p>
 
                         <div className="flex flex-wrap gap-3">
-                            <a
-                                href="https://github.com/ton-connect/kit/tree/main/packages/mcp"
-                                target="_blank"
-                                rel="noopener noreferrer"
+                            <Link
+                                to="/getting-started"
                                 className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-medium text-black transition-colors hover:bg-amber-400"
                             >
                                 Get started
                                 <ArrowRight size={14} />
-                            </a>
+                            </Link>
                             <a
                                 href="https://github.com/the-ton-tech/agentic-wallet-contract"
                                 target="_blank"

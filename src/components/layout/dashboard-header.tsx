@@ -29,6 +29,12 @@ export function DashboardHeader() {
                             About
                         </Link>
                         <Link
+                            to="/getting-started"
+                            className="text-sm text-neutral-400 transition-colors hover:text-white"
+                        >
+                            Getting Started
+                        </Link>
+                        <Link
                             to="/create"
                             className="text-sm text-neutral-400 transition-colors hover:text-white"
                         >

@@ -16,6 +16,7 @@ import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { DashboardPage } from '@/pages/dashboard-page';
 import { AgentDetailPage } from '@/pages/agent-detail-page';
 import { CreateAgentPage } from '@/pages/create-agent-page';
+import { GettingStartedPage } from '@/pages/getting-started-page';
 import { LandingPage } from '@/pages/landing';
 
 import '@ton/appkit-react/styles.css';
@@ -43,6 +44,14 @@ export function App() {
                             element={
                                 <DashboardLayout>
                                     <DashboardPage />
+                                </DashboardLayout>
+                            }
+                        />
+                        <Route
+                            path="/getting-started"
+                            element={
+                                <DashboardLayout>
+                                    <GettingStartedPage />
                                 </DashboardLayout>
                             }
                         />

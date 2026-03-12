@@ -22,9 +22,7 @@ export function LandingCTA() {
 
                     <div className="mt-8 flex flex-wrap justify-center gap-4">
                         <a
-                            href="https://github.com/ton-connect/kit/tree/main/packages/mcp"
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            href="/getting-started"
                             className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-6 py-3 text-sm font-medium text-black transition-colors hover:bg-amber-400"
                         >
                             Start Building
