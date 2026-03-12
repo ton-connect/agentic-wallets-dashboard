@@ -6,13 +6,21 @@
  *
  */
 
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, MessageSquare, Terminal } from 'lucide-react';
+import { ArrowRight, Check, Copy, MessageSquare, Terminal } from 'lucide-react';
 
 const configCommand = 'npx skills add ton-connect/kit/packages/mcp';
 
-
 export function LandingForDevelopers() {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async () => {
+        await navigator.clipboard.writeText(configCommand);
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 2000);
+    };
+
     return (
         <section id="for-developers" className="border-b border-white/[0.06] py-24">
             <div className="mx-auto max-w-6xl px-6">
@@ -27,9 +35,24 @@ export function LandingForDevelopers() {
                                     Add to your MCP client
                                 </span>
                             </div>
-                            <div className="flex items-center gap-3 px-5 py-4">
-                                <span className="font-mono text-xs text-amber-500/60">$</span>
-                                <code className="font-mono text-sm text-neutral-200">{configCommand}</code>
+                            <div className="flex items-center justify-between gap-4 px-5 py-4">
+                                <div className="flex min-w-0 items-center gap-3">
+                                    <span className="font-mono text-xs text-amber-500/60">$</span>
+                                    <code className="truncate font-mono text-sm text-neutral-200">{configCommand}</code>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={handleCopy}
+                                    aria-label={copied ? 'Copied' : 'Copy command'}
+                                    title={copied ? 'Copied' : 'Copy command'}
+                                    className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/[0.08] text-neutral-500 transition-colors hover:border-white/[0.14] hover:text-neutral-200"
+                                >
+                                    {copied ? (
+                                        <Check size={14} className="text-emerald-500" />
+                                    ) : (
+                                        <Copy size={14} />
+                                    )}
+                                </button>
                             </div>
                             <div className="flex items-center justify-between border-t border-white/[0.04] px-5 py-3">
                                 <p className="text-[10px] text-neutral-700">

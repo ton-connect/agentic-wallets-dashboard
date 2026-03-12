@@ -8,7 +8,7 @@
 
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 
@@ -27,8 +27,11 @@ const sectionNavItems: NavItem[] = [
     { label: 'FAQ', href: '#faq' },
 ];
 
+const MOBILE_MENU_ANIMATION_MS = 240;
+
 export function SiteHeader() {
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
     const { pathname } = useLocation();
     const isLandingPage = pathname === '/';
 
@@ -43,12 +46,37 @@ export function SiteHeader() {
 
     const closeMobileMenu = () => setMobileOpen(false);
 
+    useEffect(() => {
+        if (mobileOpen) {
+            setMobileMenuVisible(true);
+            return undefined;
+        }
+
+        const timeoutId = window.setTimeout(() => {
+            setMobileMenuVisible(false);
+        }, MOBILE_MENU_ANIMATION_MS);
+
+        return () => window.clearTimeout(timeoutId);
+    }, [mobileOpen]);
+
+    useEffect(() => {
+        closeMobileMenu();
+    }, [pathname]);
+
+    useEffect(() => {
+        document.body.classList.toggle('overflow-hidden', mobileOpen);
+
+        return () => {
+            document.body.classList.remove('overflow-hidden');
+        };
+    }, [mobileOpen]);
+
     return (
-        <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#050505]/80 backdrop-blur-md">
+        <header className="sticky top-0 z-50 isolate border-b border-white/[0.06] bg-[#050505]/80 backdrop-blur-md">
             <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
                 <Link to="/" className="flex items-center gap-2.5 text-lg font-semibold tracking-tight">
                     <AgentLogo />
-                    Agentic Wallets
+                    <span className="hidden md:inline">Agentic Wallets</span>
                 </Link>
 
                 <nav className="hidden items-center gap-8 md:flex">
@@ -76,37 +104,57 @@ export function SiteHeader() {
                     )}
                 </div>
 
-                <button className="md:hidden" onClick={() => setMobileOpen((open) => !open)} aria-label="Toggle menu">
-                    {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-                </button>
+                <div className="flex items-center gap-2 md:hidden">
+                    {isLandingPage ? (
+                        <Link
+                            to="/getting-started"
+                            className="inline-flex items-center rounded-full bg-amber-500 px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-amber-400"
+                        >
+                            Get started
+                        </Link>
+                    ) : (
+                        <WalletButton variant="header" />
+                    )}
+                    <button
+                        type="button"
+                        className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] transition-colors hover:bg-white/[0.08]"
+                        onClick={() => setMobileOpen((open) => !open)}
+                        aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+                        aria-expanded={mobileOpen}
+                        aria-controls="mobile-navigation"
+                    >
+                        <Menu
+                            size={18}
+                            className={`absolute transition-all duration-200 ease-out ${mobileOpen ? 'scale-75 opacity-0' : 'scale-100 opacity-100'}`}
+                        />
+                        <X
+                            size={18}
+                            className={`absolute transition-all duration-200 ease-out ${mobileOpen ? 'scale-100 opacity-100' : 'scale-75 opacity-0'}`}
+                        />
+                    </button>
+                </div>
             </div>
 
-            {mobileOpen && (
-                <nav className="flex flex-col gap-4 border-t border-white/[0.06] px-6 py-6 md:hidden">
-                    {navItems.map((item) => (
-                        <a
-                            key={item.href}
-                            href={item.href}
-                            className="text-sm text-neutral-400 transition-colors hover:text-white"
-                            onClick={closeMobileMenu}
-                        >
-                            {item.label}
-                        </a>
-                    ))}
-                    <div className="mt-2">
-                        {isLandingPage ? (
-                            <Link
-                                to="/getting-started"
-                                className="inline-flex w-full items-center justify-center rounded-full bg-amber-500 px-5 py-2 text-sm font-medium text-black transition-colors hover:bg-amber-400"
-                                onClick={closeMobileMenu}
-                            >
-                                Get started
-                            </Link>
-                        ) : (
-                            <WalletButton variant="header" fullWidth onConnect={closeMobileMenu} />
-                        )}
-                    </div>
-                </nav>
+            {mobileMenuVisible && (
+                <div className="absolute inset-x-0 top-full md:hidden">
+                    <nav
+                        id="mobile-navigation"
+                        className={`h-[calc(100dvh-73px)] overflow-y-auto border-t border-white/[0.06] bg-[#050505] px-6 py-6 shadow-[0_24px_80px_rgba(0,0,0,0.65)] transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${mobileOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 pointer-events-none opacity-0'}`}
+                    >
+                        <div className="flex flex-col gap-5">
+                            {navItems.map((item) => (
+                                <a
+                                    key={item.href}
+                                    href={item.href}
+                                    className="text-[17px] text-neutral-300 transition-colors hover:text-white"
+                                    onClick={closeMobileMenu}
+                                >
+                                    {item.label}
+                                </a>
+                            ))}
+                        </div>
+                    </nav>
+                </div>
             )}
         </header>
     );

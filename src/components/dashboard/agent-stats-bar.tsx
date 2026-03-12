@@ -37,7 +37,7 @@ export function AgentStatsBar({ agents, totalBalanceTon }: { agents: AgentWallet
 
             <Link
                 to="/create"
-                className="inline-flex items-center justify-center self-start rounded-full border border-white/[0.1] bg-white/[0.03] px-4 py-2 text-sm font-medium text-neutral-200 transition-colors hover:border-white/[0.16] hover:bg-white/[0.06] hover:text-white sm:self-auto"
+                className="flex w-full items-center justify-center self-stretch rounded-full border border-white/[0.1] bg-white/[0.03] px-4 py-2 text-sm font-medium text-neutral-200 transition-colors hover:border-white/[0.16] hover:bg-white/[0.06] hover:text-white sm:inline-flex sm:w-auto sm:self-auto"
             >
                 Create new wallet
             </Link>

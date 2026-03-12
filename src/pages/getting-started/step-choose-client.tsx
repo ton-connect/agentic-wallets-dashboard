@@ -33,10 +33,10 @@ export function StepChooseClient() {
                 <div className="flex items-center gap-2 border-b border-white/[0.06] px-5 py-3">
                     <Terminal size={12} className="text-neutral-600" />
                     <span className="text-[10px] font-medium uppercase tracking-wider text-neutral-600">
-                        Single entry point
+                        SINGLE ENTRYPOINT · RUN IN YOUR TERMINAL
                     </span>
                 </div>
-                <CodeBlock code={installCommand} title="Run in your terminal" language="bash" />
+                <CodeBlock code={installCommand} className="rounded-none border-0 bg-transparent" />
             </div>
 
             <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">

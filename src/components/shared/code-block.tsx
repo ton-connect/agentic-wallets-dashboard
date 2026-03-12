@@ -13,9 +13,10 @@ interface CodeBlockProps {
     code: string;
     language?: string;
     title?: string;
+    className?: string;
 }
 
-export function CodeBlock({ code, language, title }: CodeBlockProps) {
+export function CodeBlock({ code, language, title, className }: CodeBlockProps) {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = async () => {
@@ -25,7 +26,7 @@ export function CodeBlock({ code, language, title }: CodeBlockProps) {
     };
 
     return (
-        <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-white/[0.02]">
+        <div className={`relative overflow-hidden rounded-xl border border-white/[0.06] bg-white/[0.02] ${className ?? ''}`}>
             {(title || language) && (
                 <div className="flex items-center justify-between border-b border-white/[0.06] px-4 py-2.5">
                     <span className="text-[10px] font-medium uppercase tracking-wider text-neutral-600">
