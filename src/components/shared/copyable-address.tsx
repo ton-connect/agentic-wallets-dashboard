@@ -132,7 +132,7 @@ function CopyableValueBase({ value, copyValue, truncate = true, className, adapt
     const handleCopy = async () => {
         await navigator.clipboard.writeText(copyValue ?? value);
         setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        setTimeout(() => setCopied(false), 1500);
     };
 
     return (

@@ -9,10 +9,19 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { isSameTonAddress, normalizeTonAddress } from '@/features/agents/lib/address';
+
 interface AgentsState {
     knownAgentIds: string[];
+    pendingDeploymentNoticeAgentIds: string[];
     markKnown: (id: string) => void;
     markManyKnown: (ids: string[]) => void;
+    queueDeploymentNotice: (id: string) => void;
+    consumeDeploymentNotice: (id: string) => void;
+}
+
+function normalizeAgentId(id: string): string {
+    return normalizeTonAddress(id) ?? id.trim();
 }
 
 /**
@@ -23,6 +32,7 @@ export const useAgentsStore = create<AgentsState>()(
     persist(
         (set) => ({
             knownAgentIds: [],
+            pendingDeploymentNoticeAgentIds: [],
             markKnown: (id) => {
                 set((state) => {
                     if (state.knownAgentIds.includes(id)) {
@@ -48,6 +58,46 @@ export const useAgentsStore = create<AgentsState>()(
                         return state;
                     }
                     return { knownAgentIds: Array.from(known) };
+                });
+            },
+            queueDeploymentNotice: (id) => {
+                const normalizedId = normalizeAgentId(id);
+                if (!normalizedId) {
+                    return;
+                }
+
+                set((state) => {
+                    if (
+                        state.pendingDeploymentNoticeAgentIds.some((knownId) =>
+                            isSameTonAddress(knownId, normalizedId),
+                        )
+                    ) {
+                        return state;
+                    }
+
+                    return {
+                        pendingDeploymentNoticeAgentIds: [...state.pendingDeploymentNoticeAgentIds, normalizedId],
+                    };
+                });
+            },
+            consumeDeploymentNotice: (id) => {
+                const normalizedId = normalizeAgentId(id);
+                if (!normalizedId) {
+                    return;
+                }
+
+                set((state) => {
+                    const nextIds = state.pendingDeploymentNoticeAgentIds.filter(
+                        (knownId) => !isSameTonAddress(knownId, normalizedId),
+                    );
+
+                    if (nextIds.length === state.pendingDeploymentNoticeAgentIds.length) {
+                        return state;
+                    }
+
+                    return {
+                        pendingDeploymentNoticeAgentIds: nextIds,
+                    };
                 });
             },
         }),

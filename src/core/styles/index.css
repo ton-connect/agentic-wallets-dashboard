@@ -93,6 +93,44 @@ html, body {
     background: rgba(251, 191, 36, 0.85);
 }
 
+.deployment-command-scroll {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.22) rgba(255, 255, 255, 0.025);
+}
+
+.deployment-command-scroll::-webkit-scrollbar {
+    height: 2px;
+}
+
+.deployment-command-scroll::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.025);
+    border-radius: 9999px;
+}
+
+.deployment-command-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.22);
+    border-radius: 9999px;
+}
+
+.deployment-command-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+@media (max-width: 640px) {
+    .deployment-command-scroll {
+        scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+    }
+
+    .deployment-command-scroll::-webkit-scrollbar {
+        height: 1px;
+    }
+
+    .deployment-command-scroll::-webkit-scrollbar-track {
+        background: transparent;
+    }
+}
+
 .stepper-no-scrollbar {
     scrollbar-width: none;
     -ms-overflow-style: none;

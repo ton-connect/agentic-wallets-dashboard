@@ -18,7 +18,7 @@ export function LandingForDevelopers() {
     const handleCopy = async () => {
         await navigator.clipboard.writeText(configCommand);
         setCopied(true);
-        window.setTimeout(() => setCopied(false), 2000);
+        window.setTimeout(() => setCopied(false), 1500);
     };
 
     return (

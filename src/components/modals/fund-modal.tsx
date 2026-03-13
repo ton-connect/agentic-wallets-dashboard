@@ -11,7 +11,6 @@ import {
     createTransferJettonTransaction,
     createTransferNftTransaction,
     createTransferTonTransaction,
-    getTransactionStatus,
 } from '@ton/appkit';
 import {
     useAddress,
@@ -32,8 +31,9 @@ import { toast } from 'sonner';
 import { Modal } from './modal';
 
 import type { AgentWallet } from '@/features/agents';
-import { isAllowedNftTrust } from '@/features/agents/lib/nft-trust';
+import { isEligibleFundingNft } from '@/features/agents/lib/nft-trust';
 import { formatUnitsTrimmed, parseUiAmountToUnits, tryParseUiAmountToUnits } from '@/features/agents/lib/amount';
+import { waitForTransactionStatus } from '@/features/agents/lib/transaction-status';
 
 interface FundModalProps {
     agent: AgentWallet | null;
@@ -68,6 +68,8 @@ function delay(ms: number): Promise<void> {
 }
 
 const PER_NON_TON_RESERVE_NANO = toNano('0.06');
+const STATUS_RETRY_ATTEMPTS = 40;
+const STATUS_RETRY_DELAY_MS = 250;
 
 export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
     const appKit = useAppKit();
@@ -92,7 +94,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
         isFetching: jettonsFetching,
     } = useJettonsByAddress({ address: ownerAddress, network });
 
-    const { data: nftsResponse, isLoading: nftsLoading, isFetching: nftsFetching } = useNfts({ network });
+    const { data: nftsResponse, isLoading: nftsLoading, isFetching: nftsFetching } = useNfts({ network, limit: 1000 });
 
     const assets = useMemo<AssetItem[]>(() => {
         const ton: AssetItem = { id: 'ton', kind: 'ton', label: 'TON', sublabel: 'Toncoin' };
@@ -118,7 +120,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
             .sort((a, b) => (b.usdEquivalent ?? 0) - (a.usdEquivalent ?? 0));
 
         const nfts: AssetItem[] = (nftsResponse?.nfts ?? [])
-            .filter(isAllowedNftTrust)
+            .filter((nft) => isEligibleFundingNft(nft, nftsResponse?.addressBook))
             .filter((nft) => nft.address !== agent?.address)
             .slice(0, 30)
             .map((nft) => ({
@@ -131,7 +133,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
             }));
 
         return [ton, ...jettons, ...nfts];
-    }, [agent?.address, jettonsResponse?.jettons, nftsResponse?.nfts]);
+    }, [agent?.address, jettonsResponse?.jettons, nftsResponse?.addressBook, nftsResponse?.nfts]);
 
     const createFundingItem = (assetId: string = 'ton'): FundingItem => ({
         uid: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
@@ -325,19 +327,11 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                 messages,
             });
 
-            let confirmation: 'completed' | 'pending' | 'failed' = 'pending';
-            for (let attempt = 0; attempt < 20; attempt += 1) {
-                const status = await getTransactionStatus(appKit, { network, normalizedHash: tx.normalizedHash });
-                if (status.status === 'completed') {
-                    confirmation = 'completed';
-                    break;
-                }
-                if (status.status === 'failed') {
-                    confirmation = 'failed';
-                    break;
-                }
-                await new Promise((resolve) => setTimeout(resolve, 1500));
-            }
+            const confirmation = await waitForTransactionStatus(
+                appKit,
+                { network, normalizedHash: tx.normalizedHash },
+                { attempts: STATUS_RETRY_ATTEMPTS, delayMs: STATUS_RETRY_DELAY_MS },
+            );
 
             const refreshNow = async () => {
                 await Promise.all([
@@ -354,7 +348,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
             await refreshNow();
             void (async () => {
                 for (let attempt = 0; attempt < 5; attempt += 1) {
-                    await delay(2500);
+                    await delay(250);
                     await Promise.all([
                         queryClient.refetchQueries({ queryKey: ['balance'], type: 'active' }),
                         queryClient.refetchQueries({ queryKey: ['jettons'], type: 'active' }),
