@@ -31,7 +31,7 @@ export function WithdrawModal({ agent, onClose, onSuccess }: WithdrawModalProps)
     const { data: jettonsResponse } = useJettonsByAddress({ address: agent?.address ?? '', network });
     const { data: nftsResponse } = useNftsByAddress({ address: agent?.address ?? '', network, limit: 30 });
     const jettons = jettonsResponse?.jettons ?? [];
-    const nfts = (nftsResponse?.nfts ?? []).filter(isEligibleFundingNft);
+    const nfts = (nftsResponse?.nfts ?? []).filter((nft) => isEligibleFundingNft(nft, nftsResponse?.addressBook));
     const [includeTon, setIncludeTon] = useState(true);
     const [selectedJettons, setSelectedJettons] = useState<Record<string, boolean>>({});
     const [selectedNfts, setSelectedNfts] = useState<Record<string, boolean>>({});

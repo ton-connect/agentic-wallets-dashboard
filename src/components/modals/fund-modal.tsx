@@ -94,7 +94,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
         isFetching: jettonsFetching,
     } = useJettonsByAddress({ address: ownerAddress, network });
 
-    const { data: nftsResponse, isLoading: nftsLoading, isFetching: nftsFetching } = useNfts({ network });
+    const { data: nftsResponse, isLoading: nftsLoading, isFetching: nftsFetching } = useNfts({ network, limit: 1000 });
 
     const assets = useMemo<AssetItem[]>(() => {
         const ton: AssetItem = { id: 'ton', kind: 'ton', label: 'TON', sublabel: 'Toncoin' };
@@ -120,7 +120,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
             .sort((a, b) => (b.usdEquivalent ?? 0) - (a.usdEquivalent ?? 0));
 
         const nfts: AssetItem[] = (nftsResponse?.nfts ?? [])
-            .filter(isEligibleFundingNft)
+            .filter((nft) => isEligibleFundingNft(nft, nftsResponse?.addressBook))
             .filter((nft) => nft.address !== agent?.address)
             .slice(0, 30)
             .map((nft) => ({
@@ -133,7 +133,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
             }));
 
         return [ton, ...jettons, ...nfts];
-    }, [agent?.address, jettonsResponse?.jettons, nftsResponse?.nfts]);
+    }, [agent?.address, jettonsResponse?.jettons, nftsResponse?.addressBook, nftsResponse?.nfts]);
 
     const createFundingItem = (assetId: string = 'ton'): FundingItem => ({
         uid: `${Date.now()}-${Math.random().toString(16).slice(2)}`,

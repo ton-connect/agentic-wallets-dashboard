@@ -394,7 +394,7 @@ export function CreateAgentPage() {
     const { data: ownerTonBalance } = useBalanceByAddress({ address: ownerAddress ?? '', network });
     const { mutateAsync: sendTransaction, isPending } = useSendTransaction();
     const { data: jettonsResponse } = useJettonsByAddress({ address: ownerAddress, network });
-    const { data: nftsResponse } = useNfts({ network });
+    const { data: nftsResponse } = useNfts({ network, limit: 1000 });
 
     const [originOperatorPublicKey, setOriginOperatorPublicKey] = useState('');
     const [agentName, setAgentName] = useState('');
@@ -441,7 +441,7 @@ export function CreateAgentPage() {
             .sort((a, b) => (b.usdEquivalent ?? 0) - (a.usdEquivalent ?? 0));
 
         const nfts: DepositAssetItem[] = (nftsResponse?.nfts ?? [])
-            .filter(isEligibleFundingNft)
+            .filter((nft) => isEligibleFundingNft(nft, nftsResponse?.addressBook))
             .slice(0, 30)
             .map((nft) => ({
                 id: `nft:${nft.address}`,
@@ -453,7 +453,7 @@ export function CreateAgentPage() {
             }));
 
         return [...jettons, ...nfts];
-    }, [jettonsResponse?.jettons, nftsResponse?.nfts]);
+    }, [jettonsResponse?.jettons, nftsResponse?.addressBook, nftsResponse?.nfts]);
 
     const maxDepositsAllowed = Math.min(depositAssets.length, maxAssetMessages);
     const canAddMoreAssets = assetDeposits.length < maxDepositsAllowed;

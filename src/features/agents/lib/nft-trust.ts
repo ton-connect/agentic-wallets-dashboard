@@ -8,9 +8,9 @@
 
 import type { NFT } from '@ton/appkit';
 
-import { ENV_AGENTIC_COLLECTION_MAINNET, ENV_AGENTIC_COLLECTION_TESTNET } from '@/core/configs/env';
 
 type NftTrust = 'whitelist' | 'graylist' | 'blacklist' | 'none';
+type NftAddressBook = Record<string, { interfaces?: string[] } | undefined>;
 
 function readTrust(nft: NFT): NftTrust | undefined {
     const trust = nft.extra?.trust;
@@ -22,32 +22,22 @@ function readTrust(nft: NFT): NftTrust | undefined {
 
 export function isAllowedNftTrust(nft: NFT): boolean {
     const trust = readTrust(nft);
-    return trust === undefined || trust === 'none' || trust === 'whitelist';
+    return trust === undefined || trust === 'none' || trust === 'whitelist' || trust === 'graylist';
 }
 
-function isAgenticCollectionAddress(address: string | undefined): boolean {
-    if (!address) {
-        return false;
-    }
-
-    return address === ENV_AGENTIC_COLLECTION_MAINNET || address === ENV_AGENTIC_COLLECTION_TESTNET;
+function hasSbtInterface(nft: NFT, addressBook?: NftAddressBook): boolean {
+    const interfaces = addressBook?.[nft.address]?.interfaces;
+    return Array.isArray(interfaces) && interfaces.some((iface) => typeof iface === 'string' && iface.toLowerCase() === 'sbt');
 }
 
-function isSoulboundNft(nft: NFT): boolean {
+export function isSoulboundNft(nft: NFT, addressBook?: NftAddressBook): boolean {
     if (nft.isSoulbound === true) {
         return true;
     }
 
-    const extra = nft.extra;
-    if (!extra || typeof extra !== 'object') {
-        return false;
-    }
-
-    const soulbound = extra.soulbound;
-    const nonTransferable = extra.nonTransferable;
-    return soulbound === true || nonTransferable === true;
+    return hasSbtInterface(nft, addressBook);
 }
 
-export function isEligibleFundingNft(nft: NFT): boolean {
-    return isAllowedNftTrust(nft) && !isSoulboundNft(nft) && !isAgenticCollectionAddress(nft.collection?.address);
+export function isEligibleFundingNft(nft: NFT, addressBook?: NftAddressBook): boolean {
+    return isAllowedNftTrust(nft) && !isSoulboundNft(nft, addressBook);
 }

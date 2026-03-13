@@ -228,7 +228,7 @@ export function useAgentOperations() {
                     const pageNfts = response.nfts ?? [];
 
                     for (const nft of pageNfts) {
-                        if (!isEligibleFundingNft(nft)) {
+                        if (!isEligibleFundingNft(nft, response.addressBook)) {
                             continue;
                         }
                         nfts.push({ nftAddress: Address.parse(nft.address) });
