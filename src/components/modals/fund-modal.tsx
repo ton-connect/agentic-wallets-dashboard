@@ -32,7 +32,7 @@ import { toast } from 'sonner';
 import { Modal } from './modal';
 
 import type { AgentWallet } from '@/features/agents';
-import { isAllowedNftTrust } from '@/features/agents/lib/nft-trust';
+import { isEligibleFundingNft } from '@/features/agents/lib/nft-trust';
 import { formatUnitsTrimmed, parseUiAmountToUnits, tryParseUiAmountToUnits } from '@/features/agents/lib/amount';
 
 interface FundModalProps {
@@ -118,7 +118,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
             .sort((a, b) => (b.usdEquivalent ?? 0) - (a.usdEquivalent ?? 0));
 
         const nfts: AssetItem[] = (nftsResponse?.nfts ?? [])
-            .filter(isAllowedNftTrust)
+            .filter(isEligibleFundingNft)
             .filter((nft) => nft.address !== agent?.address)
             .slice(0, 30)
             .map((nft) => ({

@@ -15,6 +15,7 @@ const MAX_NAME_LENGTH = 64;
 
 const METADATA_KEYS = {
     name: 'name',
+    creationDate: 'creation_date',
 } as const;
 
 export function onchainMetadataKey(key: string): bigint {
@@ -97,16 +98,46 @@ export function parseOnchainMetadataValue(cell: Cell): string {
 }
 
 export function extractNameFromMetadata(content: Cell | null): string | null {
+    return extractStringFromMetadata(content, METADATA_KEYS.name);
+}
+
+export function extractStringFromMetadata(content: Cell | null, key: string): string | null {
     if (!content) {
         return null;
     }
 
     const dict = parseOnchainMetadataDict(content);
-    const rawName = dict.get(onchainMetadataKey(METADATA_KEYS.name));
-    if (!rawName) {
+    const rawValue = dict.get(onchainMetadataKey(key));
+    if (!rawValue) {
         return null;
     }
-    return parseOnchainMetadataValue(rawName);
+    return parseOnchainMetadataValue(rawValue);
+}
+
+export function extractCreationDateFromMetadata(content: Cell | null): string | null {
+    const rawValue = extractStringFromMetadata(content, METADATA_KEYS.creationDate);
+    if (!rawValue) {
+        return null;
+    }
+
+    const trimmed = rawValue.trim();
+    if (!trimmed) {
+        return null;
+    }
+
+    if (/^\d+$/.test(trimmed)) {
+        const numericValue = Number(trimmed);
+        if (!Number.isFinite(numericValue)) {
+            return null;
+        }
+
+        const timestampMs = trimmed.length <= 10 ? numericValue * 1000 : numericValue;
+        const parsedDate = new Date(timestampMs);
+        return Number.isNaN(parsedDate.getTime()) ? null : parsedDate.toISOString();
+    }
+
+    const parsedDate = new Date(trimmed);
+    return Number.isNaN(parsedDate.getTime()) ? null : parsedDate.toISOString();
 }
 
 export function buildUpdatedMetadataCell(currentContent: Cell | null, newNameRaw: string): Cell {

@@ -47,11 +47,19 @@ export function DashboardPage() {
 
     const orderedAgents = useMemo(() => {
         return [...agents].sort((a, b) => {
-            if (a.isNew !== b.isNew) {
-                return a.isNew ? -1 : 1;
+            const aHasCreationDate = a.creationDateTimestamp != null;
+            const bHasCreationDate = b.creationDateTimestamp != null;
+            if (aHasCreationDate !== bHasCreationDate) {
+                return aHasCreationDate ? -1 : 1;
+            }
+            if (aHasCreationDate && bHasCreationDate && a.creationDateTimestamp !== b.creationDateTimestamp) {
+                return (b.creationDateTimestamp ?? 0) - (a.creationDateTimestamp ?? 0);
             }
             if (a.status !== b.status) {
                 return a.status === 'active' ? -1 : 1;
+            }
+            if (a.isNew !== b.isNew) {
+                return a.isNew ? -1 : 1;
             }
             return a.name.localeCompare(b.name);
         });
@@ -148,9 +156,11 @@ export function DashboardPage() {
                 </div>
             </section>
 
-            <FundModal agent={fundAgent} onClose={() => setFundAgent(null)} onSuccess={refresh} />
-            <WithdrawModal agent={withdrawAgent} onClose={() => setWithdrawAgent(null)} onSuccess={refresh} />
-            <RevokeModal agent={revokeAgent} onClose={() => setRevokeAgent(null)} onSuccess={refresh} />
+            {fundAgent ? <FundModal agent={fundAgent} onClose={() => setFundAgent(null)} onSuccess={refresh} /> : null}
+            {withdrawAgent ? (
+                <WithdrawModal agent={withdrawAgent} onClose={() => setWithdrawAgent(null)} onSuccess={refresh} />
+            ) : null}
+            {revokeAgent ? <RevokeModal agent={revokeAgent} onClose={() => setRevokeAgent(null)} onSuccess={refresh} /> : null}
         </div>
     );
 }

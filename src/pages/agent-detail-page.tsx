@@ -28,7 +28,7 @@ import { ChangePublicKeyModal } from '@/components/modals/change-public-key-moda
 import { UnexpectedActivityModal } from '@/components/modals/unexpected-activity-modal';
 import { ActivityFeedV2 } from '@/components/dashboard/activity-feed-v2';
 import { getAgentWalletState } from '@/features/agents/lib/agentic-wallet';
-import { extractNameFromMetadata } from '@/features/agents/lib/metadata';
+import { extractCreationDateFromMetadata, extractNameFromMetadata } from '@/features/agents/lib/metadata';
 import { isSameTonAddress } from '@/features/agents/lib/address';
 import { parseUint256PublicKey } from '@/features/agents/lib/public-key';
 import { formatUiAmountFixed } from '@/features/agents/lib/amount';
@@ -116,6 +116,8 @@ export function AgentDetailPage() {
             }
 
             const name = extractNameFromMetadata(state.nftItemContent) ?? `Agent ${id.slice(0, 6)}`;
+            const createdAt = extractCreationDateFromMetadata(state.nftItemContent);
+            const creationDateTimestamp = createdAt ? Date.parse(createdAt) : null;
             const nowIso = new Date().toISOString();
 
             return {
@@ -125,7 +127,11 @@ export function AgentDetailPage() {
                 operatorPubkey: `0x${state.operatorPublicKey.toString(16)}`,
                 originOperatorPublicKey: `0x${state.originOperatorPublicKey.toString(16)}`,
                 ownerAddress: state.ownerAddress?.toString() ?? '',
-                createdAt: nowIso,
+                creationDateTimestamp:
+                    creationDateTimestamp != null && Number.isFinite(creationDateTimestamp)
+                        ? creationDateTimestamp
+                        : null,
+                createdAt: createdAt ?? nowIso,
                 detectedAt: nowIso,
                 isNew: false,
                 status: state.operatorPublicKey === 0n ? 'revoked' : 'active',

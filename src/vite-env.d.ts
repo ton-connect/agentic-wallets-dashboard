@@ -11,6 +11,7 @@
 interface ImportMetaEnv {
     readonly VITE_TON_API_KEY?: string;
     readonly VITE_TON_API_TESTNET_KEY?: string;
+    readonly VITE_TON_API_PROVIDER?: 'toncenter' | 'tonapi';
     readonly VITE_TON_API_MIN_REQUEST_INTERVAL_MS?: string;
     readonly VITE_AGENTIC_COLLECTION_MAINNET?: string;
     readonly VITE_AGENTIC_COLLECTION_TESTNET?: string;

@@ -40,7 +40,7 @@ import {
     getCollectionAddressByIndex,
 } from '@/features/agents/lib/agentic-wallet';
 import { buildOnchainMetadataCell } from '@/features/agents/lib/metadata';
-import { isAllowedNftTrust } from '@/features/agents/lib/nft-trust';
+import { isEligibleFundingNft } from '@/features/agents/lib/nft-trust';
 import { parseUint256PublicKey } from '@/features/agents/lib/public-key';
 import { formatUnitsTrimmed, parseUiAmountToUnits, tryParseUiAmountToUnits } from '@/features/agents/lib/amount';
 import { isSameTonAddress } from '@/features/agents/lib/address';
@@ -438,7 +438,7 @@ export function CreateAgentPage() {
             .sort((a, b) => (b.usdEquivalent ?? 0) - (a.usdEquivalent ?? 0));
 
         const nfts: DepositAssetItem[] = (nftsResponse?.nfts ?? [])
-            .filter(isAllowedNftTrust)
+            .filter(isEligibleFundingNft)
             .slice(0, 30)
             .map((nft) => ({
                 id: `nft:${nft.address}`,
@@ -630,9 +630,11 @@ export function CreateAgentPage() {
 
             const nftItemIndex = calculateWalletIndex(owner, originKey, true);
 
+            const creationTimestamp = Math.floor(Date.now() / 1000).toString();
             const metadata = buildOnchainMetadataCell({
                 name,
                 description: sourceValue,
+                creation_date: creationTimestamp,
             });
 
             const runtimeData = {
@@ -756,6 +758,7 @@ export function CreateAgentPage() {
                 for (let page = 0; page < 5; page += 1) {
                     const ownerNfts = await client.nftItemsByOwner({
                         ownerAddress,
+                        collectionAddress: collection.toString(),
                         pagination: {
                             limit: 100,
                             offset: page * 100,

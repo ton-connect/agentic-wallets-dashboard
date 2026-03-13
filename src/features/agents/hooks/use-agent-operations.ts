@@ -23,6 +23,7 @@ import {
 } from '../lib/agentic-wallet';
 import type { WithdrawJettonAction, WithdrawNftAction } from '../lib/agentic-wallet';
 import { buildUpdatedMetadataCell, extractNameFromMetadata } from '../lib/metadata';
+import { isEligibleFundingNft } from '../lib/nft-trust';
 import { parseUint256PublicKey } from '../lib/public-key';
 
 import { ENV_AGENTIC_OWNER_OP_GAS } from '@/core/configs/env';
@@ -161,7 +162,7 @@ export function useAgentOperations() {
                     nfts.push({ nftAddress: Address.parse(nft.address) });
                 }
             } else {
-                const jettonPageLimit = 100;
+                const jettonPageLimit = 500;
                 for (let page = 0; page < 50; page += 1) {
                     const response = await getJettonsFromClient(client, agent.address, {
                         pagination: {
@@ -193,7 +194,7 @@ export function useAgentOperations() {
                     }
                 }
 
-                const nftPageLimit = 100;
+                const nftPageLimit = 500;
                 for (let page = 0; page < 50; page += 1) {
                     const response = await getNftsFromClient(client, agent.address, {
                         pagination: {
@@ -204,6 +205,9 @@ export function useAgentOperations() {
                     const pageNfts = response.nfts ?? [];
 
                     for (const nft of pageNfts) {
+                        if (!isEligibleFundingNft(nft)) {
+                            continue;
+                        }
                         nfts.push({ nftAddress: Address.parse(nft.address) });
                     }
 

@@ -6,38 +6,45 @@
  *
  */
 
-import {  ApiClientToncenter, AppKit, Network } from '@ton/appkit';
+import { ApiClientTonApi, ApiClientToncenter, AppKit, Network } from '@ton/appkit';
 import { TonConnectConnector } from '@ton/appkit';
 import { THEME } from '@tonconnect/ui';
 
-import { ENV_TON_API_KEY_MAINNET, ENV_TON_API_KEY_TESTNET, ENV_TON_API_MIN_REQUEST_INTERVAL_MS } from '@/core/configs/env';
+import {
+    ENV_TON_API_KEY_MAINNET,
+    ENV_TON_API_KEY_TESTNET,
+    ENV_TON_API_MIN_REQUEST_INTERVAL_MS,
+    ENV_TON_API_PROVIDER,
+} from '@/core/configs/env';
 
+function createApiClient(network: Network) {
+    const isTestnet = network.chainId === Network.testnet().chainId;
+    const apiKey = isTestnet ? ENV_TON_API_KEY_TESTNET : ENV_TON_API_KEY_MAINNET;
+    const minRequestIntervalMs = ENV_TON_API_MIN_REQUEST_INTERVAL_MS;
+
+    if (ENV_TON_API_PROVIDER === 'tonapi') {
+        return new ApiClientTonApi({
+            network,
+            apiKey,
+            minRequestIntervalMs,
+        });
+    }
+
+    return new ApiClientToncenter({
+        network,
+        endpoint: isTestnet ? 'https://testnet.toncenter.com' : 'https://toncenter.com',
+        apiKey,
+        minRequestIntervalMs,
+    });
+}
 
 export const appKit = new AppKit({
     networks: {
         [Network.mainnet().chainId]: {
-            apiClient: new ApiClientToncenter({
-                endpoint: 'https://toncenter.com',
-                apiKey: ENV_TON_API_KEY_MAINNET,
-                minRequestIntervalMs: ENV_TON_API_MIN_REQUEST_INTERVAL_MS,
-            }),
-            // apiClient: new ApiClientTonApi({
-            //     network: Network.mainnet(),
-            //     apiKey: ENV_TON_API_KEY_MAINNET,
-            //     minRequestIntervalMs: ENV_TON_API_MIN_REQUEST_INTERVAL_MS,
-            // }),
+            apiClient: createApiClient(Network.mainnet()),
         },
         [Network.testnet().chainId]: {
-            apiClient: new ApiClientToncenter({
-                endpoint: 'https://testnet.toncenter.com',
-                apiKey: ENV_TON_API_KEY_TESTNET,
-                minRequestIntervalMs: ENV_TON_API_MIN_REQUEST_INTERVAL_MS,
-            }),
-            // apiClient: new ApiClientTonApi({
-            //     network: Network.testnet(),
-            //     apiKey: ENV_TON_API_KEY_TESTNET,
-            //     minRequestIntervalMs: ENV_TON_API_MIN_REQUEST_INTERVAL_MS,
-            // }),
+            apiClient: createApiClient(Network.testnet()),
         },
     },
     connectors: [

@@ -8,6 +8,8 @@
 
 import type { NFT } from '@ton/appkit';
 
+import { ENV_AGENTIC_COLLECTION_MAINNET, ENV_AGENTIC_COLLECTION_TESTNET } from '@/core/configs/env';
+
 type NftTrust = 'whitelist' | 'graylist' | 'blacklist' | 'none';
 
 function readTrust(nft: NFT): NftTrust | undefined {
@@ -21,4 +23,31 @@ function readTrust(nft: NFT): NftTrust | undefined {
 export function isAllowedNftTrust(nft: NFT): boolean {
     const trust = readTrust(nft);
     return trust === undefined || trust === 'none' || trust === 'whitelist';
+}
+
+function isAgenticCollectionAddress(address: string | undefined): boolean {
+    if (!address) {
+        return false;
+    }
+
+    return address === ENV_AGENTIC_COLLECTION_MAINNET || address === ENV_AGENTIC_COLLECTION_TESTNET;
+}
+
+function isSoulboundNft(nft: NFT): boolean {
+    if (nft.isSoulbound === true) {
+        return true;
+    }
+
+    const extra = nft.extra;
+    if (!extra || typeof extra !== 'object') {
+        return false;
+    }
+
+    const soulbound = extra.soulbound;
+    const nonTransferable = extra.nonTransferable;
+    return soulbound === true || nonTransferable === true;
+}
+
+export function isEligibleFundingNft(nft: NFT): boolean {
+    return isAllowedNftTrust(nft) && !isSoulboundNft(nft) && !isAgenticCollectionAddress(nft.collection?.address);
 }
