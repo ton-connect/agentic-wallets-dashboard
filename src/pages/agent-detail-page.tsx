@@ -11,7 +11,7 @@ import type { ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAppKit, useBalanceByAddress, useNetwork } from '@ton/appkit-react';
-import { ArrowLeft, AlertTriangle, Pencil } from 'lucide-react';
+import { ArrowLeft, AlertTriangle, Check, CheckCircle2, Copy, Pencil, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useAgentActivity, useAgentOperations, useAgents, useAgentsStore } from '@/features/agents';
@@ -29,7 +29,7 @@ import { UnexpectedActivityModal } from '@/components/modals/unexpected-activity
 import { ActivityFeedV2 } from '@/components/dashboard/activity-feed-v2';
 import { getAgentWalletState } from '@/features/agents/lib/agentic-wallet';
 import { extractCreationDateFromMetadata, extractNameFromMetadata } from '@/features/agents/lib/metadata';
-import { isSameTonAddress } from '@/features/agents/lib/address';
+import { formatTonAddressForNetwork, isSameTonAddress } from '@/features/agents/lib/address';
 import { parseUint256PublicKey } from '@/features/agents/lib/public-key';
 import { formatUiAmountFixed } from '@/features/agents/lib/amount';
 
@@ -154,8 +154,13 @@ export function AgentDetailPage() {
     const [showRename, setShowRename] = useState(false);
     const [showChangePublicKey, setShowChangePublicKey] = useState(false);
     const [showUnexpected, setShowUnexpected] = useState(false);
+    const [showDeploymentNotice, setShowDeploymentNotice] = useState(false);
+    const [deploymentNoticeDismissed, setDeploymentNoticeDismissed] = useState(false);
+    const [deploymentNoticeCopied, setDeploymentNoticeCopied] = useState(false);
     const [deepLinkedPublicKey, setDeepLinkedPublicKey] = useState<string | null>(null);
     const changePublicKeyDeepLink = useMemo(() => parseChangePublicKeyDeepLink(searchParams), [searchParams]);
+    const pendingDeploymentNoticeAgentIds = useAgentsStore((s) => s.pendingDeploymentNoticeAgentIds);
+    const consumeDeploymentNotice = useAgentsStore((s) => s.consumeDeploymentNotice);
 
     const clearChangePublicKeyDeepLink = useCallback(() => {
         let hasUpdates = false;
@@ -225,6 +230,20 @@ export function AgentDetailPage() {
         clearChangePublicKeyDeepLink();
     }, [agent, changePublicKeyDeepLink, clearChangePublicKeyDeepLink, showChangePublicKey]);
 
+    useEffect(() => {
+        if (!agent || showDeploymentNotice) {
+            return;
+        }
+
+        const hasPendingNotice = pendingDeploymentNoticeAgentIds.some((storedId) => isSameTonAddress(storedId, agent.address));
+        if (!hasPendingNotice) {
+            return;
+        }
+
+        setShowDeploymentNotice(true);
+        consumeDeploymentNotice(agent.address);
+    }, [agent, consumeDeploymentNotice, pendingDeploymentNoticeAgentIds, showDeploymentNotice]);
+
     if (!agent) {
         if (isAgentsLoading || isFallbackAgentLoading) {
             return (
@@ -252,6 +271,14 @@ export function AgentDetailPage() {
         month: 'long',
         day: 'numeric',
     });
+    const importCommand = `Import wallet ${formatTonAddressForNetwork(agent.address, network?.chainId)}`;
+    const shouldShowDeploymentNotice = !deploymentNoticeDismissed && showDeploymentNotice;
+
+    const handleCopyDeploymentNotice = async () => {
+        await navigator.clipboard.writeText(importCommand);
+        setDeploymentNoticeCopied(true);
+        window.setTimeout(() => setDeploymentNoticeCopied(false), 2000);
+    };
 
     return (
         <div className="animate-fade-in">
@@ -262,6 +289,45 @@ export function AgentDetailPage() {
                 <ArrowLeft size={14} />
                 Back to dashboard
             </Link>
+
+            {shouldShowDeploymentNotice && (
+                <div className="relative mb-8 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.07] p-4 pr-11 sm:p-5 sm:pr-12">
+                    <div className="flex min-w-0 items-start gap-3">
+                            <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-emerald-400" />
+                        <div className="min-w-0">
+                            <p className="text-sm font-medium text-emerald-200">Wallet deployed successfully</p>
+                            <p className="mt-1 text-sm text-neutral-300">
+                                To let your agent use this wallet, send it the message:
+                            </p>
+                            <div className="mt-3 flex items-center gap-2 rounded-xl border border-white/[0.08] bg-black/20 p-2">
+                                <div className="deployment-command-scroll min-w-0 flex-1 overflow-x-auto pb-1">
+                                    <code className="block w-max min-w-full whitespace-nowrap px-1 font-mono text-xs text-neutral-100 sm:text-sm">
+                                        {importCommand}
+                                    </code>
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        void handleCopyDeploymentNotice();
+                                    }}
+                                    className="shrink-0 rounded-lg border border-white/[0.08] bg-white/[0.04] px-2.5 py-2 text-neutral-300 transition-colors hover:bg-white/[0.08] hover:text-white"
+                                    aria-label="Copy import command"
+                                    title="Copy import command"
+                                >
+                                    {deploymentNoticeCopied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setDeploymentNoticeDismissed(true)}
+                        className="absolute top-3 right-3 text-neutral-500 transition-colors hover:text-white sm:top-4 sm:right-4"
+                        aria-label="Close deployment success message"
+                        title="Close"
+                    >
+                        <X size={16} />
+                    </button>
+                </div>
+            )}
 
             <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-center gap-3">
@@ -327,15 +393,9 @@ export function AgentDetailPage() {
                 )}
             </div>
 
-            <div className="mb-8">
-                <p className="mb-3 text-xs uppercase tracking-wider text-neutral-600">Jetton Balances</p>
-                <JettonBalances address={agent.address} network={network} />
-            </div>
+            <JettonBalances address={agent.address} network={network} title="Jetton Balances" />
 
-            <div className="mb-8">
-                <p className="mb-3 text-xs uppercase tracking-wider text-neutral-600">NFT Assets</p>
-                <NftBalances address={agent.address} network={network} />
-            </div>
+            <NftBalances address={agent.address} network={network} title="NFT Assets" />
 
             {isRevoked && (
                 <div className="mb-8 rounded-xl border border-red-500/10 bg-red-500/[0.04] px-4 py-3">

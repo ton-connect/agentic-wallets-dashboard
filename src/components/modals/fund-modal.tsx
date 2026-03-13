@@ -11,7 +11,6 @@ import {
     createTransferJettonTransaction,
     createTransferNftTransaction,
     createTransferTonTransaction,
-    getTransactionStatus,
 } from '@ton/appkit';
 import {
     useAddress,
@@ -34,6 +33,7 @@ import { Modal } from './modal';
 import type { AgentWallet } from '@/features/agents';
 import { isEligibleFundingNft } from '@/features/agents/lib/nft-trust';
 import { formatUnitsTrimmed, parseUiAmountToUnits, tryParseUiAmountToUnits } from '@/features/agents/lib/amount';
+import { waitForTransactionStatus } from '@/features/agents/lib/transaction-status';
 
 interface FundModalProps {
     agent: AgentWallet | null;
@@ -68,6 +68,8 @@ function delay(ms: number): Promise<void> {
 }
 
 const PER_NON_TON_RESERVE_NANO = toNano('0.06');
+const STATUS_RETRY_ATTEMPTS = 40;
+const STATUS_RETRY_DELAY_MS = 250;
 
 export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
     const appKit = useAppKit();
@@ -325,19 +327,11 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                 messages,
             });
 
-            let confirmation: 'completed' | 'pending' | 'failed' = 'pending';
-            for (let attempt = 0; attempt < 20; attempt += 1) {
-                const status = await getTransactionStatus(appKit, { network, normalizedHash: tx.normalizedHash });
-                if (status.status === 'completed') {
-                    confirmation = 'completed';
-                    break;
-                }
-                if (status.status === 'failed') {
-                    confirmation = 'failed';
-                    break;
-                }
-                await new Promise((resolve) => setTimeout(resolve, 1500));
-            }
+            const confirmation = await waitForTransactionStatus(
+                appKit,
+                { network, normalizedHash: tx.normalizedHash },
+                { attempts: STATUS_RETRY_ATTEMPTS, delayMs: STATUS_RETRY_DELAY_MS },
+            );
 
             const refreshNow = async () => {
                 await Promise.all([
@@ -354,7 +348,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
             await refreshNow();
             void (async () => {
                 for (let attempt = 0; attempt < 5; attempt += 1) {
-                    await delay(2500);
+                    await delay(250);
                     await Promise.all([
                         queryClient.refetchQueries({ queryKey: ['balance'], type: 'active' }),
                         queryClient.refetchQueries({ queryKey: ['jettons'], type: 'active' }),
