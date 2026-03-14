@@ -42,9 +42,9 @@ export function LandingFAQ() {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     return (
-        <section id="faq" className="border-b border-white/[0.06] py-24">
+        <section id="faq" className="border-b border-white/[0.06] py-12 sm:py-24">
             <div className="mx-auto max-w-2xl px-6">
-                <div className="mb-12 text-center">
+                <div className="mb-6 text-center sm:mb-12">
                     <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">
                         FAQ
                     </p>
@@ -58,9 +58,11 @@ export function LandingFAQ() {
                             <div key={i}>
                                 <button
                                     onClick={() => setOpenIndex(isOpen ? null : i)}
-                                    className="flex w-full items-center justify-between py-5 text-left"
+                                    className="flex w-full items-center justify-between gap-3 py-5 text-left"
                                 >
-                                    <span className="pr-4 text-sm font-medium">{faq.question}</span>
+                                    <span className="min-w-0 pr-4 text-sm font-medium [overflow-wrap:anywhere]">
+                                        {faq.question}
+                                    </span>
                                     <ChevronDown
                                         size={16}
                                         className={`shrink-0 text-neutral-500 transition-transform ${
@@ -69,7 +71,9 @@ export function LandingFAQ() {
                                     />
                                 </button>
                                 {isOpen && (
-                                    <p className="pb-5 text-sm leading-relaxed text-neutral-400">{faq.answer}</p>
+                                    <p className="pb-5 text-sm leading-relaxed text-neutral-400 [overflow-wrap:anywhere]">
+                                        {faq.answer}
+                                    </p>
                                 )}
                             </div>
                         );

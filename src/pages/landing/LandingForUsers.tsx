@@ -13,12 +13,12 @@ function DashboardMockup() {
     return (
         <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02]">
             {/* Notification banner */}
-            <div className="flex items-center gap-2 border-b border-amber-500/10 bg-amber-500/[0.04] px-4 py-2.5">
+            <div className="flex flex-wrap items-center gap-2 border-b border-amber-500/10 bg-amber-500/[0.04] px-4 py-2.5">
                 <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
-                <span className="text-[10px] text-amber-500/70">
+                <span className="min-w-0 flex-1 text-[10px] text-amber-500/70 [overflow-wrap:anywhere]">
                     New agent wallet detected — &quot;NFT Sniper&quot;
                 </span>
-                <div className="ml-auto flex gap-1.5">
+                <div className="flex gap-1.5 sm:ml-auto">
                     <span className="rounded border border-white/[0.06] px-1.5 py-0.5 text-[8px] text-neutral-500">
                         View
                     </span>
@@ -44,22 +44,22 @@ function DashboardMockup() {
                 ].map((agent, i) => (
                     <div
                         key={agent.name}
-                        className={`flex items-center justify-between px-5 py-3.5 ${
+                        className={`flex items-center justify-between gap-3 px-5 py-3.5 ${
                             i < 2 ? 'border-b border-white/[0.04]' : ''
                         }`}
                     >
-                        <div className="flex items-center gap-3">
+                        <div className="flex min-w-0 items-center gap-3">
                             <div
                                 className={`h-2 w-2 rounded-full ${
                                     agent.status === 'active' ? 'bg-emerald-500' : 'bg-neutral-700'
                                 }`}
                             />
-                            <div>
-                                <span className="block text-sm text-neutral-300">{agent.name}</span>
+                            <div className="min-w-0">
+                                <span className="block truncate text-sm text-neutral-300">{agent.name}</span>
                                 <span className="block text-[10px] text-neutral-600">{agent.txs}</span>
                             </div>
                         </div>
-                        <span className="font-mono text-xs text-neutral-500">{agent.balance} TON</span>
+                        <span className="shrink-0 font-mono text-xs text-neutral-500">{agent.balance} TON</span>
                     </div>
                 ))}
             </div>
@@ -80,9 +80,9 @@ function DashboardMockup() {
 
 export function LandingForUsers() {
     return (
-        <section id="for-users" className="border-b border-white/[0.06] py-24">
+        <section id="for-users" className="border-b border-white/[0.06] py-12 sm:py-24">
             <div className="mx-auto max-w-6xl px-6">
-                <div className="grid items-start gap-16 lg:grid-cols-2">
+                <div className="grid items-start gap-8 sm:gap-16 lg:grid-cols-2">
                     <div className="flex flex-col gap-6">
                         <div>
                             <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">

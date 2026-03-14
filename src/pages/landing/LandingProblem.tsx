@@ -77,9 +77,9 @@ function ProblemIllustration() {
 
 export function LandingProblem() {
     return (
-        <section id="what-is-it" className="border-b border-white/[0.06] py-24">
+        <section id="what-is-it" className="border-b border-white/[0.06] py-12 sm:py-24">
             <div className="mx-auto max-w-6xl px-6">
-                <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+                <div className="grid items-center gap-6 sm:gap-12 lg:grid-cols-2 lg:gap-20">
                     <div>
                         <p className="mb-4 text-xs font-medium uppercase tracking-widest text-amber-500">
                             The Problem

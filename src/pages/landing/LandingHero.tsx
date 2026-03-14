@@ -92,7 +92,7 @@ function WalletHierarchySVG() {
 export function LandingHero() {
     return (
         <section className="relative overflow-hidden border-b border-white/[0.06]">
-            <div className="mx-auto grid max-w-6xl gap-16 px-6 pb-24 pt-20 lg:grid-cols-2 lg:items-center lg:gap-20 lg:pt-32">
+            <div className="mx-auto grid max-w-6xl gap-8 px-6 pb-12 pt-12 sm:gap-16 sm:pb-24 sm:pt-20 lg:grid-cols-2 lg:items-center lg:gap-20 lg:pt-32">
                 <div className="flex flex-col gap-8">
                     <div>
                         <p className="mb-4 text-sm font-medium uppercase tracking-widest text-amber-500">
