@@ -156,6 +156,12 @@ export function SiteHeader() {
                 <Link to="/" className="flex items-center gap-2.5 text-lg font-semibold tracking-tight">
                     <AgentLogo />
                     <span className="hidden md:inline">Agentic Wallets</span>
+                    <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-300 md:hidden">
+                        Alpha
+                    </span>
+                    <span className="hidden rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-300 md:inline-flex">
+                        Alpha
+                    </span>
                 </Link>
 
                 <nav className="hidden items-center gap-8 md:flex">
@@ -241,12 +247,23 @@ export function SiteHeader() {
 
 function AgentLogo() {
     return (
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-            <rect x="1" y="1" width="26" height="26" rx="8" stroke="white" strokeWidth="1" strokeOpacity="0.2" />
-            <rect x="5" y="5" width="8" height="8" rx="2" fill="#f59e0b" fillOpacity="0.8" />
-            <rect x="15" y="5" width="8" height="8" rx="2" fill="white" fillOpacity="0.15" />
-            <rect x="5" y="15" width="8" height="8" rx="2" fill="white" fillOpacity="0.15" />
-            <rect x="15" y="15" width="8" height="8" rx="2" fill="white" fillOpacity="0.08" />
-        </svg>
+        <span className="inline-flex shrink-0">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+                <rect
+                    x="1"
+                    y="1"
+                    width="26"
+                    height="26"
+                    rx="8"
+                    stroke="white"
+                    strokeWidth="1"
+                    strokeOpacity="0.2"
+                />
+                <rect x="5" y="5" width="8" height="8" rx="2" fill="#f59e0b" fillOpacity="0.8" />
+                <rect x="15" y="5" width="8" height="8" rx="2" fill="white" fillOpacity="0.15" />
+                <rect x="5" y="15" width="8" height="8" rx="2" fill="white" fillOpacity="0.15" />
+                <rect x="15" y="15" width="8" height="8" rx="2" fill="white" fillOpacity="0.08" />
+            </svg>
+        </span>
     );
 }

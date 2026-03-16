@@ -23,8 +23,7 @@ The app starts at `http://localhost:5175`.
 ## Core Functionality
 
 1. Detecting the owner's agents:
-- load the owner's NFTs;
-- filter by the configured collection;
+- load the owner's NFTs directly from the configured agentic collection;
 - additionally load the wallets' on-chain state.
 
 2. Creating an agent (`/create`):
@@ -121,6 +120,7 @@ The key can be passed in hex format (`0x...`) or decimal. After the modal opens,
 File: `src/core/configs/env.ts`.
 
 Key variables:
+- `VITE_TON_API_PROVIDER` (`toncenter` by default, `tonapi` to switch provider)
 - `VITE_TON_API_KEY`
 - `VITE_TON_API_TESTNET_KEY`
 - `VITE_TON_API_MIN_REQUEST_INTERVAL_MS`

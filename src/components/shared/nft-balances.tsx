@@ -15,9 +15,10 @@ interface NftBalancesProps {
     address: string;
     compact?: boolean;
     network?: Network;
+    title?: string;
 }
 
-export function NftBalances({ address, compact = false, network }: NftBalancesProps) {
+export function NftBalances({ address, compact = false, network, title }: NftBalancesProps) {
     const connectedNetwork = useNetwork();
     const effectiveNetwork = network ?? connectedNetwork;
     const { data: nftsResponse } = useNftsByAddress({ address, network: effectiveNetwork, limit: 30 });
@@ -48,7 +49,7 @@ export function NftBalances({ address, compact = false, network }: NftBalancesPr
         );
     }
 
-    return (
+    const content = (
         <div className="space-y-2">
             {nfts.map((nft) => (
                 <div
@@ -70,6 +71,15 @@ export function NftBalances({ address, compact = false, network }: NftBalancesPr
                     </div>
                 </div>
             ))}
+        </div>
+    );
+
+    if (!title) return content;
+
+    return (
+        <div className="mb-8">
+            <p className="mb-3 text-xs uppercase tracking-wider text-neutral-600">{title}</p>
+            {content}
         </div>
     );
 }

@@ -29,9 +29,9 @@ const steps = [
 
 export function LandingHowItWorks() {
     return (
-        <section id="how-it-works" className="border-b border-white/[0.06] py-24">
+        <section id="how-it-works" className="border-b border-white/[0.06] py-12 sm:py-24">
             <div className="mx-auto max-w-6xl px-6">
-                <div className="mb-12 text-center">
+                <div className="mb-6 text-center sm:mb-12">
                     <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">
                         How it works
                     </p>

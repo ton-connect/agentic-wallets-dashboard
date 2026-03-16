@@ -16,9 +16,10 @@ interface JettonBalancesProps {
     address: string;
     compact?: boolean;
     network?: Network;
+    title?: string;
 }
 
-export function JettonBalances({ address, compact = false, network }: JettonBalancesProps) {
+export function JettonBalances({ address, compact = false, network, title }: JettonBalancesProps) {
     const connectedNetwork = useNetwork();
     const effectiveNetwork = network ?? connectedNetwork;
     const { data: jettonsResponse } = useJettonsByAddress({ address, network: effectiveNetwork });
@@ -57,7 +58,7 @@ export function JettonBalances({ address, compact = false, network }: JettonBala
         );
     }
 
-    return (
+    const content = (
         <div className="space-y-2">
             {jettons.map((j) => (
                 <div
@@ -82,6 +83,15 @@ export function JettonBalances({ address, compact = false, network }: JettonBala
                     </span>
                 </div>
             ))}
+        </div>
+    );
+
+    if (!title) return content;
+
+    return (
+        <div className="mb-8">
+            <p className="mb-3 text-xs uppercase tracking-wider text-neutral-600">{title}</p>
+            {content}
         </div>
     );
 }

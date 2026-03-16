@@ -17,6 +17,7 @@ export interface AgentWallet {
     operatorPubkey: string;
     originOperatorPublicKey: string;
     ownerAddress: string;
+    creationDateTimestamp: number | null;
     createdAt: string;
     detectedAt: string;
     isNew: boolean;

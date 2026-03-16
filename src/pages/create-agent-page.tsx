@@ -39,14 +39,16 @@ import {
     getAgentWalletState,
     getCollectionAddressByIndex,
 } from '@/features/agents/lib/agentic-wallet';
+import { useAgentsStore } from '@/features/agents';
 import { buildOnchainMetadataCell } from '@/features/agents/lib/metadata';
-import { isAllowedNftTrust } from '@/features/agents/lib/nft-trust';
+import { isEligibleFundingNft } from '@/features/agents/lib/nft-trust';
 import { parseUint256PublicKey } from '@/features/agents/lib/public-key';
 import { formatUnitsTrimmed, parseUiAmountToUnits, tryParseUiAmountToUnits } from '@/features/agents/lib/amount';
 import { isSameTonAddress } from '@/features/agents/lib/address';
 
 const DEPLOY_BASE_NANO = toNano('0.05');
 const PER_ASSET_RESERVE_NANO = toNano('0.06');
+const AGENT_INDEXING_RETRY_ATTEMPTS = 40;
 
 function delay(ms: number): Promise<void> {
     return new Promise((resolve) => {
@@ -382,6 +384,7 @@ async function sendDeployCallback(callbackUrl: string, payload: DeployCallbackPa
 
 export function CreateAgentPage() {
     const navigate = useNavigate();
+    const queueDeploymentNotice = useAgentsStore((s) => s.queueDeploymentNotice);
     const [searchParams] = useSearchParams();
     const queryClient = useQueryClient();
     const appKit = useAppKit();
@@ -391,7 +394,7 @@ export function CreateAgentPage() {
     const { data: ownerTonBalance } = useBalanceByAddress({ address: ownerAddress ?? '', network });
     const { mutateAsync: sendTransaction, isPending } = useSendTransaction();
     const { data: jettonsResponse } = useJettonsByAddress({ address: ownerAddress, network });
-    const { data: nftsResponse } = useNfts({ network });
+    const { data: nftsResponse } = useNfts({ network, limit: 1000 });
 
     const [originOperatorPublicKey, setOriginOperatorPublicKey] = useState('');
     const [agentName, setAgentName] = useState('');
@@ -438,7 +441,7 @@ export function CreateAgentPage() {
             .sort((a, b) => (b.usdEquivalent ?? 0) - (a.usdEquivalent ?? 0));
 
         const nfts: DepositAssetItem[] = (nftsResponse?.nfts ?? [])
-            .filter(isAllowedNftTrust)
+            .filter((nft) => isEligibleFundingNft(nft, nftsResponse?.addressBook))
             .slice(0, 30)
             .map((nft) => ({
                 id: `nft:${nft.address}`,
@@ -450,7 +453,7 @@ export function CreateAgentPage() {
             }));
 
         return [...jettons, ...nfts];
-    }, [jettonsResponse?.jettons, nftsResponse?.nfts]);
+    }, [jettonsResponse?.jettons, nftsResponse?.addressBook, nftsResponse?.nfts]);
 
     const maxDepositsAllowed = Math.min(depositAssets.length, maxAssetMessages);
     const canAddMoreAssets = assetDeposits.length < maxDepositsAllowed;
@@ -630,9 +633,11 @@ export function CreateAgentPage() {
 
             const nftItemIndex = calculateWalletIndex(owner, originKey, true);
 
+            const creationTimestamp = Math.floor(Date.now() / 1000).toString();
             const metadata = buildOnchainMetadataCell({
                 name,
                 description: sourceValue,
+                creation_date: creationTimestamp,
             });
 
             const runtimeData = {
@@ -751,11 +756,12 @@ export function CreateAgentPage() {
             });
 
             let isIndexed = false;
-            for (let attempt = 0; attempt < 30; attempt += 1) {
+            for (let attempt = 0; attempt < AGENT_INDEXING_RETRY_ATTEMPTS; attempt += 1) {
                 let found = false;
                 for (let page = 0; page < 5; page += 1) {
                     const ownerNfts = await client.nftItemsByOwner({
                         ownerAddress,
+                        collectionAddress: collection.toString(),
                         pagination: {
                             limit: 100,
                             offset: page * 100,
@@ -772,7 +778,7 @@ export function CreateAgentPage() {
                     break;
                 }
 
-                await delay(2000);
+                await delay(250);
             }
 
             await Promise.all([
@@ -816,13 +822,8 @@ export function CreateAgentPage() {
                 }
             }
 
-            if (isIndexed) {
-                toast.success(`Deploy + first fund completed. Agent address: ${localAddress.toString()}`);
-                navigate('/dashboard');
-            } else {
-                toast.message(`Transaction sent. Wallet ${localAddress.toString()} will appear after indexing.`);
-                navigate(`/agent/${localAddress.toString()}`);
-            }
+            queueDeploymentNotice(localAddress.toString());
+            navigate(`/agent/${localAddress.toString()}`);
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to create agent wallet';
             toast.error(message);

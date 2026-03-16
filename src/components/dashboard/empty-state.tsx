@@ -109,9 +109,9 @@ export function EmptyState() {
                             1
                         </span>
                         <div>
-                            <p className="text-neutral-300">Add to your MCP client</p>
+                            <p className="text-neutral-300">Install TON skills</p>
                             <code className="mt-1 block font-mono text-xs text-neutral-500">
-                                $ npx @ton/mcp@alpha
+                                $ npx skills add ton-connect/kit/packages/mcp
                             </code>
                         </div>
                     </div>

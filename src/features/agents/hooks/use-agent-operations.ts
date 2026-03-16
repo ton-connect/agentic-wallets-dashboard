@@ -23,12 +23,16 @@ import {
 } from '../lib/agentic-wallet';
 import type { WithdrawJettonAction, WithdrawNftAction } from '../lib/agentic-wallet';
 import { buildUpdatedMetadataCell, extractNameFromMetadata } from '../lib/metadata';
+import { isEligibleFundingNft } from '../lib/nft-trust';
 import { parseUint256PublicKey } from '../lib/public-key';
+import { waitForTransactionStatus } from '../lib/transaction-status';
 
 import { ENV_AGENTIC_OWNER_OP_GAS } from '@/core/configs/env';
 
 const JETTON_WITHDRAW_EXECUTION_COST_NANO = 55_000_000n; // 0.055 TON
 const NFT_WITHDRAW_EXECUTION_COST_NANO = 110_000_000n; // 0.11 TON
+const OPERATION_RETRY_ATTEMPTS = 40;
+const OPERATION_RETRY_DELAY_MS = 250;
 
 type WithdrawSelection = {
     includeTon?: boolean;
@@ -79,7 +83,7 @@ export function useAgentOperations() {
             throw new Error('Network is not selected');
         }
 
-        await sendTransaction({
+        return sendTransaction({
             network,
             validUntil: Math.floor(Date.now() / 1000) + 600,
             messages: [
@@ -92,19 +96,39 @@ export function useAgentOperations() {
         });
     };
 
+    const waitForTransactionConfirmation = async (normalizedHash: string) => {
+        if (!network) {
+            return;
+        }
+
+        const status = await waitForTransactionStatus(
+            appKit,
+            { network, normalizedHash },
+            { attempts: OPERATION_RETRY_ATTEMPTS, delayMs: OPERATION_RETRY_DELAY_MS },
+        );
+        if (status === 'completed') {
+            return;
+        }
+        if (status === 'failed') {
+            throw new Error('Transaction failed on-chain');
+        }
+
+        throw new Error('Transaction sent, but is not confirmed yet. Please refresh in a few seconds');
+    };
+
     const waitForPublicKey = async (agentAddress: string, expected: bigint) => {
         if (!network) {
             return;
         }
 
         const client = appKit.networkManager.getClient(network);
-        for (let attempt = 0; attempt < 10; attempt += 1) {
+        for (let attempt = 0; attempt < OPERATION_RETRY_ATTEMPTS; attempt += 1) {
             const state = await getAgentWalletState(client, agentAddress);
             const current = state.isInitialized ? state.operatorPublicKey : -1n;
             if (current === expected) {
                 return;
             }
-            await delay(1500);
+            await delay(OPERATION_RETRY_DELAY_MS);
         }
 
         throw new Error('On-chain state is not updated yet. Please refresh in a few seconds');
@@ -161,7 +185,7 @@ export function useAgentOperations() {
                     nfts.push({ nftAddress: Address.parse(nft.address) });
                 }
             } else {
-                const jettonPageLimit = 100;
+                const jettonPageLimit = 500;
                 for (let page = 0; page < 50; page += 1) {
                     const response = await getJettonsFromClient(client, agent.address, {
                         pagination: {
@@ -193,7 +217,7 @@ export function useAgentOperations() {
                     }
                 }
 
-                const nftPageLimit = 100;
+                const nftPageLimit = 500;
                 for (let page = 0; page < 50; page += 1) {
                     const response = await getNftsFromClient(client, agent.address, {
                         pagination: {
@@ -204,6 +228,9 @@ export function useAgentOperations() {
                     const pageNfts = response.nfts ?? [];
 
                     for (const nft of pageNfts) {
+                        if (!isEligibleFundingNft(nft, response.addressBook)) {
+                            continue;
+                        }
                         nfts.push({ nftAddress: Address.parse(nft.address) });
                     }
 
@@ -234,7 +261,8 @@ export function useAgentOperations() {
                 agentBalanceNano < requiredExecutionNano ? requiredExecutionNano - agentBalanceNano : 0n;
             const attachedAmountNano = gasAmount + missingExecutionNano;
 
-            await sendAgentMessage(agent.address, cellToBase64(payload), attachedAmountNano);
+            const tx = await sendAgentMessage(agent.address, cellToBase64(payload), attachedAmountNano);
+            await waitForTransactionConfirmation(tx.normalizedHash);
         });
 
     const renameAgentWallet = async (agent: AgentWallet, newName: string) =>
@@ -256,13 +284,13 @@ export function useAgentOperations() {
             await sendTransaction(tx);
 
             const expected = newName.trim();
-            for (let attempt = 0; attempt < 8; attempt += 1) {
+            for (let attempt = 0; attempt < OPERATION_RETRY_ATTEMPTS; attempt += 1) {
                 const updatedState = await getAgentWalletState(client, agent.address);
                 const actual = extractNameFromMetadata(updatedState.nftItemContent);
                 if (actual === expected) {
                     return;
                 }
-                await delay(1500);
+                await delay(OPERATION_RETRY_DELAY_MS);
             }
 
             throw new Error('Rename transaction sent, but metadata update is not visible yet. Please refresh shortly.');

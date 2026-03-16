@@ -61,9 +61,9 @@ const pillars: { title: string; description: string; icon: ReactNode }[] = [
 
 export function LandingValueProps() {
     return (
-        <section className="border-b border-white/[0.06] py-24">
+        <section className="border-b border-white/[0.06] py-12 sm:py-24">
             <div className="mx-auto max-w-6xl px-6">
-                <div className="grid items-start gap-16 lg:grid-cols-2">
+                <div className="grid items-start gap-8 sm:gap-16 lg:grid-cols-2">
                     <div className="flex flex-col gap-6">
                         <div>
                             <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">

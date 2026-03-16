@@ -15,7 +15,7 @@ import { ENV_AGENTIC_ACTIVITY_POLL_MS, ENV_AGENTIC_COLLECTION_MAINNET, ENV_AGENT
 
 import { useAgentsStore } from '../store/agents-store';
 import type { AgentWallet } from '../types';
-import { extractNameFromMetadata } from '../lib/metadata';
+import { extractCreationDateFromMetadata, extractNameFromMetadata } from '../lib/metadata';
 import { getAgentWalletState } from '../lib/agentic-wallet';
 import { isSameTonAddress } from '../lib/address';
 import { mapWithConcurrency } from '../lib/async';
@@ -62,12 +62,12 @@ export function useAgents() {
         error: nftsError,
         refetch: refetchNfts,
     } = useQuery({
-        queryKey: ['agentic-wallets-owner-nfts', chainId, ownerAddress],
-        enabled: !!network && !!ownerAddress,
+        queryKey: ['agentic-wallets-owner-nfts', chainId, ownerAddress, collectionAddress],
+        enabled: !!network && !!ownerAddress && !!collectionAddress,
         refetchInterval: ENV_AGENTIC_ACTIVITY_POLL_MS,
         refetchIntervalInBackground: true,
         queryFn: async () => {
-            if (!network || !ownerAddress) {
+            if (!network || !ownerAddress || !collectionAddress) {
                 return { nfts: [] as NFT[] };
             }
 
@@ -79,6 +79,7 @@ export function useAgents() {
             for (let page = 0; page < maxPages; page += 1) {
                 const response = await client.nftItemsByOwner({
                     ownerAddress,
+                    collectionAddress,
                     pagination: {
                         limit: pageLimit,
                         offset: page * pageLimit,
@@ -94,7 +95,7 @@ export function useAgents() {
 
             const deduped = Array.from(new Map(allNfts.map((nft) => [nft.address, nft])).values());
             return {
-                nfts: deduped,
+                nfts: deduped.filter((nft) => isSameTonAddress(nft.collection?.address, collectionAddress)),
             };
         },
     });
@@ -103,14 +104,7 @@ export function useAgents() {
     const markKnown = useAgentsStore((s) => s.markKnown);
     const markManyKnown = useAgentsStore((s) => s.markManyKnown);
 
-    const chainStateCandidates = useMemo(() => {
-        if (!collectionAddress) {
-            return [];
-        }
-
-        const all = nftsResponse?.nfts ?? [];
-        return all.filter((nft) => isSameTonAddress(nft.collection?.address, collectionAddress));
-    }, [nftsResponse, collectionAddress]);
+    const chainStateCandidates = useMemo(() => nftsResponse?.nfts ?? [], [nftsResponse]);
 
     const chainWalletAddresses = useMemo(
         () => Array.from(new Set(chainStateCandidates.map((nft) => nft.address))).sort(),
@@ -179,19 +173,7 @@ export function useAgents() {
         },
     });
 
-    const collectionNfts = useMemo(() => {
-        const all = nftsResponse?.nfts ?? [];
-        if (!collectionAddress) {
-            return [] as NFT[];
-        }
-
-        return all.filter((nft) => {
-            if (isSameTonAddress(nft.collection?.address, collectionAddress)) {
-                return true;
-            }
-            return isSameTonAddress(chainState?.[nft.address]?.collectionAddress, collectionAddress);
-        });
-    }, [nftsResponse, collectionAddress, chainState]);
+    const collectionNfts = useMemo(() => nftsResponse?.nfts ?? [], [nftsResponse]);
 
     useEffect(() => {
         if (knownAgentIds.length > 0) {
@@ -213,10 +195,12 @@ export function useAgents() {
         return collectionNfts.map((nft): AgentWallet => {
             const chain = chainState?.[nft.address];
             const onchainName = chain ? extractNameFromMetadata(chain.nftItemContent) : null;
+            const onchainCreatedAt = chain ? extractCreationDateFromMetadata(chain.nftItemContent) : null;
+            const creationDateTimestamp = onchainCreatedAt ? Date.parse(onchainCreatedAt) : null;
             const fallbackName = nft.info?.name ?? `Agent #${nft.index ?? '?'}`;
 
             const source = getAttribute(nft, 'source') ?? nft.info?.description ?? nft.collection?.name ?? 'Unknown';
-            const createdAt = getAttribute(nft, 'created_at') ?? new Date().toISOString();
+            const createdAt = onchainCreatedAt ?? getAttribute(nft, 'created_at') ?? new Date().toISOString();
             const isNew = hasKnownBaseline && !knownAgentIds.includes(nft.address);
 
             const fallbackPublicKey = parseBigint(getAttribute(nft, 'operator_pubkey')) ?? 0n;
@@ -234,6 +218,10 @@ export function useAgents() {
                 operatorPubkey: `0x${publicKey.toString(16)}`,
                 originOperatorPublicKey: `0x${originPublicKey.toString(16)}`,
                 ownerAddress: chain?.ownerAddress ?? nft.ownerAddress ?? '',
+                creationDateTimestamp:
+                    creationDateTimestamp != null && Number.isFinite(creationDateTimestamp)
+                        ? creationDateTimestamp
+                        : null,
                 createdAt,
                 detectedAt: getAttribute(nft, 'detected_at') ?? createdAt,
                 isNew,
