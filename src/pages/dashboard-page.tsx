@@ -102,7 +102,7 @@ export function DashboardPage() {
     if (agents.length === 0) {
         if (!collectionAddress) {
             return (
-                <div className="rounded-2xl border border-amber-500/20 bg-amber-500/[0.06] p-5 text-sm text-amber-200">
+                <div className="rounded-2xl border border-white/[0.1] bg-white/[0.04] p-5 text-sm text-neutral-300">
                     Collection address is not configured for the current network. Switch network or set
                     `VITE_AGENTIC_COLLECTION_MAINNET`/`VITE_AGENTIC_COLLECTION_TESTNET`.
                 </div>

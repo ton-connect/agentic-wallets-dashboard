@@ -77,7 +77,7 @@ export function RenameModal({ agent, onClose, onSuccess }: RenameModalProps) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Agent name"
-                    className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-white placeholder-neutral-700 outline-none transition-colors focus:border-amber-500/50"
+                    className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-white placeholder-neutral-700 outline-none transition-colors focus:border-white/25"
                     autoFocus
                     onKeyDown={(e) => e.key === 'Enter' && void handleRename()}
                 />
@@ -93,7 +93,7 @@ export function RenameModal({ agent, onClose, onSuccess }: RenameModalProps) {
                     <button
                         onClick={() => void handleRename()}
                         disabled={uiPending || isInvalidLength || trimmedName === agent.name}
-                        className="flex-1 rounded-full bg-amber-500 py-3 text-sm font-medium text-black transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex-1 rounded-full bg-white py-3 text-sm font-medium text-black transition-colors hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                         {uiPending ? (
                             <span className="inline-flex items-center gap-2">

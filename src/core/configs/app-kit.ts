@@ -57,8 +57,8 @@ export const appKit = new AppKit({
                     colorsSet: {
                         [THEME.DARK]: {
                             connectButton: {
-                                background: '#f59e0b',
-                                foreground: '#000000',
+                                background: '#C4FF89',
+                                foreground: '#0A1A00',
                             },  
                         },
                     },

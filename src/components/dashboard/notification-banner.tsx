@@ -21,8 +21,8 @@ export function NotificationBanner({ agents, onView, onRevoke, onMarkAllKnown }:
     return (
         <div className="space-y-2 animate-slide-up">
             {agents.length > 1 && (
-                <div className="flex items-center justify-between rounded-xl border border-amber-500/10 bg-amber-500/[0.04] px-4 py-2.5">
-                    <span className="text-xs text-amber-500/80">
+                <div className="flex items-center justify-between rounded-xl border border-white/[0.1] bg-white/[0.04] px-4 py-2.5">
+                    <span className="text-xs text-neutral-300">
                         {agents.length} new agent wallet{agents.length > 1 ? 's' : ''} detected
                     </span>
                     <button
@@ -37,9 +37,9 @@ export function NotificationBanner({ agents, onView, onRevoke, onMarkAllKnown }:
             {agents.map((agent) => (
                 <div
                     key={agent.id}
-                    className="flex items-center gap-3 rounded-xl border border-amber-500/10 bg-amber-500/[0.04] px-4 py-3"
+                    className="flex items-center gap-3 rounded-xl border border-white/[0.1] bg-white/[0.04] px-4 py-3"
                 >
-                    <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500 animate-pulse" />
+                    <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-white animate-pulse" />
                     <div className="min-w-0 flex-1">
                         <p className="text-sm text-neutral-300">
                             New agent wallet detected &mdash;{' '}
@@ -50,7 +50,7 @@ export function NotificationBanner({ agents, onView, onRevoke, onMarkAllKnown }:
                     <div className="flex shrink-0 gap-2">
                         <button
                             onClick={() => onView(agent.id)}
-                            className="rounded-full bg-amber-500 px-3 py-1 text-xs font-medium text-black transition-colors hover:bg-amber-400"
+                            className="rounded-full bg-white px-3 py-1 text-xs font-medium text-black transition-colors hover:bg-neutral-200"
                         >
                             View
                         </button>

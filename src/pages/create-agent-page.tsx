@@ -881,7 +881,7 @@ export function CreateAgentPage() {
                                     }
                                 }}
                                 placeholder="0.2"
-                                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 pr-16 text-sm text-white placeholder-neutral-700 outline-none transition-colors focus:border-amber-500/50"
+                                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 pr-16 text-sm text-white placeholder-neutral-700 outline-none transition-colors focus:border-white/25"
                             />
                             <button
                                 type="button"
@@ -921,7 +921,7 @@ export function CreateAgentPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => setOpenSelectorId((current) => (current === deposit.id ? null : deposit.id))}
-                                                className="flex w-full items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-left text-sm text-white outline-none transition-colors hover:border-white/[0.15] focus:border-amber-500/50"
+                                                className="flex w-full items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-left text-sm text-white outline-none transition-colors hover:border-white/[0.15] focus:border-white/25"
                                             >
                                                 <span className="flex items-center gap-2">
                                                     <AssetIcon imageUrl={selected.imageUrl} label={selected.label} />
@@ -961,7 +961,7 @@ export function CreateAgentPage() {
                                                                     setOpenSelectorId(null);
                                                                 }}
                                                                 className={`flex w-full items-center justify-between gap-2 px-6 py-2.5 text-left text-sm transition-colors hover:bg-white/[0.06] ${
-                                                                    deposit.assetId === asset.id ? 'text-amber-500' : 'text-white'
+                                                                    deposit.assetId === asset.id ? 'text-white' : 'text-white'
                                                                 }`}
                                                             >
                                                                 <span className="flex items-center gap-2">
@@ -996,7 +996,7 @@ export function CreateAgentPage() {
                                                                     setOpenSelectorId(null);
                                                                 }}
                                                                 className={`flex w-full items-center gap-2 px-6 py-2.5 text-left text-sm transition-colors hover:bg-white/[0.06] ${
-                                                                    deposit.assetId === asset.id ? 'text-amber-500' : 'text-white'
+                                                                    deposit.assetId === asset.id ? 'text-white' : 'text-white'
                                                                 }`}
                                                             >
                                                                 <AssetIcon imageUrl={asset.imageUrl} label={asset.label} />
@@ -1034,7 +1034,7 @@ export function CreateAgentPage() {
                                                             updateAssetDeposit(deposit.id, { amount: next });
                                                         }}
                                                         placeholder="0.00"
-                                                        className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 pr-16 text-sm text-white placeholder-neutral-700 outline-none transition-colors focus:border-amber-500/50"
+                                                        className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 pr-16 text-sm text-white placeholder-neutral-700 outline-none transition-colors focus:border-white/25"
                                                     />
                                                     <button
                                                         type="button"
@@ -1067,7 +1067,7 @@ export function CreateAgentPage() {
                 <button
                     onClick={() => void handleCreate()}
                     disabled={isPending || isAwaitingIndexing || !ownerAddress}
-                    className="mt-6 w-full rounded-full bg-amber-500 px-6 py-3 text-sm font-medium text-black transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="mt-6 w-full rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition-colors hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     {isPending ? 'Sending...' : isAwaitingIndexing ? 'Waiting for indexing...' : 'Deploy + First Fund'}
                 </button>
@@ -1111,7 +1111,7 @@ function Field({
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
                 readOnly={readOnly}
-                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-sm text-white placeholder-neutral-700 outline-none transition-colors focus:border-amber-500/50 read-only:text-neutral-500"
+                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-sm text-white placeholder-neutral-700 outline-none transition-colors focus:border-white/25 read-only:text-neutral-500"
             />
         </div>
     );

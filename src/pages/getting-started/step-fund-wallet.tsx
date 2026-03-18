@@ -42,7 +42,7 @@ export function StepFundWallet() {
                         key={method.title}
                         className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4"
                     >
-                        <method.icon size={16} className="mb-3 text-amber-500" />
+                        <method.icon size={16} className="mb-3 text-neutral-400" />
                         <p className="text-sm font-medium text-neutral-200">{method.title}</p>
                         <p className="mt-1 text-xs leading-relaxed text-neutral-500">{method.description}</p>
                     </div>
@@ -58,7 +58,7 @@ export function StepFundWallet() {
                 </div>
                 <div className="flex flex-col gap-4 p-5">
                     <div className="flex items-start gap-3">
-                        <span className="mt-0.5 shrink-0 font-mono text-xs font-bold text-amber-500">You</span>
+                        <span className="mt-0.5 shrink-0 font-mono text-xs font-bold text-white">You</span>
                         <span className="text-sm text-neutral-200">What's my agent wallet balance?</span>
                     </div>
                     <div className="flex items-start gap-3">
