@@ -22,7 +22,7 @@ function WalletIllustration({ animate }: { animate?: boolean }) {
             >
                 Your Wallet
             </text>
-            <text x="140" y="80" textAnchor="middle" fill="#f59e0b" fontSize="8" fontFamily="monospace" opacity="0.7">
+            <text x="140" y="80" textAnchor="middle" fill="white" fontSize="8" fontFamily="monospace" opacity="0.7">
                 connected
             </text>
 
@@ -32,7 +32,7 @@ function WalletIllustration({ animate }: { animate?: boolean }) {
 
             {animate && (
                 <>
-                    <circle r="2" fill="#f59e0b" opacity="0.8">
+                    <circle r="2" fill="white" opacity="0.8">
                         <animateMotion dur="3s" repeatCount="indefinite" path="M140 96 C140 120 140 135 140 152" />
                     </circle>
                     <circle r="1.5" fill="white" opacity="0.4">
@@ -85,7 +85,7 @@ export function LoadingState() {
                 </p>
             </div>
             <div className="flex h-9 items-center justify-center">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-white/10 border-t-amber-500" />
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-white/10 border-t-white" />
             </div>
         </div>
     );
@@ -105,7 +105,7 @@ export function EmptyState() {
             <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-4 text-sm">
                     <div className="flex items-start gap-3">
-                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-amber-500/10 font-mono text-[10px] font-bold text-amber-500">
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-white/[0.06] font-mono text-[10px] font-bold text-white">
                             1
                         </span>
                         <div>
@@ -116,7 +116,7 @@ export function EmptyState() {
                         </div>
                     </div>
                     <div className="flex items-start gap-3">
-                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-amber-500/10 font-mono text-[10px] font-bold text-amber-500">
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-white/[0.06] font-mono text-[10px] font-bold text-white">
                             2
                         </span>
                         <div>

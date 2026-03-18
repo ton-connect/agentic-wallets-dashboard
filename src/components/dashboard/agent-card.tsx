@@ -44,10 +44,10 @@ export function AgentCard({ agent, balanceNano, onFund, onWithdraw, onRevoke }: 
                     </div>
                     <div className="text-right">
                         <div className="flex items-center gap-1.5">
-                            {isZero && <AlertTriangle size={12} className="text-amber-500" />}
+                            {isZero && <AlertTriangle size={12} className="text-neutral-400" />}
                             <span className="font-mono text-sm tabular-nums">{balanceStr} TON</span>
                         </div>
-                        {isZero && <p className="mt-0.5 text-[10px] text-amber-500/70">Out of funds</p>}
+                        {isZero && <p className="mt-0.5 text-[10px] text-neutral-500">Out of funds</p>}
                     </div>
                 </div>
                 <div className="mt-2">
@@ -62,7 +62,7 @@ export function AgentCard({ agent, balanceNano, onFund, onWithdraw, onRevoke }: 
                 <div className="mt-auto flex items-center gap-2 border-t border-white/[0.04] pt-3">
                     <button
                         onClick={onFund}
-                        className="rounded-full bg-amber-500 px-4 py-1.5 text-xs font-medium text-black transition-colors hover:bg-amber-400"
+                        className="rounded-full bg-white px-4 py-1.5 text-xs font-medium text-black transition-colors hover:bg-neutral-200"
                     >
                         Fund
                     </button>
