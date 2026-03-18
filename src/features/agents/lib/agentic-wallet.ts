@@ -6,8 +6,7 @@
  *
  */
 
-import type { Address } from '@ton/core';
-import { beginCell, Cell, contractAddress, internal, SendMode, storeOutList, storeStateInit } from '@ton/core';
+import { Address, beginCell, Cell, contractAddress, Dictionary, internal, SendMode, storeOutList, storeStateInit } from '@ton/core';
 import {
     createJettonTransferPayload,
     createNftTransferPayload,
@@ -17,6 +16,7 @@ import {
 import type { TransactionRequest } from '@ton/appkit';
 
 const OP_EXTENSION_ACTION_REQUEST = 0xed84cbf0;
+const OP_REMOVE_EXTENSION_EXTRA_ACTION = 0x03;
 const OP_DEPLOY_WALLET = 0x0609e47b;
 const OP_CHANGE_OPERATOR = 0xea4e36cf;
 const OP_CHANGE_NFT_CONTENT = 0x1a0b9d51;
@@ -54,6 +54,7 @@ export type AgentWalletState = {
     collectionAddress: Address;
     isSignatureAllowed: boolean;
     seqno: number;
+    extensions: string[];
     ownerAddress: Address | null;
     nftItemContent: Cell | null;
     originOperatorPublicKey: bigint;
@@ -293,6 +294,42 @@ export function createExtensionActionRequestBody(queryId: bigint, outActions: Ce
         .endCell();
 }
 
+function createRemoveExtensionExtraActionBody(extensionAddress: Address): Cell {
+    return beginCell().storeUint(OP_REMOVE_EXTENSION_EXTRA_ACTION, 8).storeAddress(extensionAddress).endCell();
+}
+
+function createSnakedExtraActions(actions: Cell[]): Cell | null {
+    if (actions.length === 0) {
+        return null;
+    }
+
+    let current: Cell | null = null;
+    for (let index = actions.length - 1; index >= 0; index -= 1) {
+        const builder = beginCell().storeSlice(actions[index].beginParse());
+        if (current) {
+            builder.storeRef(current);
+        }
+        current = builder.endCell();
+    }
+
+    return current;
+}
+
+export function createRemoveExtensionsRequestBody(queryId: bigint, extensionAddresses: Address[]): Cell {
+    const extraActions = createSnakedExtraActions(extensionAddresses.map((address) => createRemoveExtensionExtraActionBody(address)));
+    if (!extraActions) {
+        throw new Error('At least one extension must be selected');
+    }
+
+    return beginCell()
+        .storeUint(OP_EXTENSION_ACTION_REQUEST, 32)
+        .storeUint(queryId, 64)
+        .storeMaybeRef(null)
+        .storeBit(true)
+        .storeSlice(extraActions.beginParse())
+        .endCell();
+}
+
 export function cellToBase64(cell: Cell): string {
     return cell.toBoc().toString('base64');
 }
@@ -305,19 +342,28 @@ function parseCellFromBase64Boc(value: string): Cell {
     return cells[0];
 }
 
-export function parseAgentWalletStateData(dataCell: Cell): AgentWalletState {
+function extensionHashToAddress(workChain: number, hash: bigint): string {
+    const normalizedHash = hash.toString(16).padStart(64, '0');
+    return new Address(workChain, Buffer.from(normalizedHash, 'hex')).toString();
+}
+
+function parseExtensionAddresses(dataSlice: ReturnType<Cell['beginParse']>, walletAddress: Address): string[] {
+    const extensions = dataSlice.loadDict(Dictionary.Keys.BigUint(256), Dictionary.Values.Bool());
+    return extensions
+        .keys()
+        .map((hash) => extensionHashToAddress(walletAddress.workChain, hash))
+        .sort((left, right) => left.localeCompare(right));
+}
+
+export function parseAgentWalletStateData(dataCell: Cell, walletAddress: Address | string): AgentWalletState {
     const slice = dataCell.beginParse();
+    const parsedWalletAddress = typeof walletAddress === 'string' ? Address.parse(walletAddress) : walletAddress;
 
     const nftItemIndex = slice.loadUintBig(256);
     const collectionAddress = slice.loadAddress();
     const isSignatureAllowed = slice.loadBit();
     const seqno = Number(slice.loadUint(32));
-
-    // extensions dict (HashmapE) is stored inline in storage and encoded as maybe-ref
-    const hasExtensionsDict = slice.loadBit();
-    if (hasExtensionsDict) {
-        slice.loadRef();
-    }
+    const extensions = parseExtensionAddresses(slice, parsedWalletAddress);
 
     const walletDataRef = slice.loadMaybeRef();
     if (!walletDataRef) {
@@ -326,6 +372,7 @@ export function parseAgentWalletStateData(dataCell: Cell): AgentWalletState {
             collectionAddress,
             isSignatureAllowed,
             seqno,
+            extensions,
             ownerAddress: null,
             nftItemContent: null,
             originOperatorPublicKey: 0n,
@@ -347,6 +394,7 @@ export function parseAgentWalletStateData(dataCell: Cell): AgentWalletState {
         collectionAddress,
         isSignatureAllowed,
         seqno,
+        extensions,
         ownerAddress,
         nftItemContent,
         originOperatorPublicKey,
@@ -369,7 +417,7 @@ export async function getAgentWalletState(
         throw new Error(`Account state data is empty for ${walletAddress}`);
     }
 
-    return parseAgentWalletStateData(parseCellFromBase64Boc(state.data));
+    return parseAgentWalletStateData(parseCellFromBase64Boc(state.data), walletAddress);
 }
 
 export function buildRenameAgentTransaction(params: {

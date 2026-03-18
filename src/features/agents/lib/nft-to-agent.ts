@@ -31,6 +31,7 @@ export function nftToAgent(nft: NFT, nftItemContent: Cell | null = null): AgentW
         address: nft.address,
         operatorPubkey: getAttribute(nft, 'operator_pubkey') ?? '',
         originOperatorPublicKey: getAttribute(nft, 'origin_operator_public_key') ?? '',
+        extensions: [],
         ownerAddress: nft.ownerAddress ?? '',
         creationDateTimestamp: null,
         createdAt,

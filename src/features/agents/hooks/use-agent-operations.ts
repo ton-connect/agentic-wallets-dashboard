@@ -17,6 +17,7 @@ import {
     buildRenameAgentTransaction,
     createChangeOperatorBody,
     createExtensionActionRequestBody,
+    createRemoveExtensionsRequestBody,
     createQueryId,
     createWithdrawAllOutActions,
     getAgentWalletState,
@@ -132,6 +133,26 @@ export function useAgentOperations() {
         }
 
         throw new Error('On-chain state is not updated yet. Please refresh in a few seconds');
+    };
+
+    const waitForRemovedExtensions = async (agentAddress: string, removedExtensions: string[]) => {
+        if (!network) {
+            return;
+        }
+
+        const removed = new Set(removedExtensions.map((address) => Address.parse(address).toString()));
+        const client = appKit.networkManager.getClient(network);
+        for (let attempt = 0; attempt < OPERATION_RETRY_ATTEMPTS; attempt += 1) {
+            const state = await getAgentWalletState(client, agentAddress);
+            const current = new Set(state.extensions.map((address) => Address.parse(address).toString()));
+            const allRemoved = [...removed].every((address) => !current.has(address));
+            if (allRemoved) {
+                return;
+            }
+            await delay(OPERATION_RETRY_DELAY_MS);
+        }
+
+        throw new Error('Extension removal transaction sent, but on-chain state is not updated yet. Please refresh shortly.');
     };
 
     const revokeAgentWallet = async (agent: AgentWallet) =>
@@ -265,6 +286,24 @@ export function useAgentOperations() {
             await waitForTransactionConfirmation(tx.normalizedHash);
         });
 
+    const removeAgentExtensions = async (agent: AgentWallet, extensionAddresses: string[]) =>
+        runWithPending(async () => {
+            const selected = Array.from(
+                new Set(extensionAddresses.map((address) => Address.parse(address).toString())),
+            );
+            if (selected.length === 0) {
+                throw new Error('Select at least one extension to delete');
+            }
+
+            const payload = createRemoveExtensionsRequestBody(
+                createQueryId(),
+                selected.map((address) => Address.parse(address)),
+            );
+            const tx = await sendAgentMessage(agent.address, cellToBase64(payload));
+            await waitForTransactionConfirmation(tx.normalizedHash);
+            await waitForRemovedExtensions(agent.address, selected);
+        });
+
     const renameAgentWallet = async (agent: AgentWallet, newName: string) =>
         runWithPending(async () => {
             if (!network) {
@@ -301,6 +340,7 @@ export function useAgentOperations() {
         revokeAgentWallet,
         changeAgentPublicKey,
         withdrawAllFromAgentWallet,
+        removeAgentExtensions,
         renameAgentWallet,
     };
 }

@@ -114,6 +114,7 @@ export function useAgents() {
     type ChainStateEntry = {
         publicKey: bigint;
         originPublicKey: bigint;
+        extensions: AgentWallet['extensions'];
         nftItemContent: AgentWallet['nftItemContent'];
         ownerAddress: string;
         collectionAddress: string;
@@ -157,6 +158,7 @@ export function useAgents() {
                             {
                                 publicKey: state.operatorPublicKey,
                                 originPublicKey: state.originOperatorPublicKey,
+                                extensions: state.extensions,
                                 nftItemContent: state.nftItemContent,
                                 ownerAddress: state.ownerAddress?.toString() ?? nft?.ownerAddress ?? '',
                                 collectionAddress: state.collectionAddress.toString(),
@@ -217,6 +219,7 @@ export function useAgents() {
                 address: nft.address,
                 operatorPubkey: `0x${publicKey.toString(16)}`,
                 originOperatorPublicKey: `0x${originPublicKey.toString(16)}`,
+                extensions: chain?.extensions ?? [],
                 ownerAddress: chain?.ownerAddress ?? nft.ownerAddress ?? '',
                 creationDateTimestamp:
                     creationDateTimestamp != null && Number.isFinite(creationDateTimestamp)
