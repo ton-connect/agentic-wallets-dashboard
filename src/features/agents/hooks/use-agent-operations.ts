@@ -6,7 +6,9 @@
  *
  */
 
+import { getSelectedWallet } from '@ton/appkit';
 import { Address } from '@ton/core';
+import type { Feature, SendTransactionFeature } from '@tonconnect/sdk';
 import { useCallback, useState } from 'react';
 import { useAddress, useAppKit, useNetwork, useSendTransaction } from '@ton/appkit-react';
 import { getJettonWalletAddressFromClient, getJettonsFromClient, getNftsFromClient, parseUnits } from '@ton/walletkit';
@@ -17,6 +19,7 @@ import {
     buildRenameAgentTransaction,
     createChangeOperatorBody,
     createExtensionActionRequestBody,
+    createRemoveExtensionsRequestBody,
     createQueryId,
     createWithdrawAllOutActions,
     getAgentWalletState,
@@ -31,6 +34,8 @@ import { ENV_AGENTIC_OWNER_OP_GAS } from '@/core/configs/env';
 
 const JETTON_WITHDRAW_EXECUTION_COST_NANO = 55_000_000n; // 0.055 TON
 const NFT_WITHDRAW_EXECUTION_COST_NANO = 110_000_000n; // 0.11 TON
+const EXTENSION_REMOVAL_GAS_PER_EXTENSION_NANO = 1_000_000n; // 0.001 TON
+const MAX_EXTENSION_REMOVALS_PER_MESSAGE = 255;
 const OPERATION_RETRY_ATTEMPTS = 40;
 const OPERATION_RETRY_DELAY_MS = 250;
 
@@ -46,6 +51,10 @@ type WithdrawSelection = {
     }>;
 };
 
+type OperatorUpdateOptions = {
+    removeAllExtensions?: boolean;
+};
+
 function delay(ms: number): Promise<void> {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
@@ -58,6 +67,25 @@ function parseGasNano(value: string): bigint {
         throw new Error('VITE_AGENTIC_OWNER_OP_GAS must be a nano amount integer');
     }
     return BigInt(parsed);
+}
+
+function chunkArray<T>(items: T[], chunkSize: number): T[][] {
+    if (chunkSize < 1) {
+        throw new Error('chunkSize must be greater than zero');
+    }
+
+    const chunks: T[][] = [];
+    for (let index = 0; index < items.length; index += chunkSize) {
+        chunks.push(items.slice(index, index + chunkSize));
+    }
+    return chunks;
+}
+
+function getMaxMessagesFromFeatures(features: Feature[] | undefined): number {
+    const sendTransactionFeature = features?.find(
+        (feature): feature is SendTransactionFeature => feature !== 'SendTransaction' && feature.name === 'SendTransaction',
+    );
+    return Math.max(1, sendTransactionFeature?.maxMessages ?? 1);
 }
 
 export function useAgentOperations() {
@@ -78,22 +106,64 @@ export function useAgentOperations() {
         }
     }, []);
 
-    const sendAgentMessage = async (agentAddress: string, payloadB64: string, amountNano: bigint = gasAmount) => {
+    const getOwnerMaxMessagesPerRequest = () => {
+        const selectedWallet = getSelectedWallet(appKit) as
+            | {
+                  tonConnectWallet?: {
+                      device?: {
+                          features?: Feature[];
+                      };
+                  };
+              }
+            | null;
+
+        return getMaxMessagesFromFeatures(selectedWallet?.tonConnectWallet?.device?.features);
+    };
+
+    const sendAgentMessages = async (
+        messages: Array<{ agentAddress: string; payloadB64: string; amountNano?: bigint }>,
+    ) => {
         if (!network) {
             throw new Error('Network is not selected');
         }
 
-        return sendTransaction({
-            network,
-            validUntil: Math.floor(Date.now() / 1000) + 600,
-            messages: [
-                {
-                    address: agentAddress,
-                    amount: amountNano.toString(),
-                    payload: payloadB64,
-                },
-            ],
-        });
+        if (messages.length === 0) {
+            throw new Error('At least one message must be provided');
+        }
+
+        const maxMessagesPerRequest = getOwnerMaxMessagesPerRequest();
+        const requestBatches = chunkArray(messages, maxMessagesPerRequest);
+        const receipts = [];
+
+        for (const batch of requestBatches) {
+            const receipt = await sendTransaction({
+                network,
+                validUntil: Math.floor(Date.now() / 1000) + 600,
+                messages: batch.map((message) => ({
+                    address: message.agentAddress,
+                    amount: (message.amountNano ?? gasAmount).toString(),
+                    payload: message.payloadB64,
+                })),
+            });
+            receipts.push(receipt);
+        }
+
+        return receipts;
+    };
+
+    const sendAgentMessage = async (agentAddress: string, payloadB64: string, amountNano: bigint = gasAmount) => {
+        const [receipt] = await sendAgentMessages([{ agentAddress, payloadB64, amountNano }]);
+        return receipt;
+    };
+
+    const waitForTransactionConfirmations = async (
+        receipts: Array<{
+            normalizedHash: string;
+        }>,
+    ) => {
+        for (const receipt of receipts) {
+            await waitForTransactionConfirmation(receipt.normalizedHash);
+        }
     };
 
     const waitForTransactionConfirmation = async (normalizedHash: string) => {
@@ -134,21 +204,119 @@ export function useAgentOperations() {
         throw new Error('On-chain state is not updated yet. Please refresh in a few seconds');
     };
 
-    const revokeAgentWallet = async (agent: AgentWallet) =>
+    const waitForRemovedExtensions = async (agentAddress: string, removedExtensions: string[]) => {
+        if (!network) {
+            return;
+        }
+
+        const removed = new Set(removedExtensions.map((address) => Address.parse(address).toString()));
+        const client = appKit.networkManager.getClient(network);
+        for (let attempt = 0; attempt < OPERATION_RETRY_ATTEMPTS; attempt += 1) {
+            const state = await getAgentWalletState(client, agentAddress);
+            const current = new Set(state.extensions.map((address) => Address.parse(address).toString()));
+            const allRemoved = [...removed].every((address) => !current.has(address));
+            if (allRemoved) {
+                return;
+            }
+            await delay(OPERATION_RETRY_DELAY_MS);
+        }
+
+        throw new Error('Extension removal transaction sent, but on-chain state is not updated yet. Please refresh shortly.');
+    };
+
+    const normalizeExtensionAddresses = (extensionAddresses: string[]) =>
+        Array.from(new Set(extensionAddresses.map((address) => Address.parse(address).toString())));
+
+    const buildRemoveAgentExtensionMessages = (agent: AgentWallet, extensionAddresses: string[]) => {
+        const selected = normalizeExtensionAddresses(extensionAddresses);
+        if (selected.length === 0) {
+            throw new Error('Select at least one extension to delete');
+        }
+
+        const extensionBatches = chunkArray(selected, MAX_EXTENSION_REMOVALS_PER_MESSAGE);
+        return {
+            selected,
+            messages: extensionBatches.map((batch) => {
+                const payload = createRemoveExtensionsRequestBody(
+                    createQueryId(),
+                    batch.map((address) => Address.parse(address)),
+                );
+
+                return {
+                    agentAddress: agent.address,
+                    payloadB64: cellToBase64(payload),
+                    amountNano: gasAmount + BigInt(batch.length) * EXTENSION_REMOVAL_GAS_PER_EXTENSION_NANO,
+                };
+            }),
+        };
+    };
+
+    const removeAgentExtensionsInternal = async (agent: AgentWallet, extensionAddresses: string[]) => {
+        const { selected, messages } = buildRemoveAgentExtensionMessages(agent, extensionAddresses);
+        const receipts = await sendAgentMessages(messages);
+        await waitForTransactionConfirmations(receipts);
+        await waitForRemovedExtensions(agent.address, selected);
+    };
+
+    const revokeAgentWallet = async (agent: AgentWallet, options?: OperatorUpdateOptions) =>
         runWithPending(async () => {
             const queryId = createQueryId();
             const payload = createChangeOperatorBody(queryId, 0n);
-            await sendAgentMessage(agent.address, cellToBase64(payload));
+            const operationMessages: Array<{ agentAddress: string; payloadB64: string; amountNano?: bigint }> = [
+                { agentAddress: agent.address, payloadB64: cellToBase64(payload) },
+            ];
+            let removedExtensions: string[] = [];
+
+            if (options?.removeAllExtensions && agent.extensions.length > 0) {
+                const maxMessagesPerRequest = getOwnerMaxMessagesPerRequest();
+                if (maxMessagesPerRequest < 2) {
+                    throw new Error(
+                        'Connected wallet supports only 1 message per request. It cannot send revoke and delete extensions in the same confirmation.',
+                    );
+                }
+
+                const removePlan = buildRemoveAgentExtensionMessages(agent, agent.extensions);
+                removedExtensions = removePlan.selected;
+                operationMessages.push(...removePlan.messages);
+            }
+
+            const receipts = await sendAgentMessages(operationMessages);
+            await waitForTransactionConfirmations(receipts);
             await waitForPublicKey(agent.address, 0n);
+            if (removedExtensions.length > 0) {
+                await waitForRemovedExtensions(agent.address, removedExtensions);
+            }
         });
 
-    const changeAgentPublicKey = async (agent: AgentWallet, newPublicKeyInput: string) =>
+    const changeAgentPublicKey = async (agent: AgentWallet, newPublicKeyInput: string, options?: OperatorUpdateOptions) =>
         runWithPending(async () => {
             const newPublicKey = parseUint256PublicKey(newPublicKeyInput);
             const queryId = createQueryId();
             const payload = createChangeOperatorBody(queryId, newPublicKey);
-            await sendAgentMessage(agent.address, cellToBase64(payload));
+            const operationMessages: Array<{ agentAddress: string; payloadB64: string; amountNano?: bigint }> = [
+                { agentAddress: agent.address, payloadB64: cellToBase64(payload) },
+            ];
+            let removedExtensions: string[] = [];
+
+            if (options?.removeAllExtensions && agent.extensions.length > 0) {
+                const maxMessagesPerRequest = getOwnerMaxMessagesPerRequest();
+                if (maxMessagesPerRequest < 2) {
+                    throw new Error(
+                        'Connected wallet supports only 1 message per request. It cannot send change key and delete extensions in the same confirmation.',
+                    );
+                }
+
+                const removePlan = buildRemoveAgentExtensionMessages(agent, agent.extensions);
+                removedExtensions = removePlan.selected;
+                operationMessages.push(...removePlan.messages);
+            }
+
+            const receipts = await sendAgentMessages(operationMessages);
+            await waitForTransactionConfirmations(receipts);
             await waitForPublicKey(agent.address, newPublicKey);
+            if (removedExtensions.length > 0) {
+                await waitForRemovedExtensions(agent.address, removedExtensions);
+            }
         });
 
     const withdrawAllFromAgentWallet = async (agent: AgentWallet, selection?: WithdrawSelection) =>
@@ -265,6 +433,11 @@ export function useAgentOperations() {
             await waitForTransactionConfirmation(tx.normalizedHash);
         });
 
+    const removeAgentExtensions = async (agent: AgentWallet, extensionAddresses: string[]) =>
+        runWithPending(async () => {
+            await removeAgentExtensionsInternal(agent, extensionAddresses);
+        });
+
     const renameAgentWallet = async (agent: AgentWallet, newName: string) =>
         runWithPending(async () => {
             if (!network) {
@@ -301,6 +474,7 @@ export function useAgentOperations() {
         revokeAgentWallet,
         changeAgentPublicKey,
         withdrawAllFromAgentWallet,
+        removeAgentExtensions,
         renameAgentWallet,
     };
 }

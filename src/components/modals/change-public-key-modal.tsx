@@ -25,12 +25,14 @@ export function ChangePublicKeyModal({ agent, initialPublicKey, onClose, onSucce
     const { changeAgentPublicKey, isPending } = useAgentOperations();
     const [publicKey, setPublicKey] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [removeAllExtensions, setRemoveAllExtensions] = useState(false);
 
     useEffect(() => {
         if (!agent) {
             return;
         }
         setPublicKey(initialPublicKey?.trim() || agent.operatorPubkey);
+        setRemoveAllExtensions(false);
     }, [agent, initialPublicKey]);
 
     if (!agent) return null;
@@ -38,6 +40,7 @@ export function ChangePublicKeyModal({ agent, initialPublicKey, onClose, onSucce
     const trimmedPublicKey = publicKey.trim();
     const isChanged = trimmedPublicKey !== agent.operatorPubkey;
     const uiPending = isPending || isSubmitting;
+    const hasExtensions = agent.extensions.length > 0;
 
     const handleSubmit = async () => {
         if (!isChanged) {
@@ -46,11 +49,12 @@ export function ChangePublicKeyModal({ agent, initialPublicKey, onClose, onSucce
 
         try {
             setIsSubmitting(true);
-            await changeAgentPublicKey(agent, trimmedPublicKey);
+            await changeAgentPublicKey(agent, trimmedPublicKey, { removeAllExtensions });
             await onSuccess?.();
             toast.success(`Updated operator public key for ${agent.name}`);
             onClose();
         } catch (error) {
+            await onSuccess?.();
             const message = error instanceof Error ? error.message : 'Failed to update operator public key';
             toast.error(message);
         } finally {
@@ -75,6 +79,20 @@ export function ChangePublicKeyModal({ agent, initialPublicKey, onClose, onSucce
                     Enter a new operator key in hex (`0x...`) or decimal format. You can use this to reactivate a revoked
                     agent.
                 </p>
+
+                {hasExtensions ? (
+                    <label className="flex items-start gap-3 rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-sm text-neutral-300">
+                        <input
+                            type="checkbox"
+                            checked={removeAllExtensions}
+                            onChange={(e) => setRemoveAllExtensions(e.target.checked)}
+                            className="mt-0.5 h-4 w-4 rounded border border-white/[0.12] bg-transparent accent-amber-500"
+                        />
+                        <span className="space-y-1">
+                            <span className="block">Delete all extensions ({agent.extensions.length})</span>
+                        </span>
+                    </label>
+                ) : null}
 
                 <div className="flex gap-3">
                     <button

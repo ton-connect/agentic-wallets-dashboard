@@ -6,7 +6,7 @@
  *
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Modal } from './modal';
@@ -23,18 +23,28 @@ interface RevokeModalProps {
 export function RevokeModal({ agent, onClose, onSuccess }: RevokeModalProps) {
     const { revokeAgentWallet, isPending } = useAgentOperations();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [removeAllExtensions, setRemoveAllExtensions] = useState(false);
+
+    useEffect(() => {
+        if (!agent) {
+            return;
+        }
+        setRemoveAllExtensions(agent.extensions.length > 0);
+    }, [agent]);
 
     if (!agent) return null;
     const uiPending = isPending || isSubmitting;
+    const hasExtensions = agent.extensions.length > 0;
 
     const handleRevoke = async () => {
         try {
             setIsSubmitting(true);
-            await revokeAgentWallet(agent);
+            await revokeAgentWallet(agent, { removeAllExtensions });
             await onSuccess?.();
             toast.success(`Revoked ${agent.name}. Operator key deactivated.`);
             onClose();
         } catch (error) {
+            await onSuccess?.();
             const message = error instanceof Error ? error.message : 'Failed to revoke agent';
             toast.error(message);
         } finally {
@@ -51,6 +61,20 @@ export function RevokeModal({ agent, onClose, onSuccess }: RevokeModalProps) {
                         transactions until you set a new public key.
                     </p>
                 </div>
+
+                {hasExtensions ? (
+                    <label className="flex items-start gap-3 rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-sm text-neutral-300">
+                        <input
+                            type="checkbox"
+                            checked={removeAllExtensions}
+                            onChange={(e) => setRemoveAllExtensions(e.target.checked)}
+                            className="mt-0.5 h-4 w-4 rounded border border-white/[0.12] bg-transparent accent-red-500"
+                        />
+                        <span className="space-y-1">
+                            <span className="block">Delete all extensions ({agent.extensions.length})</span>
+                        </span>
+                    </label>
+                ) : null}
 
                 <p className="text-xs text-neutral-500">
                     You can restore agent access at any time from the agent page by changing the public key.

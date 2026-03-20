@@ -26,6 +26,7 @@ import { RevokeModal } from '@/components/modals/revoke-modal';
 import { RenameModal } from '@/components/modals/rename-modal';
 import { ChangePublicKeyModal } from '@/components/modals/change-public-key-modal';
 import { UnexpectedActivityModal } from '@/components/modals/unexpected-activity-modal';
+import { RemoveExtensionsModal } from '@/components/modals/remove-extensions-modal';
 import { ActivityFeedV2 } from '@/components/dashboard/activity-feed-v2';
 import { getAgentWalletState } from '@/features/agents/lib/agentic-wallet';
 import { extractCreationDateFromMetadata, extractNameFromMetadata } from '@/features/agents/lib/metadata';
@@ -96,7 +97,7 @@ export function AgentDetailPage() {
         (a) => id && (a.id === id || isSameTonAddress(a.id, id) || isSameTonAddress(a.address, id)),
     );
     const network = useNetwork();
-    const { data: fallbackAgent, isLoading: isFallbackAgentLoading } = useQuery({
+    const { data: fallbackAgent, isLoading: isFallbackAgentLoading, refetch: refetchFallbackAgent } = useQuery({
         queryKey: ['agent-detail-fallback', network?.chainId, id],
         enabled: !!network && !!id && !isAgentsLoading && !listedAgent,
         staleTime: 30_000,
@@ -126,6 +127,7 @@ export function AgentDetailPage() {
                 address: id,
                 operatorPubkey: `0x${state.operatorPublicKey.toString(16)}`,
                 originOperatorPublicKey: `0x${state.originOperatorPublicKey.toString(16)}`,
+                extensions: state.extensions,
                 ownerAddress: state.ownerAddress?.toString() ?? '',
                 creationDateTimestamp:
                     creationDateTimestamp != null && Number.isFinite(creationDateTimestamp)
@@ -153,11 +155,13 @@ export function AgentDetailPage() {
     const [showRevoke, setShowRevoke] = useState(false);
     const [showRename, setShowRename] = useState(false);
     const [showChangePublicKey, setShowChangePublicKey] = useState(false);
+    const [showRemoveExtensions, setShowRemoveExtensions] = useState(false);
     const [showUnexpected, setShowUnexpected] = useState(false);
     const [showDeploymentNotice, setShowDeploymentNotice] = useState(false);
     const [deploymentNoticeDismissed, setDeploymentNoticeDismissed] = useState(false);
     const [deploymentNoticeCopied, setDeploymentNoticeCopied] = useState(false);
     const [deepLinkedPublicKey, setDeepLinkedPublicKey] = useState<string | null>(null);
+    const [selectedExtensions, setSelectedExtensions] = useState<string[]>([]);
     const changePublicKeyDeepLink = useMemo(() => parseChangePublicKeyDeepLink(searchParams), [searchParams]);
     const pendingDeploymentNoticeAgentIds = useAgentsStore((s) => s.pendingDeploymentNoticeAgentIds);
     const consumeDeploymentNotice = useAgentsStore((s) => s.consumeDeploymentNotice);
@@ -244,6 +248,15 @@ export function AgentDetailPage() {
         consumeDeploymentNotice(agent.address);
     }, [agent, consumeDeploymentNotice, pendingDeploymentNoticeAgentIds, showDeploymentNotice]);
 
+    useEffect(() => {
+        if (!agent) {
+            setSelectedExtensions([]);
+            return;
+        }
+
+        setSelectedExtensions((current) => current.filter((extension) => agent.extensions.includes(extension)));
+    }, [agent]);
+
     if (!agent) {
         if (isAgentsLoading || isFallbackAgentLoading) {
             return (
@@ -273,11 +286,23 @@ export function AgentDetailPage() {
     });
     const importCommand = `Import wallet ${formatTonAddressForNetwork(agent.address, network?.chainId)}`;
     const shouldShowDeploymentNotice = !deploymentNoticeDismissed && showDeploymentNotice;
+    const hasExtensions = agent.extensions.length > 0;
+    const selectedExtensionCount = selectedExtensions.length;
+    const deleteSelectedExtensionsLabel =
+        selectedExtensionCount > 0
+            ? `Delete selected extensions (${selectedExtensionCount})`
+            : 'Delete selected extensions';
 
     const handleCopyDeploymentNotice = async () => {
         await navigator.clipboard.writeText(importCommand);
         setDeploymentNoticeCopied(true);
         window.setTimeout(() => setDeploymentNoticeCopied(false), 2000);
+    };
+
+    const toggleExtensionSelection = (extension: string) => {
+        setSelectedExtensions((current) =>
+            current.includes(extension) ? current.filter((item) => item !== extension) : [...current, extension],
+        );
     };
 
     return (
@@ -438,6 +463,57 @@ export function AgentDetailPage() {
                 <InfoRow label="Source">{agent.source}</InfoRow>
             </div>
 
+            {hasExtensions && (
+                <div className="mb-8 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 sm:p-6">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                            <p className="text-xs uppercase tracking-wider text-neutral-600">Extensions</p>
+                            <p className="mt-1 text-sm text-neutral-400">
+                                Selected extensions can be removed by the wallet owner.
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setShowRemoveExtensions(true)}
+                            disabled={selectedExtensionCount === 0}
+                            className="rounded-full border border-red-500/25 bg-red-500/10 px-4 py-2 text-sm text-red-300 transition-colors hover:border-red-500/50 hover:bg-red-500/20 hover:text-red-200 disabled:cursor-not-allowed disabled:border-white/[0.08] disabled:bg-white/[0.03] disabled:text-neutral-500"
+                        >
+                            {deleteSelectedExtensionsLabel}
+                        </button>
+                    </div>
+
+                    <div className="mt-4 space-y-2">
+                        {agent.extensions.map((extension, index) => {
+                            const selected = selectedExtensions.includes(extension);
+                            const formattedExtension = formatTonAddressForNetwork(extension, network?.chainId);
+                            return (
+                                <button
+                                    type="button"
+                                    key={extension}
+                                    onClick={() => toggleExtensionSelection(extension)}
+                                    aria-pressed={selected}
+                                    className={`flex w-full items-center gap-2 rounded-xl px-3 py-3 text-left transition-colors ${
+                                        selected
+                                            ? 'border border-amber-500/50 bg-amber-500/[0.08] hover:border-amber-400/60 hover:bg-amber-500/[0.12]'
+                                            : 'border border-white/[0.06] bg-white/[0.03] hover:border-white/[0.1] hover:bg-white/[0.05]'
+                                    }`}
+                                >
+                                    <div className="min-w-0 flex-1">
+                                        <span
+                                            className={`block min-w-0 overflow-hidden text-ellipsis whitespace-nowrap font-mono text-sm ${
+                                                selected ? 'text-amber-100' : 'text-neutral-300'
+                                            }`}
+                                        >
+                                            {`Extension ${index + 1}: ${formattedExtension}`}
+                                        </span>
+                                    </div>
+                                    <InlineCopyButton value={formattedExtension} label={`Copy extension ${index + 1} address`} />
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
             <ActivityFeedV2
                 items={activity}
                 isLoading={isActivityLoading}
@@ -458,6 +534,16 @@ export function AgentDetailPage() {
                 initialPublicKey={deepLinkedPublicKey}
                 onClose={handleCloseChangePublicKey}
                 onSuccess={refresh}
+            />
+            <RemoveExtensionsModal
+                agent={showRemoveExtensions ? agent : null}
+                selectedExtensions={selectedExtensions}
+                onClose={() => setShowRemoveExtensions(false)}
+                onSuccess={async () => {
+                    setShowRemoveExtensions(false);
+                    setSelectedExtensions([]);
+                    await Promise.all([refresh(), refetchFallbackAgent()]);
+                }}
             />
             <UnexpectedActivityModal
                 agent={showUnexpected ? agent : null}
@@ -485,5 +571,30 @@ function InfoRow({ label, children }: { label: string; children: ReactNode }) {
             <span className="text-xs text-neutral-600">{label}</span>
             <div className="min-w-0 text-sm text-neutral-300 sm:ml-6 sm:flex-1 sm:text-right">{children}</div>
         </div>
+    );
+}
+
+function InlineCopyButton({ value, label }: { value: string; label: string }) {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        await navigator.clipboard.writeText(value);
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 1500);
+    };
+
+    return (
+        <button
+            type="button"
+            onClick={(event) => {
+                void handleCopy(event);
+            }}
+            className="shrink-0 rounded-lg border border-white/[0.08] bg-white/[0.04] p-2 text-neutral-400 transition-colors hover:bg-white/[0.08] hover:text-white"
+            aria-label={label}
+            title={label}
+        >
+            {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+        </button>
     );
 }
