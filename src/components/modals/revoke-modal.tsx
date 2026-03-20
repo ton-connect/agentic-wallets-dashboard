@@ -29,7 +29,7 @@ export function RevokeModal({ agent, onClose, onSuccess }: RevokeModalProps) {
         if (!agent) {
             return;
         }
-        setRemoveAllExtensions(false);
+        setRemoveAllExtensions(agent.extensions.length > 0);
     }, [agent]);
 
     if (!agent) return null;
