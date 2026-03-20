@@ -55,7 +55,8 @@ export function RemoveExtensionsModal({ agent, selectedExtensions, onClose, onSu
                 <div className="rounded-xl border border-red-500/10 bg-red-500/[0.04] px-4 py-3">
                     <p className="text-sm leading-relaxed text-red-400/90">
                         This will remove the selected wallet extensions from the agentic wallet. The change is applied
-                        on-chain and takes effect after the transaction is confirmed.
+                        on-chain and takes effect after the transaction is confirmed. Removals are split into batches of up
+                        to 255 extensions per message, and large batches may require several wallet confirmations.
                     </p>
                 </div>
 
