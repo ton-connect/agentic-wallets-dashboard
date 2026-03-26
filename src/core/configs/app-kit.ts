@@ -50,7 +50,7 @@ export const appKit = new AppKit({
     connectors: [
         new TonConnectConnector({
             tonConnectOptions: {
-                manifestUrl: 'https://agentic-wallets-dashboard.vercel.app/tonconnect-manifest.json',
+                manifestUrl: 'https://agents.ton.org/tonconnect-manifest.json',
                 uiPreferences: {
                     theme: THEME.DARK,
                     borderRadius: 's',
