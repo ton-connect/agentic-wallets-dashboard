@@ -13,9 +13,9 @@ function DashboardMockup() {
     return (
         <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02]">
             {/* Notification banner */}
-            <div className="flex flex-wrap items-center gap-2 border-b border-amber-500/10 bg-amber-500/[0.04] px-4 py-2.5">
-                <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
-                <span className="min-w-0 flex-1 text-[10px] text-amber-500/70 [overflow-wrap:anywhere]">
+            <div className="flex flex-wrap items-center gap-2 border-b border-white/10 bg-white/[0.04] px-4 py-2.5">
+                <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-white" />
+                <span className="min-w-0 flex-1 text-[10px] text-white/70 [overflow-wrap:anywhere]">
                     New agent wallet detected — &quot;NFT Sniper&quot;
                 </span>
                 <div className="flex gap-1.5 sm:ml-auto">
@@ -85,7 +85,7 @@ export function LandingForUsers() {
                 <div className="grid items-start gap-8 sm:gap-16 lg:grid-cols-2">
                     <div className="flex flex-col gap-6">
                         <div>
-                            <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">
+                            <p className="mb-2 text-xs font-medium uppercase tracking-widest text-neutral-500">
                                 For Users
                             </p>
                             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
@@ -100,15 +100,15 @@ export function LandingForUsers() {
 
                         <div className="flex flex-col gap-3 text-sm text-neutral-400">
                             <div className="flex items-start gap-3">
-                                <span className="mt-[9px] h-px w-4 shrink-0 bg-amber-500/40" />
+                                <span className="mt-[9px] h-px w-4 shrink-0 bg-white/40" />
                                 Your main wallet is never exposed to agents
                             </div>
                             <div className="flex items-start gap-3">
-                                <span className="mt-[9px] h-px w-4 shrink-0 bg-amber-500/40" />
+                                <span className="mt-[9px] h-px w-4 shrink-0 bg-white/40" />
                                 See every transaction in real time
                             </div>
                             <div className="flex items-start gap-3">
-                                <span className="mt-[9px] h-px w-4 shrink-0 bg-amber-500/40" />
+                                <span className="mt-[9px] h-px w-4 shrink-0 bg-white/40" />
                                 Unexpected activity? Revoke instantly
                             </div>
                         </div>
@@ -116,7 +116,7 @@ export function LandingForUsers() {
                         <div className="pt-2">
                             <Link
                                 to="/dashboard"
-                                className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-medium text-black transition-colors hover:bg-amber-400"
+                                className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-black transition-colors hover:bg-neutral-200"
                             >
                                 Try Dashboard
                                 <ArrowRight size={14} />

@@ -32,7 +32,7 @@ function WalletIllustration() {
             <path d="M140 96 C140 120 140 135 140 152" stroke="white" strokeWidth="1" strokeOpacity="0.3" />
             <path d="M170 96 C170 130 220 130 220 152" stroke="white" strokeWidth="1" strokeOpacity="0.2" />
 
-            <circle r="2" fill="#f59e0b" opacity="0.8">
+            <circle r="2" fill="white" opacity="0.8">
                 <animateMotion dur="3s" repeatCount="indefinite" path="M140 96 C140 120 140 135 140 152" />
             </circle>
             <circle r="1.5" fill="white" opacity="0.4">

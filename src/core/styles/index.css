@@ -4,7 +4,8 @@
     --font-sans: 'Inter', system-ui, 'Avenir', 'Helvetica', 'Arial', sans-serif;
     --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
 
-    --color-surface: #050505;
+    /* TON Design Language — Core palette */
+    --color-surface: #08080A;
     --color-surface-1: rgba(255, 255, 255, 0.03);
     --color-surface-2: rgba(255, 255, 255, 0.05);
     --color-surface-3: rgba(255, 255, 255, 0.07);
@@ -12,7 +13,18 @@
     --color-border: rgba(255, 255, 255, 0.09);
     --color-border-strong: rgba(255, 255, 255, 0.14);
 
-    /* Slightly brighter neutral scale for better text contrast on dark surfaces. */
+    /* TON accent — lime green */
+    --color-accent: #C4FF89;
+    --color-accent-hover: #D4FF9F;
+    --color-accent-muted: #A8E06E;
+    --color-accent-text: #0A1A00;
+
+    /* TON secondary accents */
+    --color-cyan: #4DB8FF;
+    --color-magenta: #FF9FFC;
+    --color-coral: #FFB5AB;
+
+    /* Neutral scale */
     --color-neutral-300: #cdd2da;
     --color-neutral-400: #b0b6bf;
     --color-neutral-500: #939ba5;
@@ -71,7 +83,7 @@ html, body {
 
 .app-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: rgba(245, 158, 11, 0.7) rgba(255, 255, 255, 0.05);
+    scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
 }
 
 .app-scrollbar::-webkit-scrollbar {
@@ -85,12 +97,12 @@ html, body {
 }
 
 .app-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(245, 158, 11, 0.7);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 9999px;
 }
 
 .app-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(251, 191, 36, 0.85);
+    background: rgba(255, 255, 255, 0.35);
 }
 
 .deployment-command-scroll {

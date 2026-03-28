@@ -24,7 +24,7 @@ export function LandingCTA() {
                     <div className="mt-6 flex flex-wrap justify-center gap-4 sm:mt-8">
                         <Link
                             to="/getting-started"
-                            className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-6 py-3 text-sm font-medium text-black transition-colors hover:bg-amber-400"
+                            className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition-colors hover:bg-neutral-200"
                         >
                             Start Building
                             <ArrowRight size={16} />

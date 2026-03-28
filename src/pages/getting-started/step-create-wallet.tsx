@@ -44,7 +44,7 @@ export function StepCreateWallet() {
                 </div>
                 <div className="flex flex-col gap-4 p-5">
                     <div className="flex items-start gap-3">
-                        <span className="mt-0.5 shrink-0 font-mono text-xs font-bold text-amber-500">You</span>
+                        <span className="mt-0.5 shrink-0 font-mono text-xs font-bold text-white">You</span>
                         <span className="text-sm text-neutral-200">Create agentic wallet</span>
                     </div>
                     <div className="flex items-start gap-3">
@@ -54,7 +54,7 @@ export function StepCreateWallet() {
                             <p>Generating operator keys...</p>
                             <p>
                                 Please open this link to deploy the wallet:{' '}
-                                <span className="text-amber-500/70">→ [Dashboard Create Link]</span>
+                                <span className="text-white/50">→ [Dashboard Create Link]</span>
                             </p>
                         </div>
                     </div>
@@ -79,11 +79,11 @@ export function StepCreateWallet() {
 
             {/* Key points */}
             <div className="flex flex-col gap-2">
-                <p className="text-xs font-medium uppercase tracking-widest text-amber-500">Key points</p>
+                <p className="text-xs font-medium uppercase tracking-widest text-neutral-500">Key points</p>
                 <ul className="flex flex-col gap-2">
                     {keyPoints.map((point, i) => (
                         <li key={i} className="flex items-start gap-2.5 text-sm text-neutral-400">
-                            <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-amber-500/50" />
+                            <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-white/40" />
                             {point}
                         </li>
                     ))}

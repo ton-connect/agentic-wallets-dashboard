@@ -35,7 +35,7 @@ export function LandingTrust() {
         <section className="border-b border-white/[0.06] py-24">
             <div className="mx-auto max-w-6xl px-6">
                 <div className="mb-16 text-center">
-                    <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">
+                    <p className="mb-2 text-xs font-medium uppercase tracking-widest text-neutral-500">
                         Trust & Security
                     </p>
                     <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
@@ -53,7 +53,7 @@ export function LandingTrust() {
                             className="overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02]"
                         >
                             <div className="flex items-center gap-3 border-b border-white/[0.06] px-5 py-3">
-                                <span className="flex h-6 w-6 items-center justify-center rounded-md bg-amber-500/10 font-mono text-[10px] font-bold text-amber-500">
+                                <span className="flex h-6 w-6 items-center justify-center rounded-md bg-white/[0.06] font-mono text-[10px] font-bold text-white">
                                     {point.number}
                                 </span>
                                 <span className="text-sm font-semibold text-neutral-200">

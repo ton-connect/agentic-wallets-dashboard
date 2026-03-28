@@ -45,7 +45,7 @@ export function LandingFAQ() {
         <section id="faq" className="border-b border-white/[0.06] py-12 sm:py-24">
             <div className="mx-auto max-w-2xl px-6">
                 <div className="mb-6 text-center sm:mb-12">
-                    <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">
+                    <p className="mb-2 text-xs font-medium uppercase tracking-widest text-neutral-500">
                         FAQ
                     </p>
                     <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Common questions</h2>

@@ -432,7 +432,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                                         <button
                                             type="button"
                                             onClick={() => setOpenSelectorUid((current) => (current === item.uid ? null : item.uid))}
-                                            className="flex w-full items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-left text-sm text-white outline-none transition-colors hover:border-white/[0.15] focus:border-amber-500/50"
+                                            className="flex w-full items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-left text-sm text-white outline-none transition-colors hover:border-white/[0.15] focus:border-white/25"
                                         >
                                             <span className="flex min-w-0 items-center gap-2">
                                                 <AssetIcon asset={asset} />
@@ -476,7 +476,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                                                         setOpenSelectorUid(null);
                                                     }}
                                                     className={`flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm transition-colors hover:bg-white/[0.06] ${
-                                                        item.assetId === 'ton' ? 'text-amber-500' : 'text-white'
+                                                        item.assetId === 'ton' ? 'text-white font-medium' : 'text-white'
                                                     }`}
                                                     disabled={isAssetSelectedInOtherItem('ton', item.uid)}
                                                 >
@@ -512,7 +512,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                                                                     setOpenSelectorUid(null);
                                                                 }}
                                                                 className={`flex w-full items-center justify-between gap-2 px-6 py-2.5 text-left text-sm transition-colors hover:bg-white/[0.06] ${
-                                                                    item.assetId === option.id ? 'text-amber-500' : 'text-white'
+                                                                    item.assetId === option.id ? 'text-white font-medium' : 'text-white'
                                                                 }`}
                                                             >
                                                                 <span className="flex min-w-0 items-center gap-2">
@@ -561,7 +561,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                                                                     setOpenSelectorUid(null);
                                                                 }}
                                                                 className={`flex w-full items-center gap-2 px-6 py-2.5 text-left text-sm transition-colors hover:bg-white/[0.06] ${
-                                                                    item.assetId === option.id ? 'text-amber-500' : 'text-white'
+                                                                    item.assetId === option.id ? 'text-white font-medium' : 'text-white'
                                                                 }`}
                                                             >
                                                                 <AssetIcon asset={option} />
@@ -578,7 +578,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                                                 )}
                                                 {(jettonsLoading || jettonsFetching || nftsLoading || nftsFetching) && assets.length <= 1 && (
                                                     <div className="flex items-center gap-2 px-4 py-2.5 text-xs text-neutral-500">
-                                                        <div className="h-3 w-3 animate-spin rounded-full border border-white/10 border-t-amber-500" />
+                                                        <div className="h-3 w-3 animate-spin rounded-full border border-white/10 border-t-white" />
                                                         Loading assets...
                                                     </div>
                                                 )}
@@ -611,7 +611,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                                                         updateFundingItem(item.uid, { amount: next });
                                                     }}
                                                     placeholder="0.00"
-                                                    className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 pr-16 font-mono text-base text-white placeholder-neutral-700 outline-none transition-colors focus:border-amber-500/50"
+                                                    className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 pr-16 font-mono text-base text-white placeholder-neutral-700 outline-none transition-colors focus:border-white/25"
                                                 />
                                                 <button
                                                     type="button"
@@ -642,9 +642,9 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                     </button>
                 )}
 
-                <div className="flex items-start gap-2 rounded-xl border border-amber-500/10 bg-amber-500/[0.04] px-3 py-2.5">
-                    <AlertTriangle size={14} className="mt-0.5 shrink-0 text-amber-500" />
-                    <p className="text-xs leading-relaxed text-amber-500/80">
+                <div className="flex items-start gap-2 rounded-xl border border-yellow-500/15 bg-yellow-500/[0.05] px-3 py-2.5">
+                    <AlertTriangle size={14} className="mt-0.5 shrink-0 text-yellow-500" />
+                    <p className="text-xs leading-relaxed text-yellow-200/70">
                         The agent can spend all transferred assets. Fund only what you&apos;re comfortable with.
                     </p>
                 </div>
@@ -652,7 +652,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                 <button
                     onClick={() => void handleFund()}
                     disabled={isPending || !canSubmit}
-                    className="w-full rounded-full bg-amber-500 py-3 text-sm font-medium text-black transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="w-full rounded-full bg-white py-3 text-sm font-medium text-black transition-colors hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                     {isPending ? (
                         <span className="inline-flex items-center gap-2">

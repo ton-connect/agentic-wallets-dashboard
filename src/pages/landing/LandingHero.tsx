@@ -27,7 +27,7 @@ function WalletHierarchySVG() {
             <path d="M230 76 C230 120 328 120 328 156" stroke="white" strokeWidth="1" strokeOpacity="0.2" />
 
             {/* Animated dots traveling down paths */}
-            <circle r="2" fill="#f59e0b" opacity="0.8">
+            <circle r="2" fill="white" opacity="0.8">
                 <animateMotion dur="3s" repeatCount="indefinite" path="M200 76 C200 110 200 130 200 156" />
             </circle>
             <circle r="1.5" fill="white" opacity="0.3">
@@ -39,7 +39,7 @@ function WalletHierarchySVG() {
 
             {/* Center wallet — highlighted */}
             <rect x="140" y="156" width="120" height="64" rx="12" stroke="white" strokeWidth="1" />
-            <text x="156" y="174" fill="#f59e0b" fontSize="8" fontWeight="600" fontFamily="system-ui">
+            <text x="156" y="174" fill="#AB98FF" fontSize="8" fontWeight="600" fontFamily="system-ui">
                 AGENT
             </text>
             <text x="200" y="192" textAnchor="middle" fill="white" fontSize="11" fontFamily="system-ui">
@@ -51,7 +51,7 @@ function WalletHierarchySVG() {
 
             {/* Left sub-wallet — dimmer */}
             <rect x="12" y="156" width="120" height="64" rx="12" stroke="white" strokeWidth="1" strokeOpacity="0.25" />
-            <text x="28" y="174" fill="#f59e0b" fontSize="8" fontWeight="600" fontFamily="system-ui" opacity="0.3">
+            <text x="28" y="174" fill="#AB98FF" fontSize="8" fontWeight="600" fontFamily="system-ui" opacity="0.3">
                 AGENT
             </text>
             <text x="72" y="192" textAnchor="middle" fill="white" fontSize="11" fontFamily="system-ui" opacity="0.35">
@@ -63,7 +63,7 @@ function WalletHierarchySVG() {
 
             {/* Right sub-wallet — dimmer */}
             <rect x="268" y="156" width="120" height="64" rx="12" stroke="white" strokeWidth="1" strokeOpacity="0.25" />
-            <text x="284" y="174" fill="#f59e0b" fontSize="8" fontWeight="600" fontFamily="system-ui" opacity="0.3">
+            <text x="284" y="174" fill="#AB98FF" fontSize="8" fontWeight="600" fontFamily="system-ui" opacity="0.3">
                 AGENT
             </text>
             <text x="328" y="192" textAnchor="middle" fill="white" fontSize="11" fontFamily="system-ui" opacity="0.35">
@@ -95,7 +95,7 @@ export function LandingHero() {
             <div className="mx-auto grid max-w-6xl gap-8 px-6 pb-12 pt-12 sm:gap-16 sm:pb-24 sm:pt-20 lg:grid-cols-2 lg:items-center lg:gap-20 lg:pt-32">
                 <div className="flex flex-col gap-8">
                     <div>
-                        <p className="mb-4 text-sm font-medium uppercase tracking-widest text-amber-500">
+                        <p className="mb-4 text-sm font-medium uppercase tracking-widest text-neutral-500">
                             Agentic Wallets on TON
                         </p>
                         <h1 className="text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.5rem]">
@@ -111,7 +111,7 @@ export function LandingHero() {
                     <div className="flex flex-wrap gap-4">
                         <Link
                             to="/getting-started"
-                            className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-6 py-3 text-sm font-medium text-black transition-colors hover:bg-amber-400"
+                            className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition-colors hover:bg-neutral-200"
                         >
                             For Developers
                             <ArrowRight size={16} />
