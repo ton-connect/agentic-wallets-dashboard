@@ -1,0 +1,28 @@
+# Agentic Wallets
+
+> Self-custody wallets for autonomous AI agents on TON. Each agent gets its own isolated on-chain wallet — the agent holds the operator key, the user holds the master key and can fund, withdraw, or revoke access at any time.
+
+## MCP Setup
+
+```bash
+npx skills add ton-connect/kit/packages/mcp
+```
+
+Or add to your MCP client config (Claude Desktop, Cursor, Windsurf):
+
+```json
+{
+  "mcpServers": {
+    "ton": {
+      "command": "npx",
+      "args": ["-y", "@ton/mcp@alpha"]
+    }
+  }
+}
+```
+
+Then ask your agent: **"Create agentic wallet"** and follow the instructions.
+
+## Dashboard
+
+Manage your agent wallets at [agents.ton.org](https://agents.ton.org) — fund, withdraw, revoke, rotate keys.
