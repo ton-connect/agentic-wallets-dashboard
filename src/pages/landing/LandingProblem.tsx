@@ -81,7 +81,7 @@ export function LandingProblem() {
             <div className="mx-auto max-w-6xl px-6">
                 <div className="grid items-center gap-6 sm:gap-12 lg:grid-cols-2 lg:gap-20">
                     <div>
-                        <p className="mb-4 text-xs font-medium uppercase tracking-widest text-amber-500">
+                        <p className="mb-4 text-xs font-medium uppercase tracking-widest text-neutral-500">
                             The Problem
                         </p>
                         <h2 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">

@@ -42,8 +42,8 @@ export function WalletButton({ variant = 'default', fullWidth = false, onConnect
 
     const isHeaderVariant = variant === 'header';
     const disconnectedClassName = isHeaderVariant
-        ? `rounded-full bg-amber-500 px-5 py-2 text-sm font-medium text-black transition-colors hover:bg-amber-400 ${fullWidth ? 'flex w-full items-center justify-center' : ''}`
-        : `rounded-lg bg-amber-500 px-3 py-2 text-xs font-semibold text-black transition-colors hover:bg-amber-400 sm:px-4 sm:text-sm ${fullWidth ? 'flex w-full items-center justify-center' : ''}`;
+        ? `rounded-full bg-white px-5 py-2 text-sm font-medium text-black transition-colors hover:bg-white-200 ${fullWidth ? 'flex w-full items-center justify-center' : ''}`
+        : `rounded-lg bg-white px-3 py-2 text-xs font-semibold text-black transition-colors hover:bg-white-200 sm:px-4 sm:text-sm ${fullWidth ? 'flex w-full items-center justify-center' : ''}`;
     const connectedButtonClassName = isHeaderVariant
         ? `flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-medium transition-colors hover:bg-white/[0.08] sm:gap-2 sm:px-4 ${fullWidth ? 'w-full justify-between' : ''}`
         : `flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-2 text-sm font-medium transition-colors hover:bg-white/[0.08] sm:gap-2 sm:px-3 ${fullWidth ? 'w-full justify-between' : ''}`;
@@ -77,7 +77,7 @@ export function WalletButton({ variant = 'default', fullWidth = false, onConnect
                 onClick={() => setMenuOpen((v) => !v)}
                 className={connectedButtonClassName}
             >
-                <div className="h-5 w-5 rounded-full bg-gradient-to-br from-amber-400 to-amber-600" />
+                <div className="h-5 w-5 rounded-full bg-gradient-to-br from-white/60 to-white/30" />
                 <span className="font-mono text-[11px] sm:text-xs">{formatAddress(formattedAddress)}</span>
                 <svg
                     width="12"

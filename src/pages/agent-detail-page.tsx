@@ -261,7 +261,7 @@ export function AgentDetailPage() {
         if (isAgentsLoading || isFallbackAgentLoading) {
             return (
                 <div className="flex min-h-[50vh] items-center justify-center">
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-white/10 border-t-amber-500" />
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-white/10 border-t-white" />
                 </div>
             );
         }
@@ -269,7 +269,7 @@ export function AgentDetailPage() {
         return (
             <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 animate-fade-in">
                 <p className="text-neutral-500">Agent not found</p>
-                <button onClick={() => navigate('/dashboard')} className="text-sm text-amber-500 hover:text-amber-400">
+                <button onClick={() => navigate('/dashboard')} className="text-sm text-white hover:text-neutral-300">
                     Back to dashboard
                 </button>
             </div>
@@ -377,7 +377,7 @@ export function AgentDetailPage() {
                         <>
                             <button
                                 onClick={() => setShowFund(true)}
-                                className="order-1 w-full rounded-full bg-amber-500 px-6 py-2.5 text-sm font-medium text-black transition-colors hover:bg-amber-400 sm:order-none sm:w-auto"
+                                className="order-1 w-full rounded-full bg-white px-6 py-2.5 text-sm font-medium text-black transition-colors hover:bg-neutral-200 sm:order-none sm:w-auto"
                             >
                                 Fund
                             </button>
@@ -407,12 +407,12 @@ export function AgentDetailPage() {
             <div className="mb-8 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
                 <p className="text-xs uppercase tracking-wider text-neutral-600">Agent Balance</p>
                 <div className="mt-2 flex items-baseline gap-2">
-                    {isZero && <AlertTriangle size={18} className="text-amber-500" />}
+                    {isZero && <AlertTriangle size={18} className="text-white" />}
                     <span className="font-mono text-4xl font-semibold tabular-nums">{balanceStr}</span>
                     <span className="text-lg text-neutral-500">TON</span>
                 </div>
                 {isZero && (
-                    <p className="mt-2 text-xs text-amber-500/70">
+                    <p className="mt-2 text-xs text-neutral-400">
                         This agent is out of funds and can&apos;t execute transactions.
                     </p>
                 )}
