@@ -13,6 +13,7 @@ import { Modal } from './modal';
 
 import type { AgentWallet } from '@/features/agents';
 import { useAgentOperations } from '@/features/agents';
+import { parseUint256PublicKey } from '@/features/agents/lib/public-key';
 
 interface ChangePublicKeyModalProps {
     agent: AgentWallet | null;
@@ -38,7 +39,13 @@ export function ChangePublicKeyModal({ agent, initialPublicKey, onClose, onSucce
     if (!agent) return null;
 
     const trimmedPublicKey = publicKey.trim();
-    const isChanged = trimmedPublicKey !== agent.operatorPubkey;
+    const isChanged = (() => {
+        try {
+            return parseUint256PublicKey(trimmedPublicKey) !== parseUint256PublicKey(agent.operatorPubkey);
+        } catch {
+            return trimmedPublicKey !== agent.operatorPubkey;
+        }
+    })();
     const uiPending = isPending || isSubmitting;
     const hasExtensions = agent.extensions.length > 0;
 

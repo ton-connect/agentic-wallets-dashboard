@@ -1340,7 +1340,7 @@ packages:
     resolution: {integrity: sha512-/A6CYGgA/H36OZ9BbTaGerKtzWp50rg67ZCH2oIjV1NcrBaCK9Z343M+CxedvM7Haf3f/Ee9EhxyeTp0GKMUpA==}
 
   '@ton/walletkit@file:vendor/ton-walletkit-0.0.9.tgz':
-    resolution: {integrity: sha512-i7uNX13/D/CpnpzCh2qlIhAZJjNu07S3phxcxIGHr2fFUQ1/ypbqUYaEtjCjR0G6WcXpo8OrAdKH6iXM3sJXLw==, tarball: file:vendor/ton-walletkit-0.0.9.tgz}
+    resolution: {integrity: sha512-e+iOu6gqtfsouCXCoYFhenpV2g2Y7+Ms+NGRTXOeyBiZ/AVlYEprE/0gTK193ZoSTfP7Dp8FxQ/AGivUG5oFgw==, tarball: file:vendor/ton-walletkit-0.0.9.tgz}
     version: 0.0.9
     peerDependencies:
       '@ton/core': ^0.62.0 || ^0.63.0

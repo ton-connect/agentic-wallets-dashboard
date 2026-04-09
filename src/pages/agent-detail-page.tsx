@@ -30,9 +30,9 @@ import { RemoveExtensionsModal } from '@/components/modals/remove-extensions-mod
 import { ActivityFeedV2 } from '@/components/dashboard/activity-feed-v2';
 import { getAgentWalletState } from '@/features/agents/lib/agentic-wallet';
 import { extractCreationDateFromMetadata, extractNameFromMetadata } from '@/features/agents/lib/metadata';
-import { formatTonAddressForNetwork, isSameTonAddress } from '@/features/agents/lib/address';
-import { parseUint256PublicKey } from '@/features/agents/lib/public-key';
-import { formatUiAmountFixed } from '@/features/agents/lib/amount';
+import { formatTonAddressForNetwork, isSameTonAddress, normalizeTonAddress } from '@/features/agents/lib/address';
+import { formatUint256PublicKey, parseUint256PublicKey } from '@/features/agents/lib/public-key';
+import { formatUiAmountFixed, formatUnitsFixed } from '@/features/agents/lib/amount';
 
 const CHANGE_PUBLIC_KEY_PARAM_KEYS = [
     'nextOperatorPublicKey',
@@ -91,7 +91,7 @@ export function AgentDetailPage() {
     const [searchParams, setSearchParams] = useSearchParams();
     const appKit = useAppKit();
     const markKnown = useAgentsStore((s) => s.markKnown);
-    const { agents, refresh, isLoading: isAgentsLoading } = useAgents();
+    const { agents, refresh, isLoading: isAgentsLoading, balancesByAddress } = useAgents();
     const { revokeAgentWallet, isPending: isAgentOperationPending } = useAgentOperations();
     const listedAgent = agents.find(
         (a) => id && (a.id === id || isSameTonAddress(a.id, id) || isSameTonAddress(a.address, id)),
@@ -125,8 +125,8 @@ export function AgentDetailPage() {
                 id,
                 name,
                 address: id,
-                operatorPubkey: `0x${state.operatorPublicKey.toString(16)}`,
-                originOperatorPublicKey: `0x${state.originOperatorPublicKey.toString(16)}`,
+                operatorPubkey: formatUint256PublicKey(state.operatorPublicKey),
+                originOperatorPublicKey: formatUint256PublicKey(state.originOperatorPublicKey),
                 extensions: state.extensions,
                 ownerAddress: state.ownerAddress?.toString() ?? '',
                 creationDateTimestamp:
@@ -144,7 +144,13 @@ export function AgentDetailPage() {
         },
     });
     const agent = listedAgent ?? fallbackAgent ?? null;
-    const { data: balance } = useBalanceByAddress({ address: agent?.address ?? '', network });
+    const { data: fallbackBalance } = useBalanceByAddress({
+        address: id ?? '',
+        network,
+        query: {
+            enabled: !!network && !!id && !listedAgent,
+        },
+    });
     const { data: activity, isLoading: isActivityLoading } = useAgentActivity(
         agent?.address ?? null,
         agent?.ownerAddress ?? null,
@@ -276,8 +282,23 @@ export function AgentDetailPage() {
         );
     }
 
-    const balanceStr = balance != null ? formatUiAmountFixed(balance, 2) : '—';
-    const isZero = balance != null && parseFloat(balance) === 0;
+    const normalizedAgentAddress = normalizeTonAddress(agent.address);
+    const listedBalanceNano =
+        (normalizedAgentAddress ? balancesByAddress[normalizedAgentAddress] : undefined) ?? balancesByAddress[agent.address];
+    const balanceStr =
+        listedBalanceNano != null
+            ? formatUnitsFixed(listedBalanceNano, 9, 2)
+            : fallbackBalance != null
+              ? formatUiAmountFixed(fallbackBalance, 2)
+              : '—';
+    const balanceValue = agent.isPendingIndexing
+        ? null
+        : listedBalanceNano != null
+          ? Number(balanceStr)
+          : fallbackBalance != null
+            ? parseFloat(fallbackBalance)
+            : null;
+    const isZero = balanceValue != null && balanceValue < 0.01;
     const isRevoked = agent.status === 'revoked';
     const createdDate = new Date(agent.createdAt).toLocaleDateString('en-US', {
         year: 'numeric',

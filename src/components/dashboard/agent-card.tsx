@@ -6,9 +6,9 @@
  *
  */
 
-import { Link } from 'react-router-dom';
+import type { KeyboardEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useNetwork } from '@ton/appkit-react';
-import { AlertTriangle } from 'lucide-react';
 
 import type { AgentWallet } from '@/features/agents';
 import { StatusDot } from '@/components/shared/status-dot';
@@ -28,13 +28,33 @@ interface AgentCardProps {
 
 export function AgentCard({ agent, balanceNano, onFund, onWithdraw, onRevoke }: AgentCardProps) {
     const network = useNetwork();
+    const navigate = useNavigate();
     const balanceStr = balanceNano != null ? formatUnitsFixed(balanceNano, 9, 2) : '—';
-    const isZero = balanceNano === 0n;
     const isRevoked = agent.status === 'revoked';
+    const agentDetailHref = `/agent/${agent.id}`;
+
+    const handleOpenAgent = () => {
+        navigate(agentDetailHref);
+    };
+
+    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.key !== 'Enter' && event.key !== ' ') {
+            return;
+        }
+
+        event.preventDefault();
+        handleOpenAgent();
+    };
 
     return (
         <div className="group flex h-full flex-col rounded-2xl border border-white/[0.06] bg-white/[0.02] transition-all duration-200 hover:border-[#0098EA]/20 hover:bg-[#0098EA]/[0.02] hover:shadow-[0_0_0_1px_rgba(0,152,234,0.08),0_8px_32px_rgba(0,0,0,0.25)] animate-slide-up">
-            <Link to={`/agent/${agent.id}`} className="block flex-1 p-5">
+            <div
+                role="link"
+                tabIndex={0}
+                onClick={handleOpenAgent}
+                onKeyDown={handleKeyDown}
+                className="block flex-1 cursor-pointer p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0098EA]/50"
+            >
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                         <StatusDot status={agent.status} />
@@ -45,10 +65,8 @@ export function AgentCard({ agent, balanceNano, onFund, onWithdraw, onRevoke }: 
                     </div>
                     <div className="text-right">
                         <div className="flex items-center gap-1.5">
-                            {isZero && <AlertTriangle size={12} className="text-amber-500" />}
                             <span className="font-mono text-sm tabular-nums">{balanceStr} TON</span>
                         </div>
-                        {isZero && <p className="mt-0.5 text-[10px] text-amber-500/70">Out of funds</p>}
                     </div>
                 </div>
                 <div className="mt-2.5">
@@ -57,7 +75,7 @@ export function AgentCard({ agent, balanceNano, onFund, onWithdraw, onRevoke }: 
                 <div className="mt-1.5">
                     <NftBalances address={agent.address} compact network={network} />
                 </div>
-            </Link>
+            </div>
 
             {!isRevoked && (
                 <div className="flex items-center gap-2 border-t border-white/[0.04] px-5 py-3">

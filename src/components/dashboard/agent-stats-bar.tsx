@@ -10,7 +10,6 @@ import { Link } from 'react-router-dom';
 
 import type { AgentWallet } from '@/features/agents';
 import { formatUiAmountFixed } from '@/features/agents/lib/amount';
-import { Button } from '@/components/ui';
 
 export function AgentStatsBar({ agents, totalBalanceTon }: { agents: AgentWallet[]; totalBalanceTon: string }) {
     const activeAgents = agents.filter((a) => a.status === 'active');
