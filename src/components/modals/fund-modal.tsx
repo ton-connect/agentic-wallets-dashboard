@@ -432,7 +432,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                                         <button
                                             type="button"
                                             onClick={() => setOpenSelectorUid((current) => (current === item.uid ? null : item.uid))}
-                                            className="flex w-full items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-left text-sm text-white outline-none transition-colors hover:border-white/[0.15] focus:border-amber-500/50"
+                                            className="flex w-full items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-left text-sm text-white outline-none transition-colors hover:border-white/[0.15] focus:border-[#0098EA]/40"
                                         >
                                             <span className="flex min-w-0 items-center gap-2">
                                                 <AssetIcon asset={asset} />
@@ -476,7 +476,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                                                         setOpenSelectorUid(null);
                                                     }}
                                                     className={`flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm transition-colors hover:bg-white/[0.06] ${
-                                                        item.assetId === 'ton' ? 'text-amber-500' : 'text-white'
+                                                        item.assetId === 'ton' ? 'text-[#0098EA]' : 'text-white'
                                                     }`}
                                                     disabled={isAssetSelectedInOtherItem('ton', item.uid)}
                                                 >
@@ -512,7 +512,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                                                                     setOpenSelectorUid(null);
                                                                 }}
                                                                 className={`flex w-full items-center justify-between gap-2 px-6 py-2.5 text-left text-sm transition-colors hover:bg-white/[0.06] ${
-                                                                    item.assetId === option.id ? 'text-amber-500' : 'text-white'
+                                                                    item.assetId === option.id ? 'text-[#0098EA]' : 'text-white'
                                                                 }`}
                                                             >
                                                                 <span className="flex min-w-0 items-center gap-2">
@@ -561,7 +561,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                                                                     setOpenSelectorUid(null);
                                                                 }}
                                                                 className={`flex w-full items-center gap-2 px-6 py-2.5 text-left text-sm transition-colors hover:bg-white/[0.06] ${
-                                                                    item.assetId === option.id ? 'text-amber-500' : 'text-white'
+                                                                    item.assetId === option.id ? 'text-[#0098EA]' : 'text-white'
                                                                 }`}
                                                             >
                                                                 <AssetIcon asset={option} />
@@ -578,7 +578,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                                                 )}
                                                 {(jettonsLoading || jettonsFetching || nftsLoading || nftsFetching) && assets.length <= 1 && (
                                                     <div className="flex items-center gap-2 px-4 py-2.5 text-xs text-neutral-500">
-                                                        <div className="h-3 w-3 animate-spin rounded-full border border-white/10 border-t-amber-500" />
+                                                        <div className="h-3 w-3 animate-spin rounded-full border border-white/10 border-t-[#0098EA]" />
                                                         Loading assets...
                                                     </div>
                                                 )}
@@ -611,7 +611,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                                                         updateFundingItem(item.uid, { amount: next });
                                                     }}
                                                     placeholder="0.00"
-                                                    className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 pr-16 font-mono text-base text-white placeholder-neutral-700 outline-none transition-colors focus:border-amber-500/50"
+                                                    className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 pr-16 font-mono text-base text-white placeholder-neutral-700 outline-none transition-colors focus:border-[#0098EA]/40"
                                                 />
                                                 <button
                                                     type="button"
@@ -652,7 +652,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                 <button
                     onClick={() => void handleFund()}
                     disabled={isPending || !canSubmit}
-                    className="w-full rounded-full bg-amber-500 py-3 text-sm font-medium text-black transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="w-full rounded-full bg-[#0098EA] py-3 text-sm font-medium text-white shadow-[0_0_16px_rgba(0,152,234,0.3)] transition-all hover:bg-[#22A9F0] hover:shadow-[0_0_20px_rgba(0,152,234,0.4)] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                     {isPending ? (
                         <span className="inline-flex items-center gap-2">
