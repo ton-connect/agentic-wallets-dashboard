@@ -95,9 +95,6 @@ export function SiteHeader() {
             ref={headerRef}
             className="sticky top-0 z-50 isolate border-b border-white/[0.06] bg-[#06090E]/85 backdrop-blur-md"
         >
-            {/* Subtle top accent line */}
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#0098EA]/40 to-transparent" />
-
             <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
                 <Link to="/dashboard" className="flex items-center gap-2.5 text-[15px] font-semibold tracking-tight">
                     <AgentLogo />
