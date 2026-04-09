@@ -11,8 +11,7 @@ import { Link } from 'react-router-dom';
 import type { AgentWallet } from '@/features/agents';
 import { formatUiAmountFixed } from '@/features/agents/lib/amount';
 
-export function AgentStatsBar({ agents, totalBalanceTon }: { agents: AgentWallet[]; totalBalanceTon: string }) {
-    const activeAgents = agents.filter((a) => a.status === 'active');
+export function AgentStatsBar({ agents, activeAgents, totalBalanceTon }: { agents: AgentWallet[]; activeAgents: AgentWallet[]; totalBalanceTon: string }) {
     const revokedCount = agents.length - activeAgents.length;
 
     return (

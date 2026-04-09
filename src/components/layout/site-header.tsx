@@ -72,23 +72,18 @@ export function SiteHeader() {
         syncHeaderHeight();
         const resizeObserver = new ResizeObserver(syncHeaderHeight);
         resizeObserver.observe(header);
-        window.addEventListener('resize', syncHeaderHeight);
 
         return () => {
             resizeObserver.disconnect();
-            window.removeEventListener('resize', syncHeaderHeight);
         };
     }, []);
 
-    const activeHref = (() => {
-        if (pathname === '/dashboard' || pathname.startsWith('/agent/') || pathname === '/create') {
-            return '/dashboard';
-        }
-        if (pathname === '/getting-started') {
-            return '/getting-started';
-        }
-        return null;
-    })();
+    const activeHref =
+        pathname === '/dashboard' || pathname.startsWith('/agent/') || pathname === '/create'
+            ? '/dashboard'
+            : pathname === '/getting-started'
+              ? '/getting-started'
+              : null;
 
     return (
         <header
@@ -99,8 +94,7 @@ export function SiteHeader() {
                 <Link to="/dashboard" className="flex items-center gap-2.5 text-[15px] font-semibold tracking-tight">
                     <AgentLogo />
                     <span className="hidden md:inline">Agentic Wallets</span>
-                    <AlphaBadge className="md:hidden" />
-                    <AlphaBadge className="hidden md:inline-flex" />
+                    <AlphaBadge />
                 </Link>
 
                 <nav className="hidden items-center gap-7 md:flex">

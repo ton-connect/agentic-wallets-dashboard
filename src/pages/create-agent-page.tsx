@@ -26,8 +26,6 @@ import { ArrowLeft, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import {
-    ENV_AGENTIC_COLLECTION_MAINNET,
-    ENV_AGENTIC_COLLECTION_TESTNET,
     ENV_AGENTIC_WALLET_CODE_BOC,
 } from '@/core/configs/env';
 import {
@@ -47,27 +45,13 @@ import { isEligibleFundingNft } from '@/features/agents/lib/nft-trust';
 import { formatUint256PublicKey, parseUint256PublicKey } from '@/features/agents/lib/public-key';
 import { formatUnitsTrimmed, parseUiAmountToUnits, tryParseUiAmountToUnits } from '@/features/agents/lib/amount';
 import { isSameTonAddress } from '@/features/agents/lib/address';
+import { delay } from '@/features/agents/lib/async';
+import { getCollectionAddressForNetwork } from '@/features/agents/hooks/use-agents';
 
 const DEPLOY_BASE_NANO = toNano('0.05');
 const PER_ASSET_RESERVE_NANO = toNano('0.06');
 const AGENT_DEPLOYMENT_RETRY_ATTEMPTS = 40;
 const AGENT_DEPLOYMENT_RETRY_DELAY_MS = 250;
-
-function delay(ms: number): Promise<void> {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-}
-
-function collectionAddressByChain(chainId: string | undefined): string {
-    if (chainId === '-239') {
-        return ENV_AGENTIC_COLLECTION_MAINNET;
-    }
-    if (chainId === '-3') {
-        return ENV_AGENTIC_COLLECTION_TESTNET;
-    }
-    return '';
-}
 
 type DepositAssetKind = 'jetton' | 'nft';
 
@@ -440,7 +424,7 @@ export function CreateAgentPage() {
     const isDeepLinkAssetsAppliedRef = useRef(false);
     const deepLinkPayload = useMemo(() => parseCreateDeepLink(searchParams), [searchParams]);
 
-    const collectionAddress = useMemo(() => collectionAddressByChain(network?.chainId), [network?.chainId]);
+    const collectionAddress = useMemo(() => getCollectionAddressForNetwork(network?.chainId), [network?.chainId]);
     const walletFeatures = (
         wallet as unknown as { tonConnectWallet?: { device?: { features?: unknown[] } } } | null
     )?.tonConnectWallet?.device?.features;

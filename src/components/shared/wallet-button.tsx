@@ -42,13 +42,15 @@ export function WalletButton({ variant = 'default', fullWidth = false, onConnect
 
     const isHeaderVariant = variant === 'header';
 
-    const connectClass = isHeaderVariant
-        ? `rounded-full bg-[#0098EA] px-5 py-2 text-sm font-medium text-white shadow-[0_0_14px_rgba(0,152,234,0.25)] transition-all hover:bg-[#22A9F0] hover:shadow-[0_0_18px_rgba(0,152,234,0.4)] ${fullWidth ? 'flex w-full items-center justify-center' : ''}`
-        : `rounded-full bg-[#0098EA] px-5 py-2.5 text-sm font-medium text-white shadow-[0_0_16px_rgba(0,152,234,0.3)] transition-all hover:bg-[#22A9F0] hover:shadow-[0_0_20px_rgba(0,152,234,0.45)] ${fullWidth ? 'flex w-full items-center justify-center' : ''}`;
+    const connectClass = `rounded-full bg-[#0098EA] px-5 text-sm font-medium text-white transition-all hover:bg-[#22A9F0] ${
+        isHeaderVariant
+            ? 'py-2 shadow-[0_0_14px_rgba(0,152,234,0.25)] hover:shadow-[0_0_18px_rgba(0,152,234,0.4)]'
+            : 'py-2.5 shadow-[0_0_16px_rgba(0,152,234,0.3)] hover:shadow-[0_0_20px_rgba(0,152,234,0.45)]'
+    } ${fullWidth ? 'flex w-full items-center justify-center' : ''}`;
 
-    const connectedClass = isHeaderVariant
-        ? `flex items-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.04] px-3 py-2 text-sm font-medium transition-colors hover:bg-white/[0.08] sm:px-4 ${fullWidth ? 'w-full justify-between' : ''}`
-        : `flex items-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.04] px-3 py-2 text-sm font-medium transition-colors hover:bg-white/[0.08] sm:px-3.5 ${fullWidth ? 'w-full justify-between' : ''}`;
+    const connectedClass = `flex items-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.04] px-3 py-2 text-sm font-medium transition-colors hover:bg-white/[0.08] ${
+        isHeaderVariant ? 'sm:px-4' : 'sm:px-3.5'
+    } ${fullWidth ? 'w-full justify-between' : ''}`;
 
     if (!address) {
         return (

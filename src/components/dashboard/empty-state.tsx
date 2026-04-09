@@ -102,7 +102,7 @@ export function EmptyState() {
                     </Step>
                 </div>
                 <div className="mt-5 border-t border-white/[0.04] pt-4 text-center">
-                    <a href="/" className="text-xs text-neutral-600 transition-colors hover:text-white">
+                    <a href="https://ton.org/dev/agentkit" className="text-xs text-neutral-600 transition-colors hover:text-white">
                         Learn more →
                     </a>
                 </div>

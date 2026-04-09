@@ -59,7 +59,7 @@ export function DashboardPage() {
                 return aHasCreationDate ? -1 : 1;
             }
             if (aHasCreationDate && bHasCreationDate && a.creationDateTimestamp !== b.creationDateTimestamp) {
-                return (b.creationDateTimestamp ?? 0) - (a.creationDateTimestamp ?? 0);
+                return b.creationDateTimestamp! - a.creationDateTimestamp!;
             }
             if (a.status !== b.status) {
                 return a.status === 'active' ? -1 : 1;
@@ -105,7 +105,7 @@ export function DashboardPage() {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            <AgentStatsBar agents={agents} totalBalanceTon={totalBalanceTon} />
+            <AgentStatsBar agents={agents} activeAgents={activeAgents} totalBalanceTon={totalBalanceTon} />
 
             <NotificationBanner
                 agents={newAgents}

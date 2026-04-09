@@ -24,7 +24,7 @@ export function NotificationBanner({ agents, onView, onRevoke, onMarkAllKnown }:
             {agents.length > 1 && (
                 <div className="flex items-center justify-between rounded-xl border border-[#0098EA]/15 bg-[#0098EA]/[0.04] px-4 py-2.5">
                     <span className="text-xs text-[#0098EA]/80">
-                        {agents.length} new agent wallet{agents.length > 1 ? 's' : ''} detected
+                        {agents.length} new agent wallets detected
                     </span>
                     <button
                         onClick={onMarkAllKnown}

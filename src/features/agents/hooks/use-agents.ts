@@ -20,7 +20,7 @@ import { isSameTonAddress, normalizeTonAddress } from '../lib/address';
 import { mapWithConcurrency } from '../lib/async';
 import { formatUint256PublicKey } from '../lib/public-key';
 
-function getCollectionAddressForNetwork(chainId: string | undefined): string {
+export function getCollectionAddressForNetwork(chainId: string | undefined): string {
     if (chainId === '-239') {
         return ENV_AGENTIC_COLLECTION_MAINNET;
     }
@@ -40,7 +40,7 @@ function parseBigint(value: string | undefined): bigint | null {
         return null;
     }
     try {
-        return value.startsWith('0x') || value.startsWith('0X') ? BigInt(value) : BigInt(value);
+        return BigInt(value);
     } catch {
         return null;
     }
@@ -206,39 +206,40 @@ export function useAgents() {
         },
     });
 
-    const collectionNfts = useMemo(() => nftsResponse?.nfts ?? [], [nftsResponse]);
-
     useEffect(() => {
         if (knownAgentIds.length > 0) {
             return;
         }
 
-        const initialIds = collectionNfts.map((nft) => nft.address);
+        const initialIds = chainStateCandidates.map((nft) => nft.address);
         if (initialIds.length === 0) {
             return;
         }
 
         // Build initial baseline silently: no "new" notifications for the first discovered set.
         markManyKnown(initialIds);
-    }, [knownAgentIds.length, collectionNfts, markManyKnown]);
+    }, [knownAgentIds.length, chainStateCandidates, markManyKnown]);
 
     useEffect(() => {
-        if (!chainId || pendingAgentsForOwner.length === 0 || collectionNfts.length === 0) {
+        if (!chainId || pendingAgentsForOwner.length === 0 || chainStateCandidates.length === 0) {
             return;
         }
 
-        const indexedAddresses = collectionNfts.map((nft) => nft.address);
+        const indexedAddressSet = new Set(
+            chainStateCandidates.map((nft) => normalizeTonAddress(nft.address) ?? nft.address),
+        );
         for (const agent of pendingAgentsForOwner) {
-            if (indexedAddresses.some((address) => isSameTonAddress(address, agent.address))) {
+            if (indexedAddressSet.has(normalizeTonAddress(agent.address) ?? agent.address)) {
                 removePendingAgent(agent.id, chainId);
             }
         }
-    }, [chainId, collectionNfts, pendingAgentsForOwner, removePendingAgent]);
+    }, [chainId, chainStateCandidates, pendingAgentsForOwner, removePendingAgent]);
 
     const agents = useMemo(() => {
         const hasKnownBaseline = knownAgentIds.length > 0;
+        const knownAgentIdSet = new Set(knownAgentIds);
 
-        const indexedAgents = collectionNfts.map((nft): AgentWallet => {
+        const indexedAgents = chainStateCandidates.map((nft): AgentWallet => {
             const chain = chainState?.[nft.address];
             const onchainName = chain ? extractNameFromMetadata(chain.nftItemContent) : null;
             const onchainCreatedAt = chain ? extractCreationDateFromMetadata(chain.nftItemContent) : null;
@@ -247,7 +248,7 @@ export function useAgents() {
 
             const source = getAttribute(nft, 'source') ?? nft.info?.description ?? nft.collection?.name ?? 'Unknown';
             const createdAt = onchainCreatedAt ?? getAttribute(nft, 'created_at') ?? new Date().toISOString();
-            const isNew = hasKnownBaseline && !knownAgentIds.includes(nft.address);
+            const isNew = hasKnownBaseline && !knownAgentIdSet.has(nft.address);
 
             const fallbackPublicKey = parseBigint(getAttribute(nft, 'operator_pubkey')) ?? 0n;
             const fallbackOriginPublicKey =
@@ -278,16 +279,13 @@ export function useAgents() {
                 nftItemContent: chain?.nftItemContent ?? null,
             };
         });
-        const mergedAgents = [...indexedAgents];
-        for (const pendingAgent of pendingAgentsForOwner) {
-            if (indexedAgents.some((indexedAgent) => isSameTonAddress(indexedAgent.address, pendingAgent.address))) {
-                continue;
-            }
-            mergedAgents.push(pendingAgent);
-        }
 
-        return mergedAgents;
-    }, [collectionNfts, chainState, knownAgentIds, pendingAgentsForOwner]);
+        const indexedAddressSet = new Set(indexedAgents.map((a) => normalizeTonAddress(a.address) ?? a.address));
+        return [
+            ...indexedAgents,
+            ...pendingAgentsForOwner.filter((p) => !indexedAddressSet.has(normalizeTonAddress(p.address) ?? p.address)),
+        ];
+    }, [chainStateCandidates, chainState, knownAgentIds, pendingAgentsForOwner]);
 
     const activeAgents = useMemo(() => agents.filter((a) => a.status === 'active'), [agents]);
     const revokedAgents = useMemo(() => agents.filter((a) => a.status === 'revoked'), [agents]);
