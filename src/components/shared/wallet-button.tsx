@@ -41,12 +41,16 @@ export function WalletButton({ variant = 'default', fullWidth = false, onConnect
     }, []);
 
     const isHeaderVariant = variant === 'header';
-    const disconnectedClassName = isHeaderVariant
-        ? `rounded-full bg-amber-500 px-5 py-2 text-sm font-medium text-black transition-colors hover:bg-amber-400 ${fullWidth ? 'flex w-full items-center justify-center' : ''}`
-        : `rounded-lg bg-amber-500 px-3 py-2 text-xs font-semibold text-black transition-colors hover:bg-amber-400 sm:px-4 sm:text-sm ${fullWidth ? 'flex w-full items-center justify-center' : ''}`;
-    const connectedButtonClassName = isHeaderVariant
-        ? `flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-medium transition-colors hover:bg-white/[0.08] sm:gap-2 sm:px-4 ${fullWidth ? 'w-full justify-between' : ''}`
-        : `flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-2 text-sm font-medium transition-colors hover:bg-white/[0.08] sm:gap-2 sm:px-3 ${fullWidth ? 'w-full justify-between' : ''}`;
+
+    const connectClass = `rounded-full bg-[#0098EA] px-5 text-sm font-medium text-white transition-all hover:bg-[#22A9F0] ${
+        isHeaderVariant
+            ? 'py-2 shadow-[0_0_14px_rgba(0,152,234,0.25)] hover:shadow-[0_0_18px_rgba(0,152,234,0.4)]'
+            : 'py-2.5 shadow-[0_0_16px_rgba(0,152,234,0.3)] hover:shadow-[0_0_20px_rgba(0,152,234,0.45)]'
+    } ${fullWidth ? 'flex w-full items-center justify-center' : ''}`;
+
+    const connectedClass = `flex items-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.04] px-3 py-2 text-sm font-medium transition-colors hover:bg-white/[0.08] ${
+        isHeaderVariant ? 'sm:px-4' : 'sm:px-3.5'
+    } ${fullWidth ? 'w-full justify-between' : ''}`;
 
     if (!address) {
         return (
@@ -55,10 +59,9 @@ export function WalletButton({ variant = 'default', fullWidth = false, onConnect
                     connect({ connectorId: TONCONNECT_DEFAULT_CONNECTOR_ID });
                     onConnect?.();
                 }}
-                className={disconnectedClassName}
+                className={connectClass}
             >
-                <span className={isHeaderVariant ? '' : 'sm:hidden'}>Connect Wallet</span>
-                {!isHeaderVariant && <span className="hidden sm:inline">Connect Wallet</span>}
+                Connect Wallet
             </button>
         );
     }
@@ -75,10 +78,11 @@ export function WalletButton({ variant = 'default', fullWidth = false, onConnect
         <div ref={ref} className="relative">
             <button
                 onClick={() => setMenuOpen((v) => !v)}
-                className={connectedButtonClassName}
+                className={connectedClass}
             >
-                <div className="h-5 w-5 rounded-full bg-gradient-to-br from-amber-400 to-amber-600" />
-                <span className="font-mono text-[11px] sm:text-xs">{formatAddress(formattedAddress)}</span>
+                {/* TON-blue gradient avatar */}
+                <div className="h-5 w-5 rounded-full bg-gradient-to-br from-[#0098EA] to-[#005FA8]" />
+                <span className="font-mono text-xs">{formatAddress(formattedAddress)}</span>
                 <svg
                     width="12"
                     height="12"
@@ -91,46 +95,58 @@ export function WalletButton({ variant = 'default', fullWidth = false, onConnect
             </button>
 
             {menuOpen && (
-                <div className="absolute right-0 top-full z-50 mt-2 min-w-[180px] overflow-hidden rounded-lg border border-white/10 bg-[#111] shadow-xl animate-fade-in">
+                <div className="absolute right-0 top-full z-50 mt-2 min-w-[190px] overflow-hidden rounded-xl border border-white/[0.1] bg-[#0A0E15] shadow-[0_16px_48px_rgba(0,0,0,0.5)] animate-fade-in">
                     <div className="border-b border-white/[0.06] px-4 py-3">
-                        <p className="text-[10px] uppercase tracking-widest text-neutral-500">Connected</p>
-                        <p className="mt-1 font-mono text-xs text-white/70">{formatAddress(formattedAddress)}</p>
+                        <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-neutral-600">Connected</p>
+                        <p className="mt-1 font-mono text-xs text-white/60">{formatAddress(formattedAddress)}</p>
                     </div>
                     <button
                         onClick={handleCopyAddress}
-                        className="flex w-full items-center gap-2 border-b border-white/[0.06] px-4 py-3 text-left text-sm text-neutral-300 transition-colors hover:bg-white/[0.04] hover:text-white"
+                        className="flex w-full items-center gap-2.5 border-b border-white/[0.06] px-4 py-3 text-left text-sm text-neutral-400 transition-colors hover:bg-white/[0.04] hover:text-white"
                     >
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                            <path
-                                d="M5.25 5.25V2.917C5.25 2.27267 5.77267 1.75 6.417 1.75H11.083C11.7273 1.75 12.25 2.27267 12.25 2.917V7.583C12.25 8.22733 11.7273 8.75 11.083 8.75H8.75M5.25 5.25H2.917C2.27267 5.25 1.75 5.77267 1.75 6.417V11.083C1.75 11.7273 2.27267 12.25 2.917 12.25H7.583C8.22733 12.25 8.75 11.7273 8.75 11.083V8.75M5.25 5.25H8.75V8.75"
-                                stroke="currentColor"
-                                strokeWidth="1.2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
-                        {copied ? 'Copied' : 'Copy address'}
+                        <CopyIcon />
+                        {copied ? 'Copied!' : 'Copy address'}
                     </button>
                     <button
                         onClick={() => {
                             disconnect({ connectorId: TONCONNECT_DEFAULT_CONNECTOR_ID });
                             setMenuOpen(false);
                         }}
-                        className="flex w-full items-center gap-2 px-4 py-3 text-left text-sm text-red-400 transition-colors hover:bg-white/[0.04]"
+                        className="flex w-full items-center gap-2.5 px-4 py-3 text-left text-sm text-red-400 transition-colors hover:bg-white/[0.04] hover:text-red-300"
                     >
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                            <path
-                                d="M5.25 12.25H2.917A1.167 1.167 0 011.75 11.083V2.917A1.167 1.167 0 012.917 1.75H5.25M9.333 9.917L12.25 7l-2.917-2.917M12.25 7H5.25"
-                                stroke="currentColor"
-                                strokeWidth="1.2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
+                        <DisconnectIcon />
                         Disconnect
                     </button>
                 </div>
             )}
         </div>
+    );
+}
+
+function CopyIcon() {
+    return (
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path
+                d="M5.25 5.25V2.917C5.25 2.27267 5.77267 1.75 6.417 1.75H11.083C11.7273 1.75 12.25 2.27267 12.25 2.917V7.583C12.25 8.22733 11.7273 8.75 11.083 8.75H8.75M5.25 5.25H2.917C2.27267 5.25 1.75 5.77267 1.75 6.417V11.083C1.75 11.7273 2.27267 12.25 2.917 12.25H7.583C8.22733 12.25 8.75 11.7273 8.75 11.083V8.75M5.25 5.25H8.75V8.75"
+                stroke="currentColor"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function DisconnectIcon() {
+    return (
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path
+                d="M5.25 12.25H2.917A1.167 1.167 0 011.75 11.083V2.917A1.167 1.167 0 012.917 1.75H5.25M9.333 9.917L12.25 7l-2.917-2.917M12.25 7H5.25"
+                stroke="currentColor"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
     );
 }

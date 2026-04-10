@@ -57,16 +57,16 @@ function StepperSidebar({
                                 href={`#${step.id}`}
                                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors ${
                                     isActive
-                                        ? 'bg-amber-500/5'
+                                        ? 'bg-[#0098EA]/[0.03]'
                                         : 'hover:bg-white/[0.02]'
                                 }`}
                             >
                                 <span
                                     className={`flex h-6 w-6 items-center justify-center rounded-md font-mono text-[10px] font-bold transition-colors ${
                                         isActive
-                                            ? 'bg-amber-500/15 text-amber-500'
+                                            ? 'bg-[#0098EA]/[0.12] text-[#0098EA]'
                                             : isCompleted
-                                              ? 'bg-amber-500/10 text-amber-500/50'
+                                              ? 'bg-[#0098EA]/[0.07] text-[#0098EA]/50'
                                               : 'bg-white/[0.04] text-neutral-600'
                                     }`}
                                 >
@@ -108,16 +108,16 @@ function StepperSidebar({
                                 href={`#${step.id}`}
                                 className={`flex shrink-0 items-center gap-2 rounded-md px-2.5 py-1.5 transition-colors ${
                                     isActive
-                                        ? 'bg-amber-500/10'
+                                        ? 'bg-[#0098EA]/[0.07]'
                                         : ''
                                 }`}
                             >
                                 <span
                                     className={`flex h-5 w-5 items-center justify-center rounded font-mono text-[9px] font-bold ${
                                         isActive
-                                            ? 'bg-amber-500/15 text-amber-500'
+                                            ? 'bg-[#0098EA]/[0.12] text-[#0098EA]'
                                             : isCompleted
-                                              ? 'bg-amber-500/10 text-amber-500/50'
+                                              ? 'bg-[#0098EA]/[0.07] text-[#0098EA]/50'
                                               : 'bg-white/[0.04] text-neutral-600'
                                     }`}
                                 >
@@ -236,7 +236,7 @@ export function GettingStartedPage() {
         <div>
             {/* Page header */}
             <div className="mb-10">
-                <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">
+                <p className="mb-2 text-xs font-medium uppercase tracking-widest text-[#0098EA]">
                     Getting Started
                 </p>
                 <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
