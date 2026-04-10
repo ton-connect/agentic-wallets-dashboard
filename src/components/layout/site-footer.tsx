@@ -10,10 +10,8 @@ const footerColumns = [
     {
         title: 'Product',
         links: [
-            { label: 'How It Works', href: 'https://ton.org/dev/agentkit#how-it-works' },
-            { label: 'For Developers', href: 'https://ton.org/dev/agentkit#for-developers' },
-            { label: 'For Users', href: 'https://ton.org/dev/agentkit#for-users' },
-            { label: 'FAQ', href: 'https://ton.org/dev/agentkit#faq' },
+            { label: 'General info', href: 'https://testing-builders.dev-internal.org/agents#how-it-works' },
+            { label: 'Documentation', href: 'https://docs.ton.org/ecosystem/ai/wallets' },
         ],
     },
     {
