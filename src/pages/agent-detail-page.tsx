@@ -10,7 +10,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
-import { useAppKit, useBalanceByAddress, useNetwork } from '@ton/appkit-react';
+import { useAddress, useAppKit, useBalanceByAddress, useNetwork } from '@ton/appkit-react';
 import { ArrowLeft, AlertTriangle, Check, CheckCircle2, Copy, Pencil, X } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -90,6 +90,7 @@ export function AgentDetailPage() {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const appKit = useAppKit();
+    const connectedAddress = useAddress();
     const markKnown = useAgentsStore((s) => s.markKnown);
     const { agents, refresh, isLoading: isAgentsLoading, balancesByAddress } = useAgents();
     const { revokeAgentWallet, isPending: isAgentOperationPending } = useAgentOperations();
@@ -144,6 +145,7 @@ export function AgentDetailPage() {
         },
     });
     const agent = listedAgent ?? fallbackAgent ?? null;
+    const isOwner = Boolean(connectedAddress && agent?.ownerAddress && isSameTonAddress(connectedAddress, agent.ownerAddress));
     const { data: fallbackBalance } = useBalanceByAddress({
         address: id ?? '',
         network,
@@ -381,48 +383,52 @@ export function AgentDetailPage() {
                     <div>
                         <div className="flex items-center gap-2">
                             <h1 className="text-2xl font-bold tracking-tight">{agent.name}</h1>
-                            <button
-                                onClick={() => setShowRename(true)}
-                                className="text-neutral-600 transition-colors hover:text-white"
-                            >
-                                <Pencil size={14} />
-                            </button>
+                            {isOwner && (
+                                <button
+                                    onClick={() => setShowRename(true)}
+                                    className="text-neutral-600 transition-colors hover:text-white"
+                                >
+                                    <Pencil size={14} />
+                                </button>
+                            )}
                         </div>
                         <p className="text-xs text-neutral-500">
                             Created by {agent.source} on {createdDate}
                         </p>
                     </div>
                 </div>
-                <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:justify-end sm:gap-2.5">
-                    {!isRevoked && (
-                        <>
-                            <button
-                                onClick={() => setShowFund(true)}
-                                className="order-1 w-full rounded-full bg-[#0098EA] px-6 py-2.5 text-sm font-medium text-white shadow-[0_0_16px_rgba(0,152,234,0.3)] transition-all hover:bg-[#22A9F0] hover:shadow-[0_0_20px_rgba(0,152,234,0.45)] sm:order-none sm:w-auto"
-                            >
-                                Fund
-                            </button>
-                            <button
-                                onClick={() => setShowWithdraw(true)}
-                                className="order-2 w-full rounded-full border border-white/[0.1] bg-white/[0.04] px-6 py-2.5 text-sm text-neutral-300 transition-colors hover:bg-white/[0.08] hover:text-white sm:order-none sm:w-auto"
-                            >
-                                Withdraw
-                            </button>
-                            <button
-                                onClick={() => setShowRevoke(true)}
-                                className="order-4 w-full rounded-full border border-red-500/25 bg-red-500/[0.08] px-6 py-2.5 text-sm text-red-300 transition-colors hover:border-red-500/50 hover:bg-red-500/[0.15] hover:text-red-200 sm:order-none sm:w-auto"
-                            >
-                                Revoke
-                            </button>
-                        </>
-                    )}
-                    <button
-                        onClick={() => setShowChangePublicKey(true)}
-                        className="order-3 w-full rounded-full border border-white/[0.1] bg-white/[0.04] px-6 py-2.5 text-sm text-neutral-300 transition-colors hover:bg-white/[0.08] hover:text-white sm:order-none sm:w-auto"
-                    >
-                        Change key
-                    </button>
-                </div>
+                {isOwner && (
+                    <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:justify-end sm:gap-2.5">
+                        {!isRevoked && (
+                            <>
+                                <button
+                                    onClick={() => setShowFund(true)}
+                                    className="order-1 w-full rounded-full bg-[#0098EA] px-6 py-2.5 text-sm font-medium text-white shadow-[0_0_16px_rgba(0,152,234,0.3)] transition-all hover:bg-[#22A9F0] hover:shadow-[0_0_20px_rgba(0,152,234,0.45)] sm:order-none sm:w-auto"
+                                >
+                                    Fund
+                                </button>
+                                <button
+                                    onClick={() => setShowWithdraw(true)}
+                                    className="order-2 w-full rounded-full border border-white/[0.1] bg-white/[0.04] px-6 py-2.5 text-sm text-neutral-300 transition-colors hover:bg-white/[0.08] hover:text-white sm:order-none sm:w-auto"
+                                >
+                                    Withdraw
+                                </button>
+                                <button
+                                    onClick={() => setShowRevoke(true)}
+                                    className="order-4 w-full rounded-full border border-red-500/25 bg-red-500/[0.08] px-6 py-2.5 text-sm text-red-300 transition-colors hover:border-red-500/50 hover:bg-red-500/[0.15] hover:text-red-200 sm:order-none sm:w-auto"
+                                >
+                                    Revoke
+                                </button>
+                            </>
+                        )}
+                        <button
+                            onClick={() => setShowChangePublicKey(true)}
+                            className="order-3 w-full rounded-full border border-white/[0.1] bg-white/[0.04] px-6 py-2.5 text-sm text-neutral-300 transition-colors hover:bg-white/[0.08] hover:text-white sm:order-none sm:w-auto"
+                        >
+                            Change key
+                        </button>
+                    </div>
+                )}
             </div>
 
             <div className="mb-8 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
@@ -490,16 +496,20 @@ export function AgentDetailPage() {
                         <div>
                             <p className="text-xs uppercase tracking-wider text-neutral-600">Extensions</p>
                             <p className="mt-1 text-sm text-neutral-400">
-                                Selected extensions can be removed by the wallet owner.
+                                {isOwner
+                                    ? 'Selected extensions can be removed by the wallet owner.'
+                                    : 'Extensions installed on this wallet.'}
                             </p>
                         </div>
-                        <button
-                            onClick={() => setShowRemoveExtensions(true)}
-                            disabled={selectedExtensionCount === 0}
-                            className="rounded-full border border-red-500/25 bg-red-500/10 px-4 py-2 text-sm text-red-300 transition-colors hover:border-red-500/50 hover:bg-red-500/20 hover:text-red-200 disabled:cursor-not-allowed disabled:border-white/[0.08] disabled:bg-white/[0.03] disabled:text-neutral-500"
-                        >
-                            {deleteSelectedExtensionsLabel}
-                        </button>
+                        {isOwner && (
+                            <button
+                                onClick={() => setShowRemoveExtensions(true)}
+                                disabled={selectedExtensionCount === 0}
+                                className="rounded-full border border-red-500/25 bg-red-500/10 px-4 py-2 text-sm text-red-300 transition-colors hover:border-red-500/50 hover:bg-red-500/20 hover:text-red-200 disabled:cursor-not-allowed disabled:border-white/[0.08] disabled:bg-white/[0.03] disabled:text-neutral-500"
+                            >
+                                {deleteSelectedExtensionsLabel}
+                            </button>
+                        )}
                     </div>
 
                     <div className="mt-4 space-y-2">
@@ -510,7 +520,7 @@ export function AgentDetailPage() {
                                 <button
                                     type="button"
                                     key={extension}
-                                    onClick={() => toggleExtensionSelection(extension)}
+                                    onClick={isOwner ? () => toggleExtensionSelection(extension) : undefined}
                                     aria-pressed={selected}
                                     className={`flex w-full items-center gap-2 rounded-xl px-3 py-3 text-left transition-colors ${
                                         selected
