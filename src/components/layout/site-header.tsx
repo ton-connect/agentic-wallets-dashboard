@@ -23,7 +23,7 @@ type NavItem = {
 const navItems: NavItem[] = [
     { label: 'Get started', href: '/getting-started' },
     { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Read more', href: 'https://testing-builders.dev-internal.org/agents', external: true },
+    { label: 'Read more', href: 'https://ton.org/dev/agentic-wallets', external: true },
     { label: 'Docs', href: 'https://docs.ton.org/ecosystem/ai/wallets', external: true},
 ];
 
