@@ -48,7 +48,7 @@ export function StepManageDashboard() {
                         key={feature.title}
                         className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4"
                     >
-                        <feature.icon size={16} className="mb-3 text-amber-500" />
+                        <feature.icon size={16} className="mb-3 text-[#0098EA]" />
                         <p className="text-sm font-medium text-neutral-200">{feature.title}</p>
                         <p className="mt-1 text-xs leading-relaxed text-neutral-500">
                             {feature.description}
@@ -59,7 +59,7 @@ export function StepManageDashboard() {
 
             <Link
                 to="/dashboard"
-                className="inline-flex w-fit items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-medium text-black transition-colors hover:bg-amber-400"
+                className="inline-flex w-fit items-center gap-2 rounded-full bg-[#0098EA] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#22A9F0]"
             >
                 Open Dashboard
                 <ArrowRight size={14} />

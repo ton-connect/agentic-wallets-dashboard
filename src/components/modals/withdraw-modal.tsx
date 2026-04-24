@@ -53,7 +53,7 @@ export function WithdrawModal({ agent, onClose, onSuccess }: WithdrawModalProps)
     const balanceStr = balanceValue.toFixed(2);
 
     const selectedCardClass = (isSelected: boolean): string =>
-        isSelected ? 'border-amber-500/50 bg-amber-500/[0.08]' : 'border-white/[0.06] bg-white/[0.02]';
+        isSelected ? 'border-[#0098EA]/40 bg-[#0098EA]/[0.07]' : 'border-white/[0.06] bg-white/[0.02]';
 
     const getJettonUsdPrice = (jetton: (typeof jettons)[number]): number => {
         const usdPrice = jetton.prices.find((price) => price.currency.toUpperCase() === 'USD');

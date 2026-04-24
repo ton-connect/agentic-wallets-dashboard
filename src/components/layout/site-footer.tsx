@@ -10,10 +10,8 @@ const footerColumns = [
     {
         title: 'Product',
         links: [
-            { label: 'How It Works', href: '/#how-it-works' },
-            { label: 'For Developers', href: '/#for-developers' },
-            { label: 'For Users', href: '/#for-users' },
-            { label: 'FAQ', href: '/#faq' },
+            { label: 'General info', href: 'https://ton.org/dev/agentic-wallets' },
+            { label: 'Documentation', href: 'https://docs.ton.org/ecosystem/ai/wallets' },
         ],
     },
     {
@@ -34,19 +32,27 @@ const footerColumns = [
 
 export function SiteFooter() {
     return (
-        <footer className="pb-8 pt-12 sm:pb-16 sm:pt-24 md:pt-28">
-            <div className="mx-auto max-w-6xl border-t border-white/[0.05] px-6 pt-6 sm:pt-10 md:pt-12">
+        <footer className="pb-8 pt-12 sm:pb-16 sm:pt-20">
+            <div className="mx-auto max-w-6xl px-6">
+                {/* Top accent line */}
+                <div className="mb-10 h-px bg-gradient-to-r from-transparent via-[#0098EA]/20 to-transparent sm:mb-14" />
+
                 <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-4">
                     <div>
-                        <span className="text-lg font-semibold tracking-tight">Agentic Wallets</span>
-                        <p className="mt-3 text-sm text-neutral-600">
+                        <div className="flex items-center gap-2">
+                            <FooterLogo />
+                            <span className="text-sm font-semibold tracking-tight">Agentic Wallets</span>
+                        </div>
+                        <p className="mt-3 text-sm leading-relaxed text-neutral-600">
                             Self-custody wallets for autonomous agents on TON.
                         </p>
                     </div>
 
                     {footerColumns.map((col) => (
                         <div key={col.title}>
-                            <h4 className="mb-4 text-sm font-medium text-neutral-400">{col.title}</h4>
+                            <h4 className="mb-4 text-xs font-semibold uppercase tracking-[0.12em] text-neutral-600">
+                                {col.title}
+                            </h4>
                             <ul className="flex flex-col gap-3">
                                 {col.links.map((link) => (
                                     <li key={link.label}>
@@ -66,10 +72,22 @@ export function SiteFooter() {
                     ))}
                 </div>
 
-                <div className="mt-8 pt-6 text-center text-xs text-neutral-700 sm:mt-12 sm:pt-8">
+                <div className="mt-10 pt-6 text-center text-xs text-neutral-700 sm:mt-14 sm:pt-8">
                     &copy; {new Date().getFullYear()} Agentic Wallets. Built on The Open Network.
                 </div>
             </div>
         </footer>
+    );
+}
+
+function FooterLogo() {
+    return (
+        <svg width="20" height="20" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <rect x="1" y="1" width="26" height="26" rx="8" stroke="white" strokeWidth="1" strokeOpacity="0.1" />
+            <rect x="5" y="5" width="8" height="8" rx="2" fill="#0098EA" fillOpacity="0.7" />
+            <rect x="15" y="5" width="8" height="8" rx="2" fill="#0098EA" fillOpacity="0.2" />
+            <rect x="5" y="15" width="8" height="8" rx="2" fill="#0098EA" fillOpacity="0.12" />
+            <rect x="15" y="15" width="8" height="8" rx="2" fill="white" fillOpacity="0.05" />
+        </svg>
     );
 }
