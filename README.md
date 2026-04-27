@@ -12,7 +12,7 @@ From the repository root:
 pnpm install && pnpm dev
 ```
 
-The app starts at `http://localhost:5175`.
+The app starts at `http://localhost:5173`.
 
 ## Routes
 
