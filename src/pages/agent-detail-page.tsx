@@ -10,7 +10,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
-import { useAddress, useAppKit, useBalanceByAddress, useNetwork } from '@ton/appkit-react';
+import { useAddress, useAppKit, useBalanceByAddress, useNetwork, useNetworks } from '@ton/appkit-react';
+import type { Network } from '@ton/appkit-react';
 import { ArrowLeft, AlertTriangle, Check, CheckCircle2, Copy, Pencil, X } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -97,53 +98,79 @@ export function AgentDetailPage() {
     const listedAgent = agents.find(
         (a) => id && (a.id === id || isSameTonAddress(a.id, id) || isSameTonAddress(a.address, id)),
     );
-    const network = useNetwork();
-    const { data: fallbackAgent, isLoading: isFallbackAgentLoading, refetch: refetchFallbackAgent } = useQuery({
-        queryKey: ['agent-detail-fallback', network?.chainId, id],
-        enabled: !!network && !!id && !isAgentsLoading && !listedAgent,
+    const connectedNetwork = useNetwork();
+    const configuredNetworks = useNetworks();
+    const candidateNetworks = useMemo<Network[]>(
+        () => (connectedNetwork ? [connectedNetwork] : configuredNetworks),
+        [connectedNetwork, configuredNetworks],
+    );
+    const candidateChainIds = useMemo(
+        () => candidateNetworks.map((n) => n.chainId).join(','),
+        [candidateNetworks],
+    );
+    const {
+        data: fallbackResult,
+        isLoading: isFallbackAgentLoading,
+        refetch: refetchFallbackAgent,
+    } = useQuery({
+        queryKey: ['agent-detail-fallback', candidateChainIds, id],
+        enabled: candidateNetworks.length > 0 && !!id && !isAgentsLoading && !listedAgent,
         staleTime: 30_000,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
         retry: false,
-        queryFn: async (): Promise<AgentWallet | null> => {
-            if (!network || !id) {
+        queryFn: async (): Promise<{ agent: AgentWallet; network: Network } | null> => {
+            if (!id || candidateNetworks.length === 0) {
                 return null;
             }
 
-            const client = appKit.networkManager.getClient(network);
-            const state = await getAgentWalletState(client, id);
-            if (!state.isInitialized) {
-                return null;
+            for (const candidate of candidateNetworks) {
+                const client = appKit.networkManager.getClient(candidate);
+                try {
+                    const state = await getAgentWalletState(client, id);
+                    if (!state.isInitialized) {
+                        continue;
+                    }
+
+                    const name = extractNameFromMetadata(state.nftItemContent) ?? `Agent ${id.slice(0, 6)}`;
+                    const createdAt = extractCreationDateFromMetadata(state.nftItemContent);
+                    const creationDateTimestamp = createdAt ? Date.parse(createdAt) : null;
+                    const nowIso = new Date().toISOString();
+
+                    return {
+                        network: candidate,
+                        agent: {
+                            id,
+                            name,
+                            address: id,
+                            operatorPubkey: formatUint256PublicKey(state.operatorPublicKey),
+                            originOperatorPublicKey: formatUint256PublicKey(state.originOperatorPublicKey),
+                            extensions: state.extensions,
+                            ownerAddress: state.ownerAddress?.toString() ?? '',
+                            creationDateTimestamp:
+                                creationDateTimestamp != null && Number.isFinite(creationDateTimestamp)
+                                    ? creationDateTimestamp
+                                    : null,
+                            createdAt: createdAt ?? nowIso,
+                            detectedAt: nowIso,
+                            isNew: false,
+                            status: state.operatorPublicKey === 0n ? 'revoked' : 'active',
+                            source: 'On-chain',
+                            collectionAddress: state.collectionAddress.toString(),
+                            nftItemContent: state.nftItemContent,
+                        },
+                    };
+                } catch {
+                    // try next candidate network
+                }
             }
 
-            const name = extractNameFromMetadata(state.nftItemContent) ?? `Agent ${id.slice(0, 6)}`;
-            const createdAt = extractCreationDateFromMetadata(state.nftItemContent);
-            const creationDateTimestamp = createdAt ? Date.parse(createdAt) : null;
-            const nowIso = new Date().toISOString();
-
-            return {
-                id,
-                name,
-                address: id,
-                operatorPubkey: formatUint256PublicKey(state.operatorPublicKey),
-                originOperatorPublicKey: formatUint256PublicKey(state.originOperatorPublicKey),
-                extensions: state.extensions,
-                ownerAddress: state.ownerAddress?.toString() ?? '',
-                creationDateTimestamp:
-                    creationDateTimestamp != null && Number.isFinite(creationDateTimestamp)
-                        ? creationDateTimestamp
-                        : null,
-                createdAt: createdAt ?? nowIso,
-                detectedAt: nowIso,
-                isNew: false,
-                status: state.operatorPublicKey === 0n ? 'revoked' : 'active',
-                source: 'On-chain',
-                collectionAddress: state.collectionAddress.toString(),
-                nftItemContent: state.nftItemContent,
-            };
+            return null;
         },
     });
+    const fallbackAgent = fallbackResult?.agent ?? null;
+    const network = connectedNetwork ?? fallbackResult?.network;
     const agent = listedAgent ?? fallbackAgent ?? null;
     const isOwner = Boolean(connectedAddress && agent?.ownerAddress && isSameTonAddress(connectedAddress, agent.ownerAddress));
     const { data: fallbackBalance } = useBalanceByAddress({
