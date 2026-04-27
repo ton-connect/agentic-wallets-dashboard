@@ -17,23 +17,20 @@ export function LandingCTA() {
                     <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
                         Ready to give agents their own wallet?
                     </h2>
-                    <p className="mx-auto mt-4 max-w-md text-neutral-400">
-                        Self-custody. On-chain. Permissionless. Start building with agentic wallets today.
-                    </p>
 
                     <div className="mt-6 flex flex-wrap justify-center gap-4 sm:mt-8">
                         <Link
                             to="/getting-started"
                             className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-6 py-3 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400"
                         >
-                            Start Building
+                            Create a wallet for your agent
                             <ArrowRight size={16} />
                         </Link>
                         <Link
                             to="/dashboard"
                             className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white/[0.04]"
                         >
-                            Try Dashboard
+                            Try dashboard
                         </Link>
                     </div>
                 </div>

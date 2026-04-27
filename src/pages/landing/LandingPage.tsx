@@ -12,8 +12,8 @@ import {
     LandingHero,
     LandingProblem,
     LandingHowItWorks,
+    LandingUseCases,
     LandingValueProps,
-    LandingForDevelopers,
     LandingForUsers,
     LandingFAQ,
     LandingCTA,
@@ -27,11 +27,11 @@ export function LandingPage() {
             <LandingHero />
             <LandingProblem />
             <LandingHowItWorks />
+            <LandingUseCases />
             <LandingValueProps />
-            <LandingForDevelopers />
             <LandingForUsers />
-            <LandingFAQ />
             <LandingCTA />
+            <LandingFAQ />
             <LandingFooter />
         </div>
     );

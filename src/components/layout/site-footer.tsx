@@ -79,7 +79,7 @@ export function SiteFooter() {
 
                 <div className="mt-8 flex flex-col items-center justify-between gap-4 pt-6 text-xs text-neutral-700 sm:mt-12 sm:flex-row sm:pt-8">
                     <p>&copy; {new Date().getFullYear()} Agentic Wallets. Built on The Open Network.</p>
-                    <ThemeSwitch />
+                    {/* <ThemeSwitch /> */}
                 </div>
             </div>
         </footer>

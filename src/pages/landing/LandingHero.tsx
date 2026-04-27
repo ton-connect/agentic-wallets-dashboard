@@ -9,7 +9,7 @@
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-function WalletHierarchySVG() {
+export function WalletHierarchySVG() {
     return (
         <svg viewBox="0 0 400 360" fill="none" className="mx-auto h-auto w-full max-w-md" aria-hidden="true">
             {/* Master node — central, prominent */}
@@ -92,43 +92,23 @@ function WalletHierarchySVG() {
 export function LandingHero() {
     return (
         <section className="relative overflow-hidden border-b border-white/[0.06]">
-            <div className="mx-auto grid max-w-6xl gap-8 px-6 pb-12 pt-12 sm:gap-16 sm:pb-24 sm:pt-20 lg:grid-cols-2 lg:items-center lg:gap-20 lg:pt-32">
-                <div className="flex flex-col gap-8">
+            <div className="mx-auto flex max-w-6xl justify-center px-6 pb-12 pt-12 text-center sm:pb-24 sm:pt-20 lg:pt-32">
+                <div className="flex max-w-4xl flex-col items-center gap-8">
                     <div>
-                        <p className="mb-4 text-sm font-medium uppercase tracking-widest text-amber-500">
-                            Agentic Wallets on TON
-                        </p>
-                        <h1 className="text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.5rem]">
-                            Self-custody wallets for autonomous&nbsp;agents
-                        </h1>
+                        <div>
+                            <h1 className="text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.5rem]">
+                                Agentic Wallets on TON
+                            </h1>
+
+                            <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-neutral-400 sm:text-xl">
+                                Set up isolated self-custodial wallets for AI agents in 5 minutes and let them transact autonomously
+                            </p>
+                        </div>
                     </div>
-
-                    <p className="max-w-lg text-lg leading-relaxed text-neutral-400">
-                        Give AI agents autonomous access to TON — transfers, swaps, DeFi,
-                        payments — while you keep full control of the funds.
-                    </p>
-
-                    <div className="flex flex-wrap gap-4">
-                        <Link
-                            to="/getting-started"
-                            className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-6 py-3 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400"
-                        >
-                            For Developers
-                            <ArrowRight size={16} />
-                        </Link>
-                        <a
-                            href="#for-users"
-                            className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white/[0.04]"
-                        >
-                            For Users
-                        </a>
-                    </div>
-                </div>
-
-                <div className="flex justify-center lg:justify-end">
-                    <WalletHierarchySVG />
                 </div>
             </div>
         </section>
     );
 }
+
+

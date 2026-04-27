@@ -22,9 +22,10 @@ type NavItem = {
 
 const sectionNavItems: NavItem[] = [
     { label: 'What is it?', href: '#what-is-it', sectionId: 'what-is-it' },
-    { label: 'How It Works', href: '#how-it-works', sectionId: 'how-it-works' },
-    { label: 'For Developers', href: '#for-developers', sectionId: 'for-developers' },
-    { label: 'For Users', href: '#for-users', sectionId: 'for-users' },
+    { label: 'How it works?', href: '#how-it-works', sectionId: 'how-it-works' },
+    { label: 'Use cases', href: '#use-cases', sectionId: 'use-cases' },
+    { label: 'Features', href: '#features', sectionId: 'features' },
+    { label: 'Dashboard', href: '#dashboard', sectionId: 'dashboard' },
     { label: 'FAQ', href: '#faq', sectionId: 'faq' },
 ];
 
@@ -45,7 +46,7 @@ export function SiteHeader() {
             href: isLandingPage ? item.href : `/${item.href}`,
         }));
 
-        return [...normalizedSectionLinks, { label: 'Dashboard', href: DASHBOARD_HREF }];
+        return [...normalizedSectionLinks, { label: 'View dashboard', href: DASHBOARD_HREF }];
     }, [isLandingPage]);
 
     const closeMobileMenu = () => setMobileOpen(false);
@@ -156,12 +157,6 @@ export function SiteHeader() {
                 <Link to="/" className="flex items-center gap-2.5 text-lg font-semibold tracking-tight">
                     <AgentLogo />
                     <span className="hidden min-[1040px]:inline">Agentic Wallets</span>
-                    <span className="rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-accent min-[1040px]:hidden">
-                        Alpha
-                    </span>
-                    <span className="hidden rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-accent min-[1040px]:inline-flex">
-                        Alpha
-                    </span>
                 </Link>
 
                 <nav className="hidden items-center gap-8 min-[1040px]:flex">
