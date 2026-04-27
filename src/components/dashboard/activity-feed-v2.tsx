@@ -43,12 +43,12 @@ const CATEGORY_LABELS: Record<AgentActivityItem['category'], string> = {
 };
 
 const CATEGORY_STYLES: Record<AgentActivityItem['category'], string> = {
-    ton: 'border-[#0098EA]/30 bg-[#0098EA]/[0.08] text-[#64C8F8]',
+    ton: 'border-amber-500/35 bg-amber-500/10 text-amber-200',
     jetton: 'border-emerald-500/35 bg-emerald-500/10 text-emerald-200',
     nft: 'border-rose-500/35 bg-rose-500/10 text-rose-200',
     swap: 'border-lime-500/35 bg-lime-500/10 text-lime-200',
     contract: 'border-neutral-500/35 bg-white/[0.05] text-neutral-300',
-    agent_ops: 'border-[#0098EA]/30 bg-[#0098EA]/[0.08] text-[#64C8F8]',
+    agent_ops: 'border-amber-500/35 bg-amber-500/10 text-amber-200',
     system: 'border-neutral-500/35 bg-white/[0.05] text-neutral-300',
 };
 
@@ -112,7 +112,7 @@ function DirectionIcon({ item }: { item: AgentActivityItem }) {
     const colorClass = isIncoming
         ? 'border-emerald-500/30 bg-emerald-500/15 text-emerald-300'
         : isOutgoing
-          ? 'border-[#0098EA]/30 bg-[#0098EA]/[0.1] text-[#64C8F8]'
+          ? 'border-amber-500/30 bg-amber-500/15 text-amber-200'
           : 'border-white/[0.1] bg-white/[0.06] text-neutral-400';
 
     return (
@@ -125,7 +125,7 @@ function DirectionIcon({ item }: { item: AgentActivityItem }) {
 function ActorPill({ actor }: { actor: AgentActivityItem['actor'] }) {
     if (actor === 'agent') {
         return (
-            <span className="inline-flex items-center gap-1 rounded-full border border-[#0098EA]/25 bg-[#0098EA]/[0.07] px-2 py-0.5 text-[10px] uppercase tracking-wide text-[#64C8F8]">
+            <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-amber-300">
                 <Bot size={10} />
                 Agent
             </span>
@@ -252,7 +252,7 @@ function ActivityDetailsModal({
                             {CATEGORY_LABELS[item.category]}
                         </span>
                         {protocolLabel && (
-                            <span className="rounded-full border border-[#0098EA]/25 bg-[#0098EA]/[0.07] px-2 py-0.5 text-[10px] uppercase tracking-wide text-[#64C8F8]">
+                            <span className="rounded-full border border-amber-500/35 bg-amber-500/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-amber-200">
                                 {protocolLabel}
                             </span>
                         )}
@@ -369,7 +369,7 @@ export function ActivityFeedV2({ items, isLoading, isRevoked, onMarkUnexpected }
                                 onClick={() => setFilter(tab.key)}
                                 className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
                                     isActive
-                                        ? 'border-[#0098EA]/45 bg-[#0098EA]/20 text-[#64C8F8]'
+                                        ? 'border-amber-500/45 bg-amber-500/20 text-amber-200'
                                         : 'border-white/[0.08] bg-white/[0.03] text-neutral-400 hover:text-neutral-200'
                                 }`}
                             >
@@ -407,7 +407,7 @@ export function ActivityFeedV2({ items, isLoading, isRevoked, onMarkUnexpected }
                                                         setSelectedItem(item);
                                                     }
                                                 }}
-                                                className="relative rounded-2xl border border-white/[0.05] bg-white/[0.02] px-3 py-3 transition-colors hover:border-white/[0.12] hover:bg-white/[0.04] focus:outline-none focus:ring-1 focus:ring-[#0098EA]/30 sm:px-4"
+                                                className="relative rounded-2xl border border-white/[0.05] bg-white/[0.02] px-3 py-3 transition-colors hover:border-white/[0.12] hover:bg-white/[0.04] focus:outline-none focus:ring-1 focus:ring-amber-400/40 sm:px-4"
                                             >
                                                 <button
                                                     type="button"
@@ -464,7 +464,7 @@ export function ActivityFeedV2({ items, isLoading, isRevoked, onMarkUnexpected }
                                                                 {CATEGORY_LABELS[item.category]}
                                                             </span>
                                                             {protocolLabel && (
-                                                                <span className="rounded-full border border-[#0098EA]/25 bg-[#0098EA]/[0.07] px-2 py-0.5 text-[10px] uppercase tracking-wide text-[#64C8F8]">
+                                                                <span className="rounded-full border border-amber-500/35 bg-amber-500/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-amber-200">
                                                                     {protocolLabel}
                                                                 </span>
                                                             )}

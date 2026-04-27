@@ -54,7 +54,7 @@ export function StepStartUsing() {
                         className="grid grid-cols-1 gap-1 rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 sm:grid-cols-2 sm:gap-4"
                     >
                         <div className="flex items-start gap-2.5">
-                            <span className="mt-0.5 font-mono text-xs text-[#0098EA]">&gt;</span>
+                            <span className="mt-0.5 font-mono text-xs text-amber-500">&gt;</span>
                             <span className="text-sm font-medium text-neutral-200">
                                 "{example.command}"
                             </span>

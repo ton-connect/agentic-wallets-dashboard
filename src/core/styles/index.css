@@ -1,46 +1,27 @@
 @import 'tailwindcss';
 
 @theme {
-    --font-sans: 'Inter', system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    --font-sans: 'Inter', system-ui, 'Avenir', 'Helvetica', 'Arial', sans-serif;
+    --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
 
-    /* Base background */
-    --color-surface: #06090E;
-    --color-surface-1: rgba(0, 152, 234, 0.025);
-    --color-surface-2: rgba(0, 152, 234, 0.04);
-    --color-surface-3: rgba(0, 152, 234, 0.07);
+    --color-surface: #050505;
+    --color-surface-1: rgba(255, 255, 255, 0.03);
+    --color-surface-2: rgba(255, 255, 255, 0.05);
+    --color-surface-3: rgba(255, 255, 255, 0.07);
 
-    /* Borders */
-    --color-border: rgba(255, 255, 255, 0.07);
-    --color-border-strong: rgba(255, 255, 255, 0.13);
-    --color-border-accent: rgba(0, 152, 234, 0.25);
+    --color-border: rgba(255, 255, 255, 0.09);
+    --color-border-strong: rgba(255, 255, 255, 0.14);
 
-    /* TON Blue - primary accent */
-    --color-accent: #0098EA;
-    --color-accent-hover: #22A9F0;
-    --color-accent-dim: rgba(0, 152, 234, 0.12);
-    --color-accent-glow: rgba(0, 152, 234, 0.2);
-
-    /* Neutral scale */
+    /* Slightly brighter neutral scale for better text contrast on dark surfaces. */
     --color-neutral-300: #cdd2da;
     --color-neutral-400: #b0b6bf;
     --color-neutral-500: #939ba5;
-    --color-neutral-600: #636970;
-    --color-neutral-700: #464c55;
+    --color-neutral-600: #797f88;
+    --color-neutral-700: #636972;
 
-    /* Status colors */
-    --color-success: #22c55e;
-    --color-success-dim: rgba(34, 197, 94, 0.1);
-    --color-warning: #f59e0b;
-    --color-warning-dim: rgba(245, 158, 11, 0.1);
-    --color-danger: #ef4444;
-    --color-danger-dim: rgba(239, 68, 68, 0.08);
-
-    /* Animations */
     --animate-fade-in: fade-in 0.3s ease-out;
     --animate-slide-up: slide-up 0.3s ease-out;
     --animate-pulse-slow: pulse 3s ease-in-out infinite;
-    --animate-glow-pulse: glow-pulse 3s ease-in-out infinite;
 
     @keyframes fade-in {
         0% { opacity: 0; }
@@ -49,10 +30,6 @@
     @keyframes slide-up {
         0% { opacity: 0; transform: translateY(8px); }
         100% { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes glow-pulse {
-        0%, 100% { opacity: 0.4; }
-        50% { opacity: 0.9; }
     }
 }
 
@@ -74,19 +51,16 @@ html, body {
     color: white;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Inter Display-style optical sizing */
-    font-optical-sizing: auto;
-    font-feature-settings: 'cv05' 1, 'cv10' 1;
 }
 
 :root {
     --site-header-height: 73px;
 }
 
-/* Sonner toast overrides */
+/* Sonner toast overrides for dark theme */
 [data-sonner-toaster] [data-sonner-toast] {
-    --normal-bg: rgba(6, 9, 14, 0.95);
-    --normal-border: rgba(0, 152, 234, 0.2);
+    --normal-bg: rgba(255, 255, 255, 0.06);
+    --normal-border: rgba(255, 255, 255, 0.1);
     --normal-text: white;
     max-width: min(420px, calc(100vw - 24px));
 }
@@ -95,10 +69,9 @@ html, body {
     overflow-wrap: anywhere;
 }
 
-/* Scrollbars */
 .app-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: rgba(0, 152, 234, 0.5) rgba(255, 255, 255, 0.04);
+    scrollbar-color: rgba(245, 158, 11, 0.7) rgba(255, 255, 255, 0.05);
 }
 
 .app-scrollbar::-webkit-scrollbar {
@@ -107,23 +80,23 @@ html, body {
 }
 
 .app-scrollbar::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 9999px;
 }
 
 .app-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(0, 152, 234, 0.5);
+    background: rgba(245, 158, 11, 0.7);
     border-radius: 9999px;
 }
 
 .app-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 152, 234, 0.75);
+    background: rgba(251, 191, 36, 0.85);
 }
 
 .deployment-command-scroll {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.18) rgba(255, 255, 255, 0.025);
+    scrollbar-color: rgba(255, 255, 255, 0.22) rgba(255, 255, 255, 0.025);
 }
 
 .deployment-command-scroll::-webkit-scrollbar {
@@ -136,7 +109,7 @@ html, body {
 }
 
 .deployment-command-scroll::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.22);
     border-radius: 9999px;
 }
 
@@ -146,7 +119,7 @@ html, body {
 
 @media (max-width: 640px) {
     .deployment-command-scroll {
-        scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+        scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
     }
 
     .deployment-command-scroll::-webkit-scrollbar {
@@ -165,23 +138,4 @@ html, body {
 
 .stepper-no-scrollbar::-webkit-scrollbar {
     display: none;
-}
-
-/* Accent glow effect utility */
-.accent-glow {
-    box-shadow: 0 0 24px rgba(0, 152, 234, 0.15), 0 0 48px rgba(0, 152, 234, 0.06);
-}
-
-.accent-glow-sm {
-    box-shadow: 0 0 12px rgba(0, 152, 234, 0.2);
-}
-
-/* Card with accent border on hover */
-.card-hover {
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-}
-
-.card-hover:hover {
-    border-color: rgba(0, 152, 234, 0.2);
-    box-shadow: 0 0 0 1px rgba(0, 152, 234, 0.08), 0 8px 32px rgba(0, 0, 0, 0.3);
 }

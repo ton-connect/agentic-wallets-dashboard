@@ -15,11 +15,11 @@
   "dependencies": {
     "@tanstack/react-query": "5.90.20",
     "@tailwindcss/vite": "4.1.18",
-    "@ton/appkit": "https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-0.0.2.tgz",
-    "@ton/appkit-react": "https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-react-0.0.3.tgz",
+    "@ton/appkit": "file:./vendor/ton-appkit-0.0.2.tgz",
+    "@ton/appkit-react": "file:./vendor/ton-appkit-react-0.0.3.tgz",
     "@ton/core": "0.63.0",
     "@ton/crypto": "3.3.0",
-    "@ton/walletkit": "https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-walletkit-0.0.9.tgz",
+    "@ton/walletkit": "file:./vendor/ton-walletkit-0.0.9.tgz",
     "@tonconnect/sdk": "3.4.1",
     "@tonconnect/ui": "2.4.1",
     "@tonconnect/ui-react": "2.4.1",
@@ -42,8 +42,8 @@
   },
   "pnpm": {
     "overrides": {
-      "@ton/appkit": "https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-0.0.2.tgz",
-      "@ton/walletkit": "https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-walletkit-0.0.9.tgz",
+      "@ton/appkit": "file:./vendor/ton-appkit-0.0.2.tgz",
+      "@ton/walletkit": "file:./vendor/ton-walletkit-0.0.9.tgz",
       "@tonconnect/bridge-sdk": "file:./vendor/tonconnect-bridge-sdk-0.2.6.tgz"
     }
   }

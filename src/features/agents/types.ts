@@ -26,11 +26,4 @@ export interface AgentWallet {
     source: string;
     collectionAddress?: string;
     nftItemContent: Cell | null;
-    isPendingIndexing?: boolean;
-}
-
-export interface PendingAgentWallet extends AgentWallet {
-    networkChainId: string;
-    nftItemContent: null;
-    isPendingIndexing: true;
 }

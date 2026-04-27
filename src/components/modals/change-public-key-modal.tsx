@@ -13,7 +13,6 @@ import { Modal } from './modal';
 
 import type { AgentWallet } from '@/features/agents';
 import { useAgentOperations } from '@/features/agents';
-import { parseUint256PublicKey } from '@/features/agents/lib/public-key';
 
 interface ChangePublicKeyModalProps {
     agent: AgentWallet | null;
@@ -39,13 +38,7 @@ export function ChangePublicKeyModal({ agent, initialPublicKey, onClose, onSucce
     if (!agent) return null;
 
     const trimmedPublicKey = publicKey.trim();
-    const isChanged = (() => {
-        try {
-            return parseUint256PublicKey(trimmedPublicKey) !== parseUint256PublicKey(agent.operatorPubkey);
-        } catch {
-            return trimmedPublicKey !== agent.operatorPubkey;
-        }
-    })();
+    const isChanged = trimmedPublicKey !== agent.operatorPubkey;
     const uiPending = isPending || isSubmitting;
     const hasExtensions = agent.extensions.length > 0;
 
@@ -77,7 +70,7 @@ export function ChangePublicKeyModal({ agent, initialPublicKey, onClose, onSucce
                     value={publicKey}
                     onChange={(e) => setPublicKey(e.target.value)}
                     placeholder="0x... or decimal"
-                    className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 font-mono text-white placeholder-neutral-700 outline-none transition-colors focus:border-[#0098EA]/40"
+                    className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 font-mono text-white placeholder-neutral-700 outline-none transition-colors focus:border-amber-500/50"
                     autoFocus
                     onKeyDown={(e) => e.key === 'Enter' && void handleSubmit()}
                 />
@@ -93,7 +86,7 @@ export function ChangePublicKeyModal({ agent, initialPublicKey, onClose, onSucce
                             type="checkbox"
                             checked={removeAllExtensions}
                             onChange={(e) => setRemoveAllExtensions(e.target.checked)}
-                            className="mt-0.5 h-4 w-4 rounded border border-white/[0.12] bg-transparent accent-[#0098EA]"
+                            className="mt-0.5 h-4 w-4 rounded border border-white/[0.12] bg-transparent accent-amber-500"
                         />
                         <span className="space-y-1">
                             <span className="block">Delete all extensions ({agent.extensions.length})</span>
@@ -111,7 +104,7 @@ export function ChangePublicKeyModal({ agent, initialPublicKey, onClose, onSucce
                     <button
                         onClick={() => void handleSubmit()}
                         disabled={uiPending || !isChanged}
-                        className="flex-1 rounded-full bg-[#0098EA] py-3 text-sm font-medium text-white shadow-[0_0_16px_rgba(0,152,234,0.3)] transition-all hover:bg-[#22A9F0] hover:shadow-[0_0_20px_rgba(0,152,234,0.4)] disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex-1 rounded-full bg-amber-500 py-3 text-sm font-medium text-black transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                         {uiPending ? (
                             <span className="inline-flex items-center gap-2">

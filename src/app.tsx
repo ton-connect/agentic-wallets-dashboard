@@ -7,7 +7,7 @@
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { AppKitProvider } from '@ton/appkit-react';
 
@@ -18,6 +18,7 @@ import { DashboardPage } from '@/pages/dashboard-page';
 import { AgentDetailPage } from '@/pages/agent-detail-page';
 import { CreateAgentPage } from '@/pages/create-agent-page';
 import { GettingStartedPage } from '@/pages/getting-started-page';
+import { LandingPage } from '@/pages/landing';
 
 import '@ton/appkit-react/styles.css';
 
@@ -39,7 +40,7 @@ export function App() {
                 <BrowserRouter>
                     <ScrollRestoration />
                     <Routes>
-                        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                        <Route path="/" element={<LandingPage />} />
                         <Route
                             path="/dashboard"
                             element={

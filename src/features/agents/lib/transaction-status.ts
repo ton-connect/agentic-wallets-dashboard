@@ -8,10 +8,14 @@
 
 import { getTransactionStatus } from '@ton/appkit';
 
-import { delay } from './async';
-
 const DEFAULT_STATUS_RETRY_ATTEMPTS = 40;
 const DEFAULT_STATUS_RETRY_DELAY_MS = 250;
+
+function delay(ms: number): Promise<void> {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
 
 type GetTransactionStatusAppKit = Parameters<typeof getTransactionStatus>[0];
 type GetTransactionStatusParams = Parameters<typeof getTransactionStatus>[1];
