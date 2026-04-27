@@ -30,9 +30,9 @@ import { RemoveExtensionsModal } from '@/components/modals/remove-extensions-mod
 import { ActivityFeedV2 } from '@/components/dashboard/activity-feed-v2';
 import { getAgentWalletState } from '@/features/agents/lib/agentic-wallet';
 import { extractCreationDateFromMetadata, extractNameFromMetadata } from '@/features/agents/lib/metadata';
-import { formatTonAddressForNetwork, isSameTonAddress, normalizeTonAddress } from '@/features/agents/lib/address';
-import { formatUint256PublicKey, parseUint256PublicKey } from '@/features/agents/lib/public-key';
-import { formatUiAmountFixed, formatUnitsFixed } from '@/features/agents/lib/amount';
+import { formatTonAddressForNetwork, isSameTonAddress } from '@/features/agents/lib/address';
+import { parseUint256PublicKey } from '@/features/agents/lib/public-key';
+import { formatUiAmountFixed } from '@/features/agents/lib/amount';
 
 const CHANGE_PUBLIC_KEY_PARAM_KEYS = [
     'nextOperatorPublicKey',
@@ -92,7 +92,7 @@ export function AgentDetailPage() {
     const appKit = useAppKit();
     const connectedAddress = useAddress();
     const markKnown = useAgentsStore((s) => s.markKnown);
-    const { agents, refresh, isLoading: isAgentsLoading, balancesByAddress } = useAgents();
+    const { agents, refresh, isLoading: isAgentsLoading } = useAgents();
     const { revokeAgentWallet, isPending: isAgentOperationPending } = useAgentOperations();
     const listedAgent = agents.find(
         (a) => id && (a.id === id || isSameTonAddress(a.id, id) || isSameTonAddress(a.address, id)),
@@ -126,8 +126,8 @@ export function AgentDetailPage() {
                 id,
                 name,
                 address: id,
-                operatorPubkey: formatUint256PublicKey(state.operatorPublicKey),
-                originOperatorPublicKey: formatUint256PublicKey(state.originOperatorPublicKey),
+                operatorPubkey: `0x${state.operatorPublicKey.toString(16)}`,
+                originOperatorPublicKey: `0x${state.originOperatorPublicKey.toString(16)}`,
                 extensions: state.extensions,
                 ownerAddress: state.ownerAddress?.toString() ?? '',
                 creationDateTimestamp:
@@ -146,13 +146,7 @@ export function AgentDetailPage() {
     });
     const agent = listedAgent ?? fallbackAgent ?? null;
     const isOwner = Boolean(connectedAddress && agent?.ownerAddress && isSameTonAddress(connectedAddress, agent.ownerAddress));
-    const { data: fallbackBalance } = useBalanceByAddress({
-        address: id ?? '',
-        network,
-        query: {
-            enabled: !!network && !!id && !listedAgent,
-        },
-    });
+    const { data: balance } = useBalanceByAddress({ address: agent?.address ?? '', network });
     const { data: activity, isLoading: isActivityLoading } = useAgentActivity(
         agent?.address ?? null,
         agent?.ownerAddress ?? null,
@@ -269,7 +263,7 @@ export function AgentDetailPage() {
         if (isAgentsLoading || isFallbackAgentLoading) {
             return (
                 <div className="flex min-h-[50vh] items-center justify-center">
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-white/10 border-t-[#0098EA]" />
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-white/10 border-t-amber-500" />
                 </div>
             );
         }
@@ -277,30 +271,15 @@ export function AgentDetailPage() {
         return (
             <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 animate-fade-in">
                 <p className="text-neutral-500">Agent not found</p>
-                <button onClick={() => navigate('/dashboard')} className="text-sm text-[#0098EA] hover:text-[#22A9F0]">
+                <button onClick={() => navigate('/dashboard')} className="text-sm text-amber-500 hover:text-amber-400">
                     Back to dashboard
                 </button>
             </div>
         );
     }
 
-    const normalizedAgentAddress = normalizeTonAddress(agent.address);
-    const listedBalanceNano =
-        (normalizedAgentAddress ? balancesByAddress[normalizedAgentAddress] : undefined) ?? balancesByAddress[agent.address];
-    const balanceStr =
-        listedBalanceNano != null
-            ? formatUnitsFixed(listedBalanceNano, 9, 2)
-            : fallbackBalance != null
-              ? formatUiAmountFixed(fallbackBalance, 2)
-              : '—';
-    const balanceValue = agent.isPendingIndexing
-        ? null
-        : listedBalanceNano != null
-          ? Number(balanceStr)
-          : fallbackBalance != null
-            ? parseFloat(fallbackBalance)
-            : null;
-    const isZero = balanceValue != null && balanceValue < 0.01;
+    const balanceStr = balance != null ? formatUiAmountFixed(balance, 2) : '—';
+    const isZero = balance != null && parseFloat(balance) === 0;
     const isRevoked = agent.status === 'revoked';
     const createdDate = new Date(agent.createdAt).toLocaleDateString('en-US', {
         year: 'numeric',
@@ -347,7 +326,7 @@ export function AgentDetailPage() {
                             <p className="mt-1 text-sm text-neutral-300">
                                 To let your agent use this wallet, send it the message:
                             </p>
-                            <div className="mt-3 flex items-center gap-2 rounded-xl border border-white/[0.08] bg-black/20 p-2">
+                            <div className="mt-3 flex items-center gap-2 rounded-xl border border-white/[0.08] bg-surface-1 p-2">
                                 <div className="deployment-command-scroll min-w-0 flex-1 overflow-x-auto pb-1">
                                     <code className="block w-max min-w-full whitespace-nowrap px-1 font-mono text-xs text-neutral-100 sm:text-sm">
                                         {importCommand}
@@ -398,24 +377,24 @@ export function AgentDetailPage() {
                     </div>
                 </div>
                 {isOwner && (
-                    <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:justify-end sm:gap-2.5">
+                    <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:justify-end sm:gap-3">
                         {!isRevoked && (
                             <>
                                 <button
                                     onClick={() => setShowFund(true)}
-                                    className="order-1 w-full rounded-full bg-[#0098EA] px-6 py-2.5 text-sm font-medium text-white shadow-[0_0_16px_rgba(0,152,234,0.3)] transition-all hover:bg-[#22A9F0] hover:shadow-[0_0_20px_rgba(0,152,234,0.45)] sm:order-none sm:w-auto"
+                                    className="order-1 w-full rounded-full bg-amber-500 px-6 py-2.5 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400 sm:order-none sm:w-auto"
                                 >
                                     Fund
                                 </button>
                                 <button
                                     onClick={() => setShowWithdraw(true)}
-                                    className="order-2 w-full rounded-full border border-white/[0.1] bg-white/[0.04] px-6 py-2.5 text-sm text-neutral-300 transition-colors hover:bg-white/[0.08] hover:text-white sm:order-none sm:w-auto"
+                                    className="order-2 w-full rounded-full border border-white/[0.1] px-6 py-2.5 text-sm text-neutral-400 transition-colors hover:bg-white/[0.04] hover:text-white sm:order-none sm:w-auto"
                                 >
                                     Withdraw
                                 </button>
                                 <button
                                     onClick={() => setShowRevoke(true)}
-                                    className="order-4 w-full rounded-full border border-red-500/25 bg-red-500/[0.08] px-6 py-2.5 text-sm text-red-300 transition-colors hover:border-red-500/50 hover:bg-red-500/[0.15] hover:text-red-200 sm:order-none sm:w-auto"
+                                    className="order-4 w-full rounded-full border border-red-500/25 bg-red-500/10 px-6 py-2.5 text-sm text-red-300 transition-colors hover:border-red-500/50 hover:bg-red-500/20 hover:text-red-200 sm:order-none sm:w-auto"
                                 >
                                     Revoke
                                 </button>
@@ -423,7 +402,7 @@ export function AgentDetailPage() {
                         )}
                         <button
                             onClick={() => setShowChangePublicKey(true)}
-                            className="order-3 w-full rounded-full border border-white/[0.1] bg-white/[0.04] px-6 py-2.5 text-sm text-neutral-300 transition-colors hover:bg-white/[0.08] hover:text-white sm:order-none sm:w-auto"
+                            className="order-3 w-full rounded-full border border-white/[0.1] px-6 py-2.5 text-sm text-neutral-300 transition-colors hover:bg-white/[0.04] hover:text-white sm:order-none sm:w-auto"
                         >
                             Change key
                         </button>
@@ -439,7 +418,7 @@ export function AgentDetailPage() {
                     <span className="text-lg text-neutral-500">TON</span>
                 </div>
                 {isZero && (
-                    <p className="mt-2 text-xs text-amber-500/60">
+                    <p className="mt-2 text-xs text-amber-500/70">
                         This agent is out of funds and can&apos;t execute transactions.
                     </p>
                 )}
@@ -524,14 +503,14 @@ export function AgentDetailPage() {
                                     aria-pressed={selected}
                                     className={`flex w-full items-center gap-2 rounded-xl px-3 py-3 text-left transition-colors ${
                                         selected
-                                            ? 'border border-[#0098EA]/40 bg-[#0098EA]/[0.07] hover:border-[#0098EA]/60 hover:bg-[#0098EA]/[0.1]'
-                                            : 'border border-white/[0.06] bg-white/[0.03] hover:border-[#0098EA]/20 hover:bg-white/[0.05]'
+                                            ? 'border border-amber-500/50 bg-amber-500/[0.08] hover:border-amber-400/60 hover:bg-amber-500/[0.12]'
+                                            : 'border border-white/[0.06] bg-white/[0.03] hover:border-white/[0.1] hover:bg-white/[0.05]'
                                     }`}
                                 >
                                     <div className="min-w-0 flex-1">
                                         <span
                                             className={`block min-w-0 overflow-hidden text-ellipsis whitespace-nowrap font-mono text-sm ${
-                                                selected ? 'text-[#64C8F8]' : 'text-neutral-300'
+                                                selected ? 'text-amber-100' : 'text-neutral-300'
                                             }`}
                                         >
                                             {`Extension ${index + 1}: ${formattedExtension}`}

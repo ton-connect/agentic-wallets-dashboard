@@ -12,5 +12,5 @@ export { useAgent } from './hooks/use-agent';
 export { useAgentOperations } from './hooks/use-agent-operations';
 export { useAgentActivity } from './hooks/use-agent-activity';
 export { nftToAgent, nftsToAgents } from './lib/nft-to-agent';
-export type { AgentWallet, AgentStatus, PendingAgentWallet } from './types';
+export type { AgentWallet, AgentStatus } from './types';
 export type { AgentActivityItem } from './hooks/use-agent-activity';

@@ -26,6 +26,8 @@ import { ArrowLeft, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import {
+    ENV_AGENTIC_COLLECTION_MAINNET,
+    ENV_AGENTIC_COLLECTION_TESTNET,
     ENV_AGENTIC_WALLET_CODE_BOC,
 } from '@/core/configs/env';
 import {
@@ -36,22 +38,33 @@ import {
     createQueryId,
     getAgentWalletState,
     getCollectionAddressByIndex,
-    type ToncenterLikeClient,
 } from '@/features/agents/lib/agentic-wallet';
 import { useAgentsStore } from '@/features/agents';
-import type { PendingAgentWallet } from '@/features/agents';
 import { buildOnchainMetadataCell } from '@/features/agents/lib/metadata';
 import { isEligibleFundingNft } from '@/features/agents/lib/nft-trust';
-import { formatUint256PublicKey, parseUint256PublicKey } from '@/features/agents/lib/public-key';
+import { parseUint256PublicKey } from '@/features/agents/lib/public-key';
 import { formatUnitsTrimmed, parseUiAmountToUnits, tryParseUiAmountToUnits } from '@/features/agents/lib/amount';
 import { isSameTonAddress } from '@/features/agents/lib/address';
-import { delay } from '@/features/agents/lib/async';
-import { getCollectionAddressForNetwork } from '@/features/agents/hooks/use-agents';
 
 const DEPLOY_BASE_NANO = toNano('0.05');
 const PER_ASSET_RESERVE_NANO = toNano('0.06');
-const AGENT_DEPLOYMENT_RETRY_ATTEMPTS = 40;
-const AGENT_DEPLOYMENT_RETRY_DELAY_MS = 250;
+const AGENT_INDEXING_RETRY_ATTEMPTS = 40;
+
+function delay(ms: number): Promise<void> {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
+
+function collectionAddressByChain(chainId: string | undefined): string {
+    if (chainId === '-239') {
+        return ENV_AGENTIC_COLLECTION_MAINNET;
+    }
+    if (chainId === '-3') {
+        return ENV_AGENTIC_COLLECTION_TESTNET;
+    }
+    return '';
+}
 
 type DepositAssetKind = 'jetton' | 'nft';
 
@@ -369,36 +382,9 @@ async function sendDeployCallback(callbackUrl: string, payload: DeployCallbackPa
     }
 }
 
-async function waitForDeployedAgentWallet(
-    client: ToncenterLikeClient,
-    address: string,
-): Promise<Awaited<ReturnType<typeof getAgentWalletState>> | null> {
-    if (!client.getAccountState) {
-        return null;
-    }
-
-    for (let attempt = 0; attempt < AGENT_DEPLOYMENT_RETRY_ATTEMPTS; attempt += 1) {
-        try {
-            const state = await getAgentWalletState(client, address);
-            if (state.isInitialized) {
-                return state;
-            }
-        } catch (error) {
-            if (!(error instanceof Error) || !error.message.startsWith('Account state data is empty for')) {
-                throw error;
-            }
-        }
-
-        await delay(AGENT_DEPLOYMENT_RETRY_DELAY_MS);
-    }
-
-    return null;
-}
-
 export function CreateAgentPage() {
     const navigate = useNavigate();
     const queueDeploymentNotice = useAgentsStore((s) => s.queueDeploymentNotice);
-    const upsertPendingAgent = useAgentsStore((s) => s.upsertPendingAgent);
     const [searchParams] = useSearchParams();
     const queryClient = useQueryClient();
     const appKit = useAppKit();
@@ -424,7 +410,7 @@ export function CreateAgentPage() {
     const isDeepLinkAssetsAppliedRef = useRef(false);
     const deepLinkPayload = useMemo(() => parseCreateDeepLink(searchParams), [searchParams]);
 
-    const collectionAddress = useMemo(() => getCollectionAddressForNetwork(network?.chainId), [network?.chainId]);
+    const collectionAddress = useMemo(() => collectionAddressByChain(network?.chainId), [network?.chainId]);
     const walletFeatures = (
         wallet as unknown as { tonConnectWallet?: { device?: { features?: unknown[] } } } | null
     )?.tonConnectWallet?.device?.features;
@@ -769,38 +755,35 @@ export function CreateAgentPage() {
                 ],
             });
 
-            const deployedState = await waitForDeployedAgentWallet(client, localAddress.toString());
-            if (!deployedState) {
-                toast.message('Transaction sent, but wallet state is not available via API yet. It will appear after indexing.');
-                return;
+            let isIndexed = false;
+            for (let attempt = 0; attempt < AGENT_INDEXING_RETRY_ATTEMPTS; attempt += 1) {
+                let found = false;
+                for (let page = 0; page < 5; page += 1) {
+                    const ownerNfts = await client.nftItemsByOwner({
+                        ownerAddress,
+                        collectionAddress: collection.toString(),
+                        pagination: {
+                            limit: 100,
+                            offset: page * 100,
+                        },
+                    });
+
+                    found = (ownerNfts.nfts ?? []).some((nft) => isSameTonAddress(nft.address, localAddress.toString()));
+                    if (found || (ownerNfts.nfts ?? []).length < 100) {
+                        break;
+                    }
+                }
+                if (found) {
+                    isIndexed = true;
+                    break;
+                }
+
+                await delay(250);
             }
-            const createdAtIso = new Date(Number(creationTimestamp) * 1000).toISOString();
-            const nowIso = new Date().toISOString();
-            const pendingAgent: PendingAgentWallet = {
-                id: localAddress.toString(),
-                name,
-                address: localAddress.toString(),
-                operatorPubkey: formatUint256PublicKey(deployedState.operatorPublicKey),
-                originOperatorPublicKey: formatUint256PublicKey(deployedState.originOperatorPublicKey),
-                extensions: deployedState.extensions,
-                ownerAddress: deployedState.ownerAddress?.toString() ?? ownerAddress,
-                creationDateTimestamp: Number(creationTimestamp) * 1000,
-                createdAt: createdAtIso,
-                detectedAt: nowIso,
-                isNew: false,
-                status: deployedState.operatorPublicKey === 0n ? 'revoked' : 'active',
-                source: sourceValue || 'Local deployment',
-                collectionAddress: deployedState.collectionAddress.toString(),
-                nftItemContent: null,
-                isPendingIndexing: true,
-                networkChainId: network.chainId,
-            };
-            upsertPendingAgent(pendingAgent);
 
             await Promise.all([
                 queryClient.invalidateQueries({ queryKey: ['agentic-wallets-owner-nfts'] }),
                 queryClient.invalidateQueries({ queryKey: ['agentic-wallets-chain-state'] }),
-                queryClient.invalidateQueries({ queryKey: ['agentic-wallets-bulk-poll'] }),
                 queryClient.invalidateQueries({ queryKey: ['balance'] }),
                 queryClient.invalidateQueries({ queryKey: ['jettons'] }),
                 queryClient.invalidateQueries({ queryKey: ['nfts'] }),
@@ -810,16 +793,16 @@ export function CreateAgentPage() {
                 const callbackPayload: DeployCallbackPayload = {
                     event: 'agent_wallet_deployed',
                     deployedAt: new Date().toISOString(),
-                    indexed: false,
+                    indexed: isIndexed,
                     network: {
                         chainId: network.chainId,
                         collectionAddress: collection.toString(),
                     },
                     wallet: {
                         address: localAddress.toString(),
-                        ownerAddress: deployedState.ownerAddress?.toString() ?? ownerAddress,
-                        originOperatorPublicKey: formatUint256PublicKey(deployedState.originOperatorPublicKey),
-                        operatorPublicKey: formatUint256PublicKey(deployedState.operatorPublicKey),
+                        ownerAddress,
+                        originOperatorPublicKey: `0x${originKey.toString(16)}`,
+                        operatorPublicKey: `0x${originKey.toString(16)}`,
                         deployedByUser: true,
                         name,
                         source: sourceValue,
@@ -850,7 +833,7 @@ export function CreateAgentPage() {
     };
 
     return (
-        <div className="animate-fade-in mx-auto max-w-2xl">
+        <div className="animate-fade-in">
             <Link
                 to="/dashboard"
                 className="mb-6 inline-flex items-center gap-1.5 text-xs text-neutral-500 transition-colors hover:text-white"
@@ -859,7 +842,7 @@ export function CreateAgentPage() {
                 Back to dashboard
             </Link>
 
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
+            <div className="max-w-2xl rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
                 <h1 className="text-2xl font-bold tracking-tight">Create Agent Wallet</h1>
                 <p className="mt-2 text-sm text-neutral-500">
                     Deploy a wallet NFT and send first funding in one wallet confirmation flow.
@@ -898,7 +881,7 @@ export function CreateAgentPage() {
                                     }
                                 }}
                                 placeholder="0.2"
-                                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 pr-16 text-sm text-white placeholder-neutral-700 outline-none transition-colors focus:border-[#0098EA]/40"
+                                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 pr-16 text-sm text-white placeholder-neutral-700 outline-none transition-colors focus:border-amber-500/50"
                             />
                             <button
                                 type="button"
@@ -938,7 +921,7 @@ export function CreateAgentPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => setOpenSelectorId((current) => (current === deposit.id ? null : deposit.id))}
-                                                className="flex w-full items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-left text-sm text-white outline-none transition-colors hover:border-white/[0.15] focus:border-[#0098EA]/40"
+                                                className="flex w-full items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-left text-sm text-white outline-none transition-colors hover:border-white/[0.15] focus:border-amber-500/50"
                                             >
                                                 <span className="flex items-center gap-2">
                                                     <AssetIcon imageUrl={selected.imageUrl} label={selected.label} />
@@ -957,7 +940,7 @@ export function CreateAgentPage() {
                                                 <Trash2 size={15} />
                                             </button>
                                             {selectorOpen && (
-                                                <div className="absolute left-0 top-full z-50 mt-1 max-h-52 w-full overflow-y-auto rounded-xl border border-white/10 bg-[#111] shadow-xl">
+                                                <div className="absolute left-0 top-full z-50 mt-1 max-h-52 w-full overflow-y-auto rounded-xl border border-white/10 bg-surface-suggestions shadow-xl">
                                                     <button
                                                         type="button"
                                                         onClick={() => setJettonsOpenById((prev) => ({ ...prev, [deposit.id]: !(prev[deposit.id] ?? false) }))}
@@ -978,7 +961,7 @@ export function CreateAgentPage() {
                                                                     setOpenSelectorId(null);
                                                                 }}
                                                                 className={`flex w-full items-center justify-between gap-2 px-6 py-2.5 text-left text-sm transition-colors hover:bg-white/[0.06] ${
-                                                                    deposit.assetId === asset.id ? 'text-[#0098EA]' : 'text-white'
+                                                                    deposit.assetId === asset.id ? 'text-amber-500' : 'text-white'
                                                                 }`}
                                                             >
                                                                 <span className="flex items-center gap-2">
@@ -1013,7 +996,7 @@ export function CreateAgentPage() {
                                                                     setOpenSelectorId(null);
                                                                 }}
                                                                 className={`flex w-full items-center gap-2 px-6 py-2.5 text-left text-sm transition-colors hover:bg-white/[0.06] ${
-                                                                    deposit.assetId === asset.id ? 'text-[#0098EA]' : 'text-white'
+                                                                    deposit.assetId === asset.id ? 'text-amber-500' : 'text-white'
                                                                 }`}
                                                             >
                                                                 <AssetIcon imageUrl={asset.imageUrl} label={asset.label} />
@@ -1051,7 +1034,7 @@ export function CreateAgentPage() {
                                                             updateAssetDeposit(deposit.id, { amount: next });
                                                         }}
                                                         placeholder="0.00"
-                                                        className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 pr-16 text-sm text-white placeholder-neutral-700 outline-none transition-colors focus:border-[#0098EA]/40"
+                                                        className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 pr-16 text-sm text-white placeholder-neutral-700 outline-none transition-colors focus:border-amber-500/50"
                                                     />
                                                     <button
                                                         type="button"
@@ -1084,9 +1067,9 @@ export function CreateAgentPage() {
                 <button
                     onClick={() => void handleCreate()}
                     disabled={isPending || isAwaitingIndexing || !ownerAddress}
-                    className="mt-6 w-full rounded-full bg-[#0098EA] px-6 py-3 text-sm font-medium text-white shadow-[0_0_16px_rgba(0,152,234,0.3)] transition-all hover:bg-[#22A9F0] hover:shadow-[0_0_20px_rgba(0,152,234,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="mt-6 w-full rounded-full bg-amber-500 px-6 py-3 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    {isPending ? 'Sending...' : isAwaitingIndexing ? 'Finalizing...' : 'Deploy + First Fund'}
+                    {isPending ? 'Sending...' : isAwaitingIndexing ? 'Waiting for indexing...' : 'Deploy + First Fund'}
                 </button>
             </div>
         </div>
@@ -1128,7 +1111,7 @@ function Field({
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
                 readOnly={readOnly}
-                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-sm text-white placeholder-neutral-700 outline-none transition-colors focus:border-[#0098EA]/40 read-only:text-neutral-500"
+                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-sm text-white placeholder-neutral-700 outline-none transition-colors focus:border-amber-500/50 read-only:text-neutral-500"
             />
         </div>
     );

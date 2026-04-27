@@ -77,7 +77,7 @@ export function RenameModal({ agent, onClose, onSuccess }: RenameModalProps) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Agent name"
-                    className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-white placeholder-neutral-700 outline-none transition-colors focus:border-[#0098EA]/40"
+                    className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-white placeholder-neutral-700 outline-none transition-colors focus:border-amber-500/50"
                     autoFocus
                     onKeyDown={(e) => e.key === 'Enter' && void handleRename()}
                 />
@@ -93,11 +93,11 @@ export function RenameModal({ agent, onClose, onSuccess }: RenameModalProps) {
                     <button
                         onClick={() => void handleRename()}
                         disabled={uiPending || isInvalidLength || trimmedName === agent.name}
-                        className="flex-1 rounded-full bg-[#0098EA] py-3 text-sm font-medium text-white shadow-[0_0_16px_rgba(0,152,234,0.3)] transition-all hover:bg-[#22A9F0] hover:shadow-[0_0_20px_rgba(0,152,234,0.4)] disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex-1 rounded-full bg-amber-500 py-3 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                         {uiPending ? (
                             <span className="inline-flex items-center gap-2">
-                                <span className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />
+                                <span className="h-4 w-4 animate-spin rounded-full border-2 border-on-accent/30 border-t-on-accent" />
                                 Saving...
                             </span>
                         ) : (

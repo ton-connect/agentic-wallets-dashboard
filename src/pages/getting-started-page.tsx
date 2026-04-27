@@ -57,16 +57,16 @@ function StepperSidebar({
                                 href={`#${step.id}`}
                                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors ${
                                     isActive
-                                        ? 'bg-[#0098EA]/[0.03]'
+                                        ? 'bg-amber-500/5'
                                         : 'hover:bg-white/[0.02]'
                                 }`}
                             >
                                 <span
                                     className={`flex h-6 w-6 items-center justify-center rounded-md font-mono text-[10px] font-bold transition-colors ${
                                         isActive
-                                            ? 'bg-[#0098EA]/[0.12] text-[#0098EA]'
+                                            ? 'bg-amber-500/15 text-amber-500'
                                             : isCompleted
-                                              ? 'bg-[#0098EA]/[0.07] text-[#0098EA]/50'
+                                              ? 'bg-amber-500/10 text-amber-500/50'
                                               : 'bg-white/[0.04] text-neutral-600'
                                     }`}
                                 >
@@ -93,7 +93,7 @@ function StepperSidebar({
             <nav
                 ref={mobileStepperNavRef}
                 style={{ top: 'var(--site-header-height, 73px)' }}
-                className="sticky z-40 -mx-6 border-b border-white/[0.06] bg-[#050505] px-6 py-3 lg:hidden"
+                className="sticky z-40 -mx-6 border-b border-white/[0.06] bg-surface px-6 py-3 lg:hidden"
             >
                 <div ref={mobileStepperScrollerRef} className="stepper-no-scrollbar flex gap-1 overflow-x-auto">
                     {steps.map((step, i) => {
@@ -108,16 +108,16 @@ function StepperSidebar({
                                 href={`#${step.id}`}
                                 className={`flex shrink-0 items-center gap-2 rounded-md px-2.5 py-1.5 transition-colors ${
                                     isActive
-                                        ? 'bg-[#0098EA]/[0.07]'
+                                        ? 'bg-amber-500/10'
                                         : ''
                                 }`}
                             >
                                 <span
                                     className={`flex h-5 w-5 items-center justify-center rounded font-mono text-[9px] font-bold ${
                                         isActive
-                                            ? 'bg-[#0098EA]/[0.12] text-[#0098EA]'
+                                            ? 'bg-amber-500/15 text-amber-500'
                                             : isCompleted
-                                              ? 'bg-[#0098EA]/[0.07] text-[#0098EA]/50'
+                                              ? 'bg-amber-500/10 text-amber-500/50'
                                               : 'bg-white/[0.04] text-neutral-600'
                                     }`}
                                 >
@@ -236,7 +236,7 @@ export function GettingStartedPage() {
         <div>
             {/* Page header */}
             <div className="mb-10">
-                <p className="mb-2 text-xs font-medium uppercase tracking-widest text-[#0098EA]">
+                <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">
                     Getting Started
                 </p>
                 <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">

@@ -6,12 +6,19 @@
  *
  */
 
+import { Monitor, Moon, Sun } from 'lucide-react';
+
+import { useTheme } from '@/core/theme/theme-provider';
+import type { ThemeMode } from '@/core/theme/theme';
+
 const footerColumns = [
     {
         title: 'Product',
         links: [
-            { label: 'General info', href: 'https://ton.org/dev/agentic-wallets' },
-            { label: 'Documentation', href: 'https://docs.ton.org/ecosystem/ai/wallets' },
+            { label: 'How It Works', href: '/#how-it-works' },
+            { label: 'For Developers', href: '/#for-developers' },
+            { label: 'For Users', href: '/#for-users' },
+            { label: 'FAQ', href: '/#faq' },
         ],
     },
     {
@@ -30,29 +37,27 @@ const footerColumns = [
     },
 ];
 
+const themeOptions: { mode: ThemeMode; label: string; icon: typeof Monitor }[] = [
+    { mode: 'auto', label: 'Auto', icon: Monitor },
+    { mode: 'light', label: 'Light', icon: Sun },
+    { mode: 'dark', label: 'Dark', icon: Moon },
+];
+
 export function SiteFooter() {
     return (
-        <footer className="pb-8 pt-12 sm:pb-16 sm:pt-20">
-            <div className="mx-auto max-w-6xl px-6">
-                {/* Top accent line */}
-                <div className="mb-10 h-px bg-gradient-to-r from-transparent via-[#0098EA]/20 to-transparent sm:mb-14" />
-
+        <footer className="pb-8 pt-12 sm:pb-16 sm:pt-24 md:pt-28">
+            <div className="mx-auto max-w-6xl border-t border-white/[0.05] px-6 pt-6 sm:pt-10 md:pt-12">
                 <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-4">
                     <div>
-                        <div className="flex items-center gap-2">
-                            <FooterLogo />
-                            <span className="text-sm font-semibold tracking-tight">Agentic Wallets</span>
-                        </div>
-                        <p className="mt-3 text-sm leading-relaxed text-neutral-600">
+                        <span className="text-lg font-semibold tracking-tight">Agentic Wallets</span>
+                        <p className="mt-3 text-sm text-neutral-600">
                             Self-custody wallets for autonomous agents on TON.
                         </p>
                     </div>
 
                     {footerColumns.map((col) => (
                         <div key={col.title}>
-                            <h4 className="mb-4 text-xs font-semibold uppercase tracking-[0.12em] text-neutral-600">
-                                {col.title}
-                            </h4>
+                            <h4 className="mb-4 text-sm font-medium text-neutral-400">{col.title}</h4>
                             <ul className="flex flex-col gap-3">
                                 {col.links.map((link) => (
                                     <li key={link.label}>
@@ -72,22 +77,46 @@ export function SiteFooter() {
                     ))}
                 </div>
 
-                <div className="mt-10 pt-6 text-center text-xs text-neutral-700 sm:mt-14 sm:pt-8">
-                    &copy; {new Date().getFullYear()} Agentic Wallets. Built on The Open Network.
+                <div className="mt-8 flex flex-col items-center justify-between gap-4 pt-6 text-xs text-neutral-700 sm:mt-12 sm:flex-row sm:pt-8">
+                    <p>&copy; {new Date().getFullYear()} Agentic Wallets. Built on The Open Network.</p>
+                    <ThemeSwitch />
                 </div>
             </div>
         </footer>
     );
 }
 
-function FooterLogo() {
+function ThemeSwitch() {
+    const { mode, setMode } = useTheme();
+
     return (
-        <svg width="20" height="20" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-            <rect x="1" y="1" width="26" height="26" rx="8" stroke="white" strokeWidth="1" strokeOpacity="0.1" />
-            <rect x="5" y="5" width="8" height="8" rx="2" fill="#0098EA" fillOpacity="0.7" />
-            <rect x="15" y="5" width="8" height="8" rx="2" fill="#0098EA" fillOpacity="0.2" />
-            <rect x="5" y="15" width="8" height="8" rx="2" fill="#0098EA" fillOpacity="0.12" />
-            <rect x="15" y="15" width="8" height="8" rx="2" fill="white" fillOpacity="0.05" />
-        </svg>
+        <div
+            className="inline-flex rounded-full border border-border bg-surface-1 p-1"
+            aria-label="Theme"
+            role="group"
+        >
+            {themeOptions.map(({ mode: optionMode, label, icon: Icon }) => {
+                const isActive = mode === optionMode;
+
+                return (
+                    <button
+                        key={optionMode}
+                        type="button"
+                        onClick={() => setMode(optionMode)}
+                        className={`inline-flex h-8 items-center justify-center gap-1.5 rounded-full px-2.5 text-xs font-medium transition-colors ${
+                            isActive
+                                ? 'bg-accent text-on-accent'
+                                : 'text-tertiary hover:bg-surface-3 hover:text-primary'
+                        }`}
+                        aria-pressed={isActive}
+                        aria-label={`${label} theme`}
+                        title={`${label} theme`}
+                    >
+                        <Icon size={14} aria-hidden="true" />
+                        <span>{label}</span>
+                    </button>
+                );
+            })}
+        </div>
     );
 }

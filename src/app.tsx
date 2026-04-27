@@ -7,7 +7,7 @@
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { AppKitProvider } from '@ton/appkit-react';
 
@@ -18,6 +18,8 @@ import { DashboardPage } from '@/pages/dashboard-page';
 import { AgentDetailPage } from '@/pages/agent-detail-page';
 import { CreateAgentPage } from '@/pages/create-agent-page';
 import { GettingStartedPage } from '@/pages/getting-started-page';
+import { LandingPage } from '@/pages/landing';
+import { ThemeProvider, useTheme } from '@/core/theme/theme-provider';
 
 import '@ton/appkit-react/styles.css';
 
@@ -34,12 +36,22 @@ const queryClient = new QueryClient({
 
 export function App() {
     return (
+        <ThemeProvider>
+            <AppContent />
+        </ThemeProvider>
+    );
+}
+
+function AppContent() {
+    const { resolvedTheme } = useTheme();
+
+    return (
         <QueryClientProvider client={queryClient}>
             <AppKitProvider appKit={appKit}>
                 <BrowserRouter>
                     <ScrollRestoration />
                     <Routes>
-                        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                        <Route path="/" element={<LandingPage />} />
                         <Route
                             path="/dashboard"
                             element={
@@ -76,14 +88,14 @@ export function App() {
                 </BrowserRouter>
                 <Toaster
                     position="top-right"
-                    theme="dark"
+                    theme={resolvedTheme}
                     offset={{ top: '72px', right: '16px' }}
                     mobileOffset={{ top: '72px', right: '12px', left: '12px' }}
                     toastOptions={{
                         style: {
-                            background: 'rgba(255,255,255,0.06)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            color: 'white',
+                            background: 'var(--background-content-upper)',
+                            border: '1px solid var(--card-border-default)',
+                            color: 'var(--text-primary)',
                         },
                     }}
                 />

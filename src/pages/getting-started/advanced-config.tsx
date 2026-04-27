@@ -76,7 +76,7 @@ export function AdvancedConfig() {
     return (
         <div className="flex flex-col gap-4">
             <div className="mb-2">
-                <p className="text-xs font-medium uppercase tracking-widest text-[#0098EA]">
+                <p className="text-xs font-medium uppercase tracking-widest text-amber-500">
                     Advanced
                 </p>
                 <h3 className="mt-1 text-xl font-bold tracking-tight">Configuration Reference</h3>
@@ -95,7 +95,7 @@ export function AdvancedConfig() {
                         <tbody>
                             {envVars.map((v) => (
                                 <tr key={v.name} className="border-b border-white/[0.04]">
-                                    <td className="py-2.5 pr-4 font-mono text-xs text-[#0098EA]/70">{v.name}</td>
+                                    <td className="py-2.5 pr-4 font-mono text-xs text-amber-500/70">{v.name}</td>
                                     <td className="py-2.5 pr-4 text-xs text-neutral-400">{v.description}</td>
                                     <td className="py-2.5 font-mono text-xs text-neutral-600">{v.defaultValue}</td>
                                 </tr>
@@ -118,7 +118,7 @@ export function AdvancedConfig() {
                 <div className="flex flex-col gap-3">
                     <p className="text-sm text-neutral-400">
                         We recommend starting on testnet while experimenting. Add the{' '}
-                        <code className="font-mono text-xs text-[#0098EA]/70">NETWORK</code> env variable to your config:
+                        <code className="font-mono text-xs text-amber-500/70">NETWORK</code> env variable to your config:
                     </p>
                     <CodeBlock code={testnetConfig} title="MCP config — testnet" language="json" />
                 </div>
@@ -140,7 +140,7 @@ export function AdvancedConfig() {
                             <tbody>
                                 {deepLinkParams.map((p) => (
                                     <tr key={p.param} className="border-b border-white/[0.04]">
-                                        <td className="py-2.5 pr-4 font-mono text-xs text-[#0098EA]/70">{p.param}</td>
+                                        <td className="py-2.5 pr-4 font-mono text-xs text-amber-500/70">{p.param}</td>
                                         <td className="py-2.5 text-xs text-neutral-400">{p.description}</td>
                                     </tr>
                                 ))}
@@ -172,7 +172,7 @@ export function AdvancedConfig() {
                             <tbody>
                                 {changePublicKeyPrefillParams.map((p) => (
                                     <tr key={p.param} className="border-b border-white/[0.04]">
-                                        <td className="py-2.5 pr-4 font-mono text-xs text-[#0098EA]/70">{p.param}</td>
+                                        <td className="py-2.5 pr-4 font-mono text-xs text-amber-500/70">{p.param}</td>
                                         <td className="py-2.5 text-xs text-neutral-400">{p.description}</td>
                                     </tr>
                                 ))}

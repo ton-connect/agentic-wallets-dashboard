@@ -1,46 +1,52 @@
 @import 'tailwindcss';
+@import './constants.css';
 
 @theme {
-    --font-sans: 'Inter', system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    --font-sans: 'Inter', system-ui, 'Avenir', 'Helvetica', 'Arial', sans-serif;
+    --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
 
-    /* Base background */
-    --color-surface: #06090E;
-    --color-surface-1: rgba(0, 152, 234, 0.025);
-    --color-surface-2: rgba(0, 152, 234, 0.04);
-    --color-surface-3: rgba(0, 152, 234, 0.07);
+    --color-surface: var(--background-page);
+    --color-surface-1: var(--background-content);
+    --color-surface-2: var(--background-content-upper);
+    --color-surface-3: var(--background-content-hover);
+    --color-surface-header: var(--background-fixed-header);
+    --color-surface-suggestions: var(--background-suggestions);
 
-    /* Borders */
-    --color-border: rgba(255, 255, 255, 0.07);
-    --color-border-strong: rgba(255, 255, 255, 0.13);
-    --color-border-accent: rgba(0, 152, 234, 0.25);
+    --color-border: var(--card-border-default);
+    --color-border-strong: var(--card-border-checkbox);
+    --color-separator: var(--separator-alpha);
 
-    /* TON Blue - primary accent */
-    --color-accent: #0098EA;
-    --color-accent-hover: #22A9F0;
-    --color-accent-dim: rgba(0, 152, 234, 0.12);
-    --color-accent-glow: rgba(0, 152, 234, 0.2);
+    --color-primary: var(--text-primary);
+    --color-secondary: var(--text-secondary);
+    --color-tertiary: var(--text-tetriary);
+    --color-muted: var(--text-tetriary);
+    --color-accent: var(--accent-default);
+    --color-accent-hover: var(--accent-hover);
+    --color-on-accent: #ffffff;
+    --color-error: var(--text-error);
+    --color-error-bg: var(--error--bg);
+    --color-success: var(--free-domain-status-color);
+    --color-success-bg: var(--free-domain-status-backgroud);
 
-    /* Neutral scale */
-    --color-neutral-300: #cdd2da;
-    --color-neutral-400: #b0b6bf;
-    --color-neutral-500: #939ba5;
-    --color-neutral-600: #636970;
-    --color-neutral-700: #464c55;
+    --color-white: var(--text-primary);
+    --color-neutral-100: var(--text-primary);
+    --color-neutral-200: var(--text-secondary);
+    --color-neutral-300: var(--text-secondary);
+    --color-neutral-400: var(--text-tetriary);
+    --color-neutral-500: var(--text-tetriary);
+    --color-neutral-600: var(--icon-secondary);
+    --color-neutral-700: var(--separator-alpha);
 
-    /* Status colors */
-    --color-success: #22c55e;
-    --color-success-dim: rgba(34, 197, 94, 0.1);
-    --color-warning: #f59e0b;
-    --color-warning-dim: rgba(245, 158, 11, 0.1);
-    --color-danger: #ef4444;
-    --color-danger-dim: rgba(239, 68, 68, 0.08);
+    --color-amber-300: var(--accent-hover);
+    --color-amber-400: var(--accent-hover);
+    --color-amber-500: var(--accent-default);
+    --color-emerald-200: var(--free-domain-status-color);
+    --color-emerald-400: var(--free-domain-status-color);
+    --color-emerald-500: var(--free-domain-status-color);
 
-    /* Animations */
     --animate-fade-in: fade-in 0.3s ease-out;
     --animate-slide-up: slide-up 0.3s ease-out;
     --animate-pulse-slow: pulse 3s ease-in-out infinite;
-    --animate-glow-pulse: glow-pulse 3s ease-in-out infinite;
 
     @keyframes fade-in {
         0% { opacity: 0; }
@@ -49,10 +55,6 @@
     @keyframes slide-up {
         0% { opacity: 0; transform: translateY(8px); }
         100% { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes glow-pulse {
-        0%, 100% { opacity: 0.4; }
-        50% { opacity: 0.9; }
     }
 }
 
@@ -70,24 +72,21 @@ html {
 html, body {
     margin: 0;
     padding: 0;
-    background: var(--color-surface);
-    color: white;
+    background: var(--background-page);
+    color: var(--text-primary);
+    color-scheme: light dark;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Inter Display-style optical sizing */
-    font-optical-sizing: auto;
-    font-feature-settings: 'cv05' 1, 'cv10' 1;
 }
 
 :root {
     --site-header-height: 73px;
 }
 
-/* Sonner toast overrides */
 [data-sonner-toaster] [data-sonner-toast] {
-    --normal-bg: rgba(6, 9, 14, 0.95);
-    --normal-border: rgba(0, 152, 234, 0.2);
-    --normal-text: white;
+    --normal-bg: var(--background-content-upper);
+    --normal-border: var(--card-border-default);
+    --normal-text: var(--text-primary);
     max-width: min(420px, calc(100vw - 24px));
 }
 
@@ -95,10 +94,9 @@ html, body {
     overflow-wrap: anywhere;
 }
 
-/* Scrollbars */
 .app-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: rgba(0, 152, 234, 0.5) rgba(255, 255, 255, 0.04);
+    scrollbar-color: var(--accent-default) var(--background-content-hover);
 }
 
 .app-scrollbar::-webkit-scrollbar {
@@ -107,23 +105,23 @@ html, body {
 }
 
 .app-scrollbar::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--background-content-hover);
     border-radius: 9999px;
 }
 
 .app-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(0, 152, 234, 0.5);
+    background: var(--accent-default);
     border-radius: 9999px;
 }
 
 .app-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 152, 234, 0.75);
+    background: var(--accent-hover);
 }
 
 .deployment-command-scroll {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.18) rgba(255, 255, 255, 0.025);
+    scrollbar-color: var(--icon-secondary) transparent;
 }
 
 .deployment-command-scroll::-webkit-scrollbar {
@@ -131,22 +129,22 @@ html, body {
 }
 
 .deployment-command-scroll::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.025);
+    background: transparent;
     border-radius: 9999px;
 }
 
 .deployment-command-scroll::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.18);
+    background: var(--icon-secondary);
     border-radius: 9999px;
 }
 
 .deployment-command-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.28);
+    background: var(--text-tetriary);
 }
 
 @media (max-width: 640px) {
     .deployment-command-scroll {
-        scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+        scrollbar-color: var(--icon-secondary) transparent;
     }
 
     .deployment-command-scroll::-webkit-scrollbar {
@@ -165,23 +163,4 @@ html, body {
 
 .stepper-no-scrollbar::-webkit-scrollbar {
     display: none;
-}
-
-/* Accent glow effect utility */
-.accent-glow {
-    box-shadow: 0 0 24px rgba(0, 152, 234, 0.15), 0 0 48px rgba(0, 152, 234, 0.06);
-}
-
-.accent-glow-sm {
-    box-shadow: 0 0 12px rgba(0, 152, 234, 0.2);
-}
-
-/* Card with accent border on hover */
-.card-hover {
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-}
-
-.card-hover:hover {
-    border-color: rgba(0, 152, 234, 0.2);
-    box-shadow: 0 0 0 1px rgba(0, 152, 234, 0.08), 0 8px 32px rgba(0, 0, 0, 0.3);
 }

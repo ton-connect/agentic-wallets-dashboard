@@ -38,6 +38,14 @@ function createApiClient(network: Network) {
     });
 }
 
+function getInitialTonConnectTheme() {
+    if (typeof document === 'undefined') {
+        return THEME.LIGHT;
+    }
+
+    return document.documentElement.dataset.theme === 'dark' ? THEME.DARK : THEME.LIGHT;
+}
+
 export const appKit = new AppKit({
     networks: {
         [Network.mainnet().chainId]: {
@@ -52,14 +60,20 @@ export const appKit = new AppKit({
             tonConnectOptions: {
                 manifestUrl: 'https://agents.ton.org/tonconnect-manifest.json',
                 uiPreferences: {
-                    theme: THEME.DARK,
+                    theme: getInitialTonConnectTheme(),
                     borderRadius: 's',
                     colorsSet: {
+                        [THEME.LIGHT]: {
+                            connectButton: {
+                                background: '#0098EA',
+                                foreground: '#FFFFFF',
+                            },
+                        },
                         [THEME.DARK]: {
                             connectButton: {
-                                background: '#f59e0b',
-                                foreground: '#000000',
-                            },  
+                                background: '#07ACFF',
+                                foreground: '#FFFFFF',
+                            },
                         },
                     },
                 },

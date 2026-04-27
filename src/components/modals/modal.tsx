@@ -32,7 +32,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative mx-3 max-h-[calc(100vh-24px)] w-full max-w-md overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0a0a] p-4 shadow-2xl animate-slide-up sm:mx-4 sm:max-h-[calc(100vh-32px)] sm:p-6">
+            <div className="relative mx-3 max-h-[calc(100vh-24px)] w-full max-w-md overflow-hidden rounded-2xl border border-white/[0.08] bg-surface-1 p-4 shadow-2xl animate-slide-up sm:mx-4 sm:max-h-[calc(100vh-32px)] sm:p-6">
                 <div className="mb-4 flex items-center justify-between sm:mb-5">
                     <h2 className="text-lg font-semibold">{title}</h2>
                     <button onClick={onClose} className="text-neutral-600 transition-colors hover:text-white">

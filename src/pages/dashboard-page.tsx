@@ -7,7 +7,8 @@
  */
 
 import { useMemo, useState } from 'react';
-import { useAddress } from '@ton/appkit-react';
+import { useQuery } from '@tanstack/react-query';
+import { useAddress, useAppKit, useNetwork } from '@ton/appkit-react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAgents } from '@/features/agents';
@@ -21,25 +22,18 @@ import { FundModal } from '@/components/modals/fund-modal';
 import { WithdrawModal } from '@/components/modals/withdraw-modal';
 import { RevokeModal } from '@/components/modals/revoke-modal';
 import { formatUnitsTrimmed } from '@/features/agents/lib/amount';
-import { normalizeTonAddress } from '@/features/agents/lib/address';
-
-function getAgentBalance(balanceMap: Record<string, bigint>, address: string): bigint | undefined {
-    const normalized = normalizeTonAddress(address);
-    if (normalized && balanceMap[normalized] != null) {
-        return balanceMap[normalized];
-    }
-    return balanceMap[address];
-}
+import { mapWithConcurrency } from '@/features/agents/lib/async';
 
 export function DashboardPage() {
     const address = useAddress();
+    const appKit = useAppKit();
+    const network = useNetwork();
     const navigate = useNavigate();
 
     const {
         agents,
         activeAgents,
         newAgents,
-        balancesByAddress,
         isLoading,
         refresh,
         collectionAddress,
@@ -59,7 +53,7 @@ export function DashboardPage() {
                 return aHasCreationDate ? -1 : 1;
             }
             if (aHasCreationDate && bHasCreationDate && a.creationDateTimestamp !== b.creationDateTimestamp) {
-                return b.creationDateTimestamp! - a.creationDateTimestamp!;
+                return (b.creationDateTimestamp ?? 0) - (a.creationDateTimestamp ?? 0);
             }
             if (a.status !== b.status) {
                 return a.status === 'active' ? -1 : 1;
@@ -71,14 +65,28 @@ export function DashboardPage() {
         });
     }, [agents]);
 
+    const agentAddresses = useMemo(() => Array.from(new Set(agents.map((agent) => agent.address))).sort(), [agents]);
+
+    const { data: balancesByAddress = {} as Record<string, bigint> } = useQuery({
+        queryKey: ['agentic-wallets-balances', network?.chainId, agentAddresses],
+        enabled: !!network && agentAddresses.length > 0,
+        queryFn: async (): Promise<Record<string, bigint>> => {
+            if (!network) {
+                return {};
+            }
+
+            const client = appKit.networkManager.getClient(network);
+            const entries = await mapWithConcurrency(agentAddresses, 8, async (agentAddress) => {
+                const balance = await client.getBalance(agentAddress);
+                return [agentAddress, BigInt(balance)] as const;
+            });
+
+            return Object.fromEntries(entries);
+        },
+    });
+
     const totalBalanceNano = useMemo(
-        () =>
-            activeAgents.reduce((acc, agent) => {
-                if (agent.isPendingIndexing) {
-                    return acc;
-                }
-                return acc + (getAgentBalance(balancesByAddress, agent.address) ?? 0n);
-            }, 0n),
+        () => activeAgents.reduce((acc, agent) => acc + (balancesByAddress[agent.address] ?? 0n), 0n),
         [activeAgents, balancesByAddress],
     );
     const totalBalanceTon = formatUnitsTrimmed(totalBalanceNano, 9);
@@ -105,7 +113,7 @@ export function DashboardPage() {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            <AgentStatsBar agents={agents} activeAgents={activeAgents} totalBalanceTon={totalBalanceTon} />
+            <AgentStatsBar agents={agents} totalBalanceTon={totalBalanceTon} />
 
             <NotificationBanner
                 agents={newAgents}
@@ -130,7 +138,7 @@ export function DashboardPage() {
                         <AgentCard
                             key={agent.id}
                             agent={agent}
-                            balanceNano={agent.isPendingIndexing ? undefined : getAgentBalance(balancesByAddress, agent.address)}
+                            balanceNano={balancesByAddress[agent.address]}
                             onFund={() => {
                                 markAgentKnown(agent.id);
                                 setFundAgent(agent);
