@@ -326,7 +326,7 @@ export function AgentDetailPage() {
                             <p className="mt-1 text-sm text-neutral-300">
                                 To let your agent use this wallet, send it the message:
                             </p>
-                            <div className="mt-3 flex items-center gap-2 rounded-xl border border-white/[0.08] bg-black/20 p-2">
+                            <div className="mt-3 flex items-center gap-2 rounded-xl border border-white/[0.08] bg-surface-1 p-2">
                                 <div className="deployment-command-scroll min-w-0 flex-1 overflow-x-auto pb-1">
                                     <code className="block w-max min-w-full whitespace-nowrap px-1 font-mono text-xs text-neutral-100 sm:text-sm">
                                         {importCommand}
@@ -382,7 +382,7 @@ export function AgentDetailPage() {
                             <>
                                 <button
                                     onClick={() => setShowFund(true)}
-                                    className="order-1 w-full rounded-full bg-amber-500 px-6 py-2.5 text-sm font-medium text-black transition-colors hover:bg-amber-400 sm:order-none sm:w-auto"
+                                    className="order-1 w-full rounded-full bg-amber-500 px-6 py-2.5 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400 sm:order-none sm:w-auto"
                                 >
                                     Fund
                                 </button>

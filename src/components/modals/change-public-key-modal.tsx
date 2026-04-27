@@ -104,11 +104,11 @@ export function ChangePublicKeyModal({ agent, initialPublicKey, onClose, onSucce
                     <button
                         onClick={() => void handleSubmit()}
                         disabled={uiPending || !isChanged}
-                        className="flex-1 rounded-full bg-amber-500 py-3 text-sm font-medium text-black transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex-1 rounded-full bg-amber-500 py-3 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                         {uiPending ? (
                             <span className="inline-flex items-center gap-2">
-                                <span className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />
+                                <span className="h-4 w-4 animate-spin rounded-full border-2 border-on-accent/30 border-t-on-accent" />
                                 Saving...
                             </span>
                         ) : (

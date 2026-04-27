@@ -42,8 +42,8 @@ export function WalletButton({ variant = 'default', fullWidth = false, onConnect
 
     const isHeaderVariant = variant === 'header';
     const disconnectedClassName = isHeaderVariant
-        ? `rounded-full bg-amber-500 px-5 py-2 text-sm font-medium text-black transition-colors hover:bg-amber-400 ${fullWidth ? 'flex w-full items-center justify-center' : ''}`
-        : `rounded-lg bg-amber-500 px-3 py-2 text-xs font-semibold text-black transition-colors hover:bg-amber-400 sm:px-4 sm:text-sm ${fullWidth ? 'flex w-full items-center justify-center' : ''}`;
+        ? `rounded-full bg-amber-500 px-5 py-2 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400 ${fullWidth ? 'flex w-full items-center justify-center' : ''}`
+        : `rounded-lg bg-amber-500 px-3 py-2 text-xs font-semibold text-on-accent transition-colors hover:bg-amber-400 sm:px-4 sm:text-sm ${fullWidth ? 'flex w-full items-center justify-center' : ''}`;
     const connectedButtonClassName = isHeaderVariant
         ? `flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-medium transition-colors hover:bg-white/[0.08] sm:gap-2 sm:px-4 ${fullWidth ? 'w-full justify-between' : ''}`
         : `flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-2 text-sm font-medium transition-colors hover:bg-white/[0.08] sm:gap-2 sm:px-3 ${fullWidth ? 'w-full justify-between' : ''}`;
@@ -91,7 +91,7 @@ export function WalletButton({ variant = 'default', fullWidth = false, onConnect
             </button>
 
             {menuOpen && (
-                <div className="absolute right-0 top-full z-50 mt-2 min-w-[180px] overflow-hidden rounded-lg border border-white/10 bg-[#111] shadow-xl animate-fade-in">
+                <div className="absolute right-0 top-full z-50 mt-2 min-w-[180px] overflow-hidden rounded-lg border border-white/10 bg-surface-suggestions shadow-xl animate-fade-in">
                     <div className="border-b border-white/[0.06] px-4 py-3">
                         <p className="text-[10px] uppercase tracking-widest text-neutral-500">Connected</p>
                         <p className="mt-1 font-mono text-xs text-white/70">{formatAddress(formattedAddress)}</p>

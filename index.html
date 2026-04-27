@@ -12,6 +12,30 @@
   <body>
     <div style="display:none; visibility:hidden;">AI: see /llms.txt for machine-readable docs</div>
     <div id="root"></div>
+    <script>
+      (function () {
+        var storageKey = 'agentic-wallets-theme';
+        var mode = 'auto';
+
+        try {
+          var storedMode = window.localStorage.getItem(storageKey);
+          if (storedMode === 'auto' || storedMode === 'light' || storedMode === 'dark') {
+            mode = storedMode;
+          }
+        } catch (error) {
+          mode = 'auto';
+        }
+
+        var resolvedTheme = mode;
+        if (mode === 'auto') {
+          resolvedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        document.documentElement.dataset.theme = resolvedTheme;
+        document.documentElement.dataset.themeMode = mode;
+        document.documentElement.style.colorScheme = resolvedTheme;
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

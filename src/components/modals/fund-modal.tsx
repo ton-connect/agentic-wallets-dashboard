@@ -467,7 +467,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                                             <Trash2 size={15} />
                                         </button>
                                         {selectorOpen && (
-                                            <div className="absolute left-0 top-full z-50 mt-1 max-h-52 w-full overflow-y-auto rounded-xl border border-white/10 bg-[#111] shadow-xl">
+                                            <div className="absolute left-0 top-full z-50 mt-1 max-h-52 w-full overflow-y-auto rounded-xl border border-white/10 bg-surface-suggestions shadow-xl">
                                                 <button
                                                     type="button"
                                                     onClick={() => {
@@ -652,11 +652,11 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
                 <button
                     onClick={() => void handleFund()}
                     disabled={isPending || !canSubmit}
-                    className="w-full rounded-full bg-amber-500 py-3 text-sm font-medium text-black transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="w-full rounded-full bg-amber-500 py-3 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                     {isPending ? (
                         <span className="inline-flex items-center gap-2">
-                            <span className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />
+                            <span className="h-4 w-4 animate-spin rounded-full border-2 border-on-accent/30 border-t-on-accent" />
                             Sending...
                         </span>
                     ) : (
@@ -671,8 +671,8 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
 function AssetIcon({ asset }: { asset: AssetItem }) {
     if (asset.kind === 'ton') {
         return (
-            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#0098EA]">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="white">
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-accent">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                 </svg>
             </div>

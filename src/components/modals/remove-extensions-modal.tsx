@@ -62,7 +62,7 @@ export function RemoveExtensionsModal({ agent, selectedExtensions, onClose, onSu
 
                 <div className="space-y-2">
                     <p className="text-xs uppercase tracking-wider text-neutral-600">Selected extensions</p>
-                    <div className="max-h-52 space-y-2 overflow-y-auto rounded-xl border border-white/[0.08] bg-black/20 p-3">
+                    <div className="max-h-52 space-y-2 overflow-y-auto rounded-xl border border-white/[0.08] bg-surface-1 p-3">
                         {selectedExtensions.map((extension) => (
                             <div key={extension} className="rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-2">
                                 <CopyableAddress address={extension} adaptive className="w-full justify-between" />

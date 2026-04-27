@@ -62,7 +62,7 @@ export function AgentCard({ agent, balanceNano, onFund, onWithdraw, onRevoke }: 
                 <div className="mt-auto flex items-center gap-2 border-t border-white/[0.04] pt-3">
                     <button
                         onClick={onFund}
-                        className="rounded-full bg-amber-500 px-4 py-1.5 text-xs font-medium text-black transition-colors hover:bg-amber-400"
+                        className="rounded-full bg-amber-500 px-4 py-1.5 text-xs font-medium text-on-accent transition-colors hover:bg-amber-400"
                     >
                         Fund
                     </button>

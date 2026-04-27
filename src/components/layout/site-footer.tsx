@@ -6,6 +6,11 @@
  *
  */
 
+import { Monitor, Moon, Sun } from 'lucide-react';
+
+import { useTheme } from '@/core/theme/theme-provider';
+import type { ThemeMode } from '@/core/theme/theme';
+
 const footerColumns = [
     {
         title: 'Product',
@@ -30,6 +35,12 @@ const footerColumns = [
             { label: 'Telegram', href: 'https://t.me/ai_dev_wall' },
         ],
     },
+];
+
+const themeOptions: { mode: ThemeMode; label: string; icon: typeof Monitor }[] = [
+    { mode: 'auto', label: 'Auto', icon: Monitor },
+    { mode: 'light', label: 'Light', icon: Sun },
+    { mode: 'dark', label: 'Dark', icon: Moon },
 ];
 
 export function SiteFooter() {
@@ -66,10 +77,46 @@ export function SiteFooter() {
                     ))}
                 </div>
 
-                <div className="mt-8 pt-6 text-center text-xs text-neutral-700 sm:mt-12 sm:pt-8">
-                    &copy; {new Date().getFullYear()} Agentic Wallets. Built on The Open Network.
+                <div className="mt-8 flex flex-col items-center justify-between gap-4 pt-6 text-xs text-neutral-700 sm:mt-12 sm:flex-row sm:pt-8">
+                    <p>&copy; {new Date().getFullYear()} Agentic Wallets. Built on The Open Network.</p>
+                    <ThemeSwitch />
                 </div>
             </div>
         </footer>
+    );
+}
+
+function ThemeSwitch() {
+    const { mode, setMode } = useTheme();
+
+    return (
+        <div
+            className="inline-flex rounded-full border border-border bg-surface-1 p-1"
+            aria-label="Theme"
+            role="group"
+        >
+            {themeOptions.map(({ mode: optionMode, label, icon: Icon }) => {
+                const isActive = mode === optionMode;
+
+                return (
+                    <button
+                        key={optionMode}
+                        type="button"
+                        onClick={() => setMode(optionMode)}
+                        className={`inline-flex h-8 items-center justify-center gap-1.5 rounded-full px-2.5 text-xs font-medium transition-colors ${
+                            isActive
+                                ? 'bg-accent text-on-accent'
+                                : 'text-tertiary hover:bg-surface-3 hover:text-primary'
+                        }`}
+                        aria-pressed={isActive}
+                        aria-label={`${label} theme`}
+                        title={`${label} theme`}
+                    >
+                        <Icon size={14} aria-hidden="true" />
+                        <span>{label}</span>
+                    </button>
+                );
+            })}
+        </div>
     );
 }

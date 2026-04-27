@@ -10,65 +10,65 @@ function ProblemIllustration() {
     return (
         <svg viewBox="0 0 320 260" fill="none" className="mx-auto h-auto w-full max-w-xs" aria-hidden="true">
             {/* Central wallet — under pressure */}
-            <rect x="110" y="80" width="100" height="52" rx="10" stroke="white" strokeWidth="1.5" />
+            <rect x="110" y="80" width="100" height="52" rx="10" stroke="currentColor" strokeWidth="1.5" />
             <text
                 x="160"
                 y="104"
                 textAnchor="middle"
-                fill="white"
+                fill="currentColor"
                 fontSize="10"
                 fontWeight="600"
                 fontFamily="system-ui"
             >
                 Your Wallet
             </text>
-            <text x="160" y="120" textAnchor="middle" fill="white" fontSize="9" fontFamily="monospace" opacity="0.4">
+            <text x="160" y="120" textAnchor="middle" fill="currentColor" fontSize="9" fontFamily="monospace" opacity="0.4">
                 $10,000
             </text>
 
             {/* Agents reaching in — arrows pointing AT the wallet */}
             {/* Top-left agent */}
-            <circle cx="40" cy="30" r="16" stroke="white" strokeWidth="1" strokeOpacity="0.3" />
-            <text x="40" y="34" textAnchor="middle" fill="white" fontSize="8" fontFamily="monospace" opacity="0.3">
+            <circle cx="40" cy="30" r="16" stroke="currentColor" strokeWidth="1" strokeOpacity="0.3" />
+            <text x="40" y="34" textAnchor="middle" fill="currentColor" fontSize="8" fontFamily="monospace" opacity="0.3">
                 Bot
             </text>
-            <line x1="54" y1="42" x2="112" y2="82" stroke="white" strokeWidth="1" strokeOpacity="0.15" />
-            <polygon points="112,82 104,78 106,86" fill="white" fillOpacity="0.15" />
+            <line x1="54" y1="42" x2="112" y2="82" stroke="currentColor" strokeWidth="1" strokeOpacity="0.15" />
+            <polygon points="112,82 104,78 106,86" fill="currentColor" fillOpacity="0.15" />
 
             {/* Top-right agent */}
-            <circle cx="280" cy="30" r="16" stroke="white" strokeWidth="1" strokeOpacity="0.3" />
-            <text x="280" y="34" textAnchor="middle" fill="white" fontSize="8" fontFamily="monospace" opacity="0.3">
+            <circle cx="280" cy="30" r="16" stroke="currentColor" strokeWidth="1" strokeOpacity="0.3" />
+            <text x="280" y="34" textAnchor="middle" fill="currentColor" fontSize="8" fontFamily="monospace" opacity="0.3">
                 AI
             </text>
-            <line x1="266" y1="42" x2="208" y2="82" stroke="white" strokeWidth="1" strokeOpacity="0.15" />
-            <polygon points="208,82 214,78 216,86" fill="white" fillOpacity="0.15" />
+            <line x1="266" y1="42" x2="208" y2="82" stroke="currentColor" strokeWidth="1" strokeOpacity="0.15" />
+            <polygon points="208,82 214,78 216,86" fill="currentColor" fillOpacity="0.15" />
 
             {/* Left agent */}
-            <circle cx="20" cy="106" r="16" stroke="white" strokeWidth="1" strokeOpacity="0.3" />
-            <text x="20" y="110" textAnchor="middle" fill="white" fontSize="7" fontFamily="monospace" opacity="0.3">
+            <circle cx="20" cy="106" r="16" stroke="currentColor" strokeWidth="1" strokeOpacity="0.3" />
+            <text x="20" y="110" textAnchor="middle" fill="currentColor" fontSize="7" fontFamily="monospace" opacity="0.3">
                 App
             </text>
-            <line x1="36" y1="106" x2="110" y2="106" stroke="white" strokeWidth="1" strokeOpacity="0.15" />
-            <polygon points="110,106 102,102 102,110" fill="white" fillOpacity="0.15" />
+            <line x1="36" y1="106" x2="110" y2="106" stroke="currentColor" strokeWidth="1" strokeOpacity="0.15" />
+            <polygon points="110,106 102,102 102,110" fill="currentColor" fillOpacity="0.15" />
 
             {/* Right agent */}
-            <circle cx="300" cy="106" r="16" stroke="white" strokeWidth="1" strokeOpacity="0.3" />
-            <text x="300" y="110" textAnchor="middle" fill="white" fontSize="7" fontFamily="monospace" opacity="0.3">
+            <circle cx="300" cy="106" r="16" stroke="currentColor" strokeWidth="1" strokeOpacity="0.3" />
+            <text x="300" y="110" textAnchor="middle" fill="currentColor" fontSize="7" fontFamily="monospace" opacity="0.3">
                 API
             </text>
-            <line x1="284" y1="106" x2="210" y2="106" stroke="white" strokeWidth="1" strokeOpacity="0.15" />
-            <polygon points="210,106 218,102 218,110" fill="white" fillOpacity="0.15" />
+            <line x1="284" y1="106" x2="210" y2="106" stroke="currentColor" strokeWidth="1" strokeOpacity="0.15" />
+            <polygon points="210,106 218,102 218,110" fill="currentColor" fillOpacity="0.15" />
 
             {/* Bottom agent */}
-            <circle cx="160" cy="200" r="16" stroke="white" strokeWidth="1" strokeOpacity="0.3" />
-            <text x="160" y="204" textAnchor="middle" fill="white" fontSize="7" fontFamily="monospace" opacity="0.3">
+            <circle cx="160" cy="200" r="16" stroke="currentColor" strokeWidth="1" strokeOpacity="0.3" />
+            <text x="160" y="204" textAnchor="middle" fill="currentColor" fontSize="7" fontFamily="monospace" opacity="0.3">
                 DeFi
             </text>
-            <line x1="160" y1="184" x2="160" y2="132" stroke="white" strokeWidth="1" strokeOpacity="0.15" />
-            <polygon points="160,132 156,140 164,140" fill="white" fillOpacity="0.15" />
+            <line x1="160" y1="184" x2="160" y2="132" stroke="currentColor" strokeWidth="1" strokeOpacity="0.15" />
+            <polygon points="160,132 156,140 164,140" fill="currentColor" fillOpacity="0.15" />
 
             {/* Danger label */}
-            <text x="160" y="248" textAnchor="middle" fill="white" fontSize="9" fontFamily="monospace" opacity="0.1">
+            <text x="160" y="248" textAnchor="middle" fill="currentColor" fontSize="9" fontFamily="monospace" opacity="0.1">
                 all agents → one wallet → one key
             </text>
         </svg>

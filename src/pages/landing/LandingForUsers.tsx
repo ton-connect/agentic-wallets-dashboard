@@ -116,7 +116,7 @@ export function LandingForUsers() {
                         <div className="pt-2">
                             <Link
                                 to="/dashboard"
-                                className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-medium text-black transition-colors hover:bg-amber-400"
+                                className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400"
                             >
                                 Try Dashboard
                                 <ArrowRight size={14} />

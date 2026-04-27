@@ -306,10 +306,10 @@ export function WithdrawModal({ agent, onClose, onSuccess }: WithdrawModalProps)
                                             ))}
                                         </div>
                                         {jettonsFade.top && (
-                                            <div className="pointer-events-none absolute inset-x-0 top-0 h-5 bg-gradient-to-b from-[#0a0a0a] to-transparent" />
+                                            <div className="pointer-events-none absolute inset-x-0 top-0 h-5 bg-gradient-to-b from-surface-1 to-transparent" />
                                         )}
                                         {jettonsFade.bottom && (
-                                            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
+                                            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-surface-1 to-transparent" />
                                         )}
                                     </div>
                                 )}
@@ -379,10 +379,10 @@ export function WithdrawModal({ agent, onClose, onSuccess }: WithdrawModalProps)
                                             ))}
                                         </div>
                                         {nftsFade.top && (
-                                            <div className="pointer-events-none absolute inset-x-0 top-0 h-5 bg-gradient-to-b from-[#0a0a0a] to-transparent" />
+                                            <div className="pointer-events-none absolute inset-x-0 top-0 h-5 bg-gradient-to-b from-surface-1 to-transparent" />
                                         )}
                                         {nftsFade.bottom && (
-                                            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
+                                            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-surface-1 to-transparent" />
                                         )}
                                     </div>
                                 )}
@@ -396,7 +396,7 @@ export function WithdrawModal({ agent, onClose, onSuccess }: WithdrawModalProps)
                     </div>
                 </div>
 
-                <div className="mt-3 border-t border-white/[0.08] bg-[#0a0a0a] pt-4">
+                <div className="mt-3 border-t border-white/[0.08] bg-surface-1 pt-4">
                     <div className="flex items-center justify-between gap-3">
                         <p className="text-sm text-neutral-300">
                             Total: <span className="font-mono">{formatUsd(totalUsd)}</span>

@@ -154,7 +154,7 @@ function AmountCell({ item, compact = false }: { item: AgentActivityItem; compac
                             <img
                                 src={item.swap.sent.iconUrl}
                                 alt={item.swap.sent.symbol}
-                                className="h-4 w-4 rounded-full border border-white/[0.15] bg-black/30 object-cover"
+                                className="h-4 w-4 rounded-full border border-white/[0.15] bg-surface-2 object-cover"
                             />
                         )}
                         <p className="font-mono text-xs font-medium tabular-nums text-neutral-300 sm:text-sm">
@@ -168,7 +168,7 @@ function AmountCell({ item, compact = false }: { item: AgentActivityItem; compac
                             <img
                                 src={item.swap.received.iconUrl}
                                 alt={item.swap.received.symbol}
-                                className="h-4 w-4 rounded-full border border-white/[0.15] bg-black/30 object-cover"
+                                className="h-4 w-4 rounded-full border border-white/[0.15] bg-surface-2 object-cover"
                             />
                         )}
                         <p className="font-mono text-xs font-semibold tabular-nums text-emerald-400 sm:text-sm">
@@ -185,7 +185,7 @@ function AmountCell({ item, compact = false }: { item: AgentActivityItem; compac
             <img
                 src={item.thumbnailUrl}
                 alt="NFT"
-                className="h-11 w-11 rounded-lg border border-white/[0.15] bg-black/30 object-cover"
+                className="h-11 w-11 rounded-lg border border-white/[0.15] bg-surface-2 object-cover"
             />
         );
     }
@@ -203,7 +203,7 @@ function AmountCell({ item, compact = false }: { item: AgentActivityItem; compac
                 <img
                     src={item.amount.iconUrl}
                     alt={item.amount.symbol}
-                    className="h-5 w-5 rounded-full border border-white/[0.15] bg-black/30 object-cover"
+                    className="h-5 w-5 rounded-full border border-white/[0.15] bg-surface-2 object-cover"
                 />
             )}
             <p className={`font-mono text-sm font-semibold tabular-nums sm:text-base ${amountClass}`}>

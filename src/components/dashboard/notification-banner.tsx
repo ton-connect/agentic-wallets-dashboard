@@ -50,7 +50,7 @@ export function NotificationBanner({ agents, onView, onRevoke, onMarkAllKnown }:
                     <div className="flex shrink-0 gap-2">
                         <button
                             onClick={() => onView(agent.id)}
-                            className="rounded-full bg-amber-500 px-3 py-1 text-xs font-medium text-black transition-colors hover:bg-amber-400"
+                            className="rounded-full bg-amber-500 px-3 py-1 text-xs font-medium text-on-accent transition-colors hover:bg-amber-400"
                         >
                             View
                         </button>

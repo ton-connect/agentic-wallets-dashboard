@@ -93,7 +93,7 @@ function StepperSidebar({
             <nav
                 ref={mobileStepperNavRef}
                 style={{ top: 'var(--site-header-height, 73px)' }}
-                className="sticky z-40 -mx-6 border-b border-white/[0.06] bg-[#050505] px-6 py-3 lg:hidden"
+                className="sticky z-40 -mx-6 border-b border-white/[0.06] bg-surface px-6 py-3 lg:hidden"
             >
                 <div ref={mobileStepperScrollerRef} className="stepper-no-scrollbar flex gap-1 overflow-x-auto">
                     {steps.map((step, i) => {

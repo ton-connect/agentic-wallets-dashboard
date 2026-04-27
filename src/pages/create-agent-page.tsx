@@ -940,7 +940,7 @@ export function CreateAgentPage() {
                                                 <Trash2 size={15} />
                                             </button>
                                             {selectorOpen && (
-                                                <div className="absolute left-0 top-full z-50 mt-1 max-h-52 w-full overflow-y-auto rounded-xl border border-white/10 bg-[#111] shadow-xl">
+                                                <div className="absolute left-0 top-full z-50 mt-1 max-h-52 w-full overflow-y-auto rounded-xl border border-white/10 bg-surface-suggestions shadow-xl">
                                                     <button
                                                         type="button"
                                                         onClick={() => setJettonsOpenById((prev) => ({ ...prev, [deposit.id]: !(prev[deposit.id] ?? false) }))}
@@ -1067,7 +1067,7 @@ export function CreateAgentPage() {
                 <button
                     onClick={() => void handleCreate()}
                     disabled={isPending || isAwaitingIndexing || !ownerAddress}
-                    className="mt-6 w-full rounded-full bg-amber-500 px-6 py-3 text-sm font-medium text-black transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="mt-6 w-full rounded-full bg-amber-500 px-6 py-3 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     {isPending ? 'Sending...' : isAwaitingIndexing ? 'Waiting for indexing...' : 'Deploy + First Fund'}
                 </button>

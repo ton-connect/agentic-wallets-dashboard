@@ -150,37 +150,37 @@ export function SiteHeader() {
     return (
         <header
             ref={headerRef}
-            className="sticky top-0 z-50 isolate border-b border-white/[0.06] bg-[#050505]/80 backdrop-blur-md"
+            className="sticky top-0 z-50 isolate border-b border-border bg-surface-header text-primary backdrop-blur-md"
         >
             <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
                 <Link to="/" className="flex items-center gap-2.5 text-lg font-semibold tracking-tight">
                     <AgentLogo />
-                    <span className="hidden md:inline">Agentic Wallets</span>
-                    <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-300 md:hidden">
+                    <span className="hidden min-[1040px]:inline">Agentic Wallets</span>
+                    <span className="rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-accent min-[1040px]:hidden">
                         Alpha
                     </span>
-                    <span className="hidden rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-300 md:inline-flex">
+                    <span className="hidden rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-accent min-[1040px]:inline-flex">
                         Alpha
                     </span>
                 </Link>
 
-                <nav className="hidden items-center gap-8 md:flex">
+                <nav className="hidden items-center gap-8 min-[1040px]:flex">
                     {navItems.map((item) => (
                         <Link
                             key={item.href}
                             to={item.href}
-                            className={`text-sm transition-colors hover:text-white ${activeHref === item.href ? 'text-white' : 'text-neutral-400'}`}
+                            className={`text-sm transition-colors hover:text-primary ${activeHref === item.href ? 'text-primary' : 'text-tertiary'}`}
                         >
                             {item.label}
                         </Link>
                     ))}
                 </nav>
 
-                <div className="hidden md:block">
+                <div className="hidden items-center gap-3 min-[1040px]:flex">
                     {isLandingPage ? (
                         <Link
                             to="/getting-started"
-                            className="inline-flex items-center rounded-full bg-amber-500 px-5 py-2 text-sm font-medium text-black transition-colors hover:bg-amber-400"
+                            className="inline-flex items-center rounded-full bg-accent px-5 py-2 text-sm font-medium text-on-accent transition-colors hover:bg-accent-hover"
                         >
                             Get started
                         </Link>
@@ -189,11 +189,11 @@ export function SiteHeader() {
                     )}
                 </div>
 
-                <div className="flex items-center gap-2 md:hidden">
+                <div className="flex items-center gap-2 min-[1040px]:hidden">
                     {isLandingPage ? (
                         <Link
                             to="/getting-started"
-                            className="inline-flex items-center rounded-full bg-amber-500 px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-amber-400"
+                            className="inline-flex items-center rounded-full bg-accent px-4 py-2 text-sm font-medium text-on-accent transition-colors hover:bg-accent-hover"
                         >
                             Get started
                         </Link>
@@ -202,7 +202,7 @@ export function SiteHeader() {
                     )}
                     <button
                         type="button"
-                        className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] transition-colors hover:bg-white/[0.08]"
+                        className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface-1 transition-colors hover:bg-surface-3"
                         onClick={() => setMobileOpen((open) => !open)}
                         aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
                         aria-expanded={mobileOpen}
@@ -221,17 +221,17 @@ export function SiteHeader() {
             </div>
 
             {mobileMenuVisible && (
-                <div className="absolute inset-x-0 top-full md:hidden">
+                <div className="absolute inset-x-0 top-full min-[1040px]:hidden">
                     <nav
                         id="mobile-navigation"
-                        className={`h-[calc(100dvh-var(--site-header-height))] overflow-y-auto border-t border-white/[0.06] bg-[#050505] px-6 py-6 shadow-[0_24px_80px_rgba(0,0,0,0.65)] transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${mobileOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 pointer-events-none opacity-0'}`}
+                        className={`h-[calc(100dvh-var(--site-header-height))] overflow-y-auto border-t border-border bg-surface px-6 py-6 shadow-[0_24px_80px_var(--card-shadow)] transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${mobileOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 pointer-events-none opacity-0'}`}
                     >
                         <div className="flex flex-col gap-5">
                             {navItems.map((item) => (
                                 <Link
                                     key={item.href}
                                     to={item.href}
-                                    className={`text-[17px] transition-colors hover:text-white ${activeHref === item.href ? 'text-white' : 'text-neutral-300'}`}
+                                    className={`text-[17px] transition-colors hover:text-primary ${activeHref === item.href ? 'text-primary' : 'text-secondary'}`}
                                     onClick={closeMobileMenu}
                                 >
                                     {item.label}
@@ -255,14 +255,14 @@ function AgentLogo() {
                     width="26"
                     height="26"
                     rx="8"
-                    stroke="white"
+                    stroke="currentColor"
                     strokeWidth="1"
                     strokeOpacity="0.2"
                 />
-                <rect x="5" y="5" width="8" height="8" rx="2" fill="#f59e0b" fillOpacity="0.8" />
-                <rect x="15" y="5" width="8" height="8" rx="2" fill="white" fillOpacity="0.15" />
-                <rect x="5" y="15" width="8" height="8" rx="2" fill="white" fillOpacity="0.15" />
-                <rect x="15" y="15" width="8" height="8" rx="2" fill="white" fillOpacity="0.08" />
+                <rect x="5" y="5" width="8" height="8" rx="2" fill="var(--accent-default)" fillOpacity="0.8" />
+                <rect x="15" y="5" width="8" height="8" rx="2" fill="currentColor" fillOpacity="0.15" />
+                <rect x="5" y="15" width="8" height="8" rx="2" fill="currentColor" fillOpacity="0.15" />
+                <rect x="15" y="15" width="8" height="8" rx="2" fill="currentColor" fillOpacity="0.08" />
             </svg>
         </span>
     );

@@ -59,7 +59,7 @@ export function StepManageDashboard() {
 
             <Link
                 to="/dashboard"
-                className="inline-flex w-fit items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-medium text-black transition-colors hover:bg-amber-400"
+                className="inline-flex w-fit items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400"
             >
                 Open Dashboard
                 <ArrowRight size={14} />

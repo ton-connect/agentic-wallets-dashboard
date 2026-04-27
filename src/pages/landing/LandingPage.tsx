@@ -22,7 +22,7 @@ import {
 
 export function LandingPage() {
     return (
-        <div className="min-h-screen bg-[#050505] text-white">
+        <div className="min-h-screen bg-surface text-primary">
             <SiteHeader />
             <LandingHero />
             <LandingProblem />
