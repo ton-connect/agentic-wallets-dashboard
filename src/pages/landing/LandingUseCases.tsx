@@ -10,22 +10,22 @@ const useCases = [
     {
         title: 'Trading Bot',
         description:
-            'Build a bot that trades on behalf of users within defined risk limits.',
+            'Build a bot that trades on behalf of users within defined risk limits',
     },
     {
         title: 'DeFi Agent',
         description:
-            'Automate staking, farming and rebalancing strategies – each in isolated wallets.',
+            'Automate staking, farming and rebalancing strategies – each in isolated wallets',
     },
     {
         title: 'Payment Automation',
         description:
-            'Let agents handle recurring on-chain payments for subscriptions and purchases.',
+            'Let agents handle recurring on-chain payments for subscriptions and purchases',
     },
     {
         title: 'TMA with agent execution',
         description:
-            'Embed agentic wallets directly into a Telegram Mini App. Users fund and manage their agent inside the app.',
+            'Embed agentic wallets directly into a Telegram Mini App. Users fund and manage their agent inside the app',
     },
 ];
 

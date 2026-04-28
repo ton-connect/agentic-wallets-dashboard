@@ -24,7 +24,6 @@ export function LandingCTA() {
                             className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-6 py-3 text-base font-semibold text-on-accent transition-colors hover:bg-amber-400"
                         >
                             Create a wallet for your agent
-                            <ArrowRight size={16} />
                         </Link>
                         <Link
                             to="/dashboard"

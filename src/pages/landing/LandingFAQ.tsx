@@ -42,9 +42,6 @@ export function LandingFAQ() {
             <div className="mx-auto max-w-[1240px] px-6">
                 <div className="mx-auto max-w-4xl">
                     <div className="mb-6 text-center sm:mb-12">
-                        <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">
-                            FAQ
-                        </p>
                         <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Common questions</h2>
                     </div>
 

@@ -17,31 +17,31 @@ const steps = [
         number: '01',
         title: 'Add MCP skills',
         description:
-            'Add TON MCP skills to Cursor, Claude Desktop, Windsurf, Codex and others.',
+            'Add TON MCP skills to Cursor, Claude Desktop, Windsurf, Codex and others',
     },
     {
         number: '02',
         title: 'Create Wallet',
         description:
-            'Ask your AI agent to create an agentic wallet.',
+            'Ask your AI agent to create an agentic wallet',
     },
     {
         number: '03',
         title: 'Fund Wallet',
         description:
-            'Transfer funds from your main wallet to the agent’s wallet.',
+            'Transfer funds from your main wallet to the agent’s wallet',
     },
     {
         number: '04',
         title: 'Operate',
         description:
-            'Agent autonomously executes transactions using its own key.',
+            'Agent autonomously executes transactions using its own key',
     },
     {
         number: '05',
         title: 'Monitor',
         description:
-            'Monitor all transactions and wallets from a single dashboard.',
+            'Monitor all transactions and wallets from a single dashboard',
     },
 ];
 
@@ -106,7 +106,6 @@ export function LandingHowItWorks() {
                         className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-base font-semibold text-on-accent transition-colors hover:bg-amber-400"
                     >
                         Give your AI agent a wallet
-                        <ArrowRight size={14} />
                     </Link>
                 </div>
             </div>

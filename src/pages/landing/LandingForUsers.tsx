@@ -34,7 +34,6 @@ export function LandingForUsers() {
                             className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-base font-semibold text-on-accent transition-colors hover:bg-amber-400"
                         >
                             View dashboard
-                            <ArrowRight size={14} />
                         </Link>
                     </div>
                 </div>

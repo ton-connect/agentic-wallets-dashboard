@@ -88,7 +88,7 @@ export function LandingForDevelopers() {
                         </div>
 
                         <p className="text-xs leading-relaxed text-amber-500/60">
-                            Add TON MCP skills to Cursor, Claude Desktop, Windsurf, Codex and others.
+                            Add TON MCP skills to Cursor, Claude Desktop, Windsurf, Codex and others
                         </p>
 
                         <div className="flex items-center gap-3 sm:flex-wrap">
@@ -97,7 +97,6 @@ export function LandingForDevelopers() {
                                 className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-base font-semibold text-on-accent transition-colors hover:bg-amber-400"
                             >
                                 Give your AI agent a wallet
-                                <ArrowRight size={14} />
                             </Link>
                             <a
                                 href="https://github.com/the-ton-tech/agentic-wallet-contract"

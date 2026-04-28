@@ -10,17 +10,17 @@ const principles = [
     {
         title: 'Self-custody.',
         description:
-            'The user holds the master key. The agent operates with its own operator key — your seed phrase is never shared or exposed.',
+            'The user holds the master key. The agent operates with its own operator key — your seed phrase is never shared or exposed',
     },
     {
         title: 'Control.',
         description:
-            'Each agent gets its own isolated wallet. You set its limits and monitor activity via a dashboard –– where you can revoke access at any time.',
+            'Each agent gets its own isolated wallet. You set its limits and monitor activity via a dashboard –– where you can revoke access at any time',
     },
     {
         title: 'Adaptable.',
         description:
-            'Works with any AI agent — Claude, ChatGPT, OpenClaw, Cursor and others. Share the link with the AI agent of your choice and let it do the rest.',
+            'Works with any AI agent — Claude, ChatGPT, OpenClaw, Cursor and others. Share the link with the AI agent of your choice and let it do the rest',
     },
 ];
 
