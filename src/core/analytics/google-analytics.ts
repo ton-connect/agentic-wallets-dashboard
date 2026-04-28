@@ -6,7 +6,7 @@
  *
  */
 
-import { ENV_GA_MEASUREMENT_ID } from '@/core/configs/env';
+import { ENV_GA_DEBUG_MODE, ENV_GA_MEASUREMENT_ID } from '@/core/configs/env';
 import { getCurrentAnalyticsPath } from '@/core/analytics/url';
 
 type AnalyticsParamValue = string | number | boolean | null | undefined;
@@ -27,7 +27,7 @@ interface LandingCtaClickInput {
 
 declare global {
     interface Window {
-        dataLayer?: unknown[][];
+        dataLayer?: unknown[];
         gtag?: Gtag;
     }
 }
@@ -48,6 +48,17 @@ function cleanParams(params: AnalyticsParams): Record<string, string | number | 
     );
 }
 
+function withGoogleAnalyticsParams(
+    measurementId: string,
+    params: AnalyticsParams,
+): Record<string, string | number | boolean> {
+    return cleanParams({
+        send_to: measurementId,
+        debug_mode: ENV_GA_DEBUG_MODE ? true : undefined,
+        ...params,
+    });
+}
+
 function ensureGoogleAnalytics(): string | null {
     const measurementId = getMeasurementId();
     if (!measurementId) {
@@ -58,7 +69,7 @@ function ensureGoogleAnalytics(): string | null {
     window.gtag =
         window.gtag ??
         function gtag() {
-            window.dataLayer?.push(Array.from(arguments));
+            window.dataLayer?.push(arguments);
         };
 
     if (!document.getElementById(GA_SCRIPT_ID)) {
@@ -71,7 +82,10 @@ function ensureGoogleAnalytics(): string | null {
 
     if (!isInitialized) {
         window.gtag('js', new Date());
-        window.gtag('config', measurementId, { send_page_view: false });
+        window.gtag('config', measurementId, {
+            send_page_view: false,
+            debug_mode: ENV_GA_DEBUG_MODE ? true : undefined,
+        });
         isInitialized = true;
     }
 
@@ -79,23 +93,25 @@ function ensureGoogleAnalytics(): string | null {
 }
 
 export function trackPageView({ path, title, location }: PageViewInput): void {
-    if (!ensureGoogleAnalytics()) {
+    const measurementId = ensureGoogleAnalytics();
+    if (!measurementId) {
         return;
     }
 
-    window.gtag?.('event', 'page_view', {
+    window.gtag?.('event', 'page_view', withGoogleAnalyticsParams(measurementId, {
         page_path: path,
         page_title: title,
         page_location: location,
-    });
+    }));
 }
 
 export function trackEvent(name: string, params: AnalyticsParams = {}): void {
-    if (!ensureGoogleAnalytics()) {
+    const measurementId = ensureGoogleAnalytics();
+    if (!measurementId) {
         return;
     }
 
-    window.gtag?.('event', name, cleanParams(params));
+    window.gtag?.('event', name, withGoogleAnalyticsParams(measurementId, params));
 }
 
 export function trackLandingCtaClick({ label, destination, section }: LandingCtaClickInput): void {
@@ -106,4 +122,3 @@ export function trackLandingCtaClick({ label, destination, section }: LandingCta
         section,
     });
 }
-
