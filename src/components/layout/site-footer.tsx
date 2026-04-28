@@ -30,7 +30,7 @@ const footerColumns = [
         title: 'Social networks',
         links: [
             { label: 'Telegram TON Tech RU', href: 'https://t.me/tontechru' },
-            { label: 'Telegram TON Tech EN', href: 'https://t.me/tontech' },
+            { label: 'Telegram TON Tech', href: 'https://t.me/tontech' },
             { label: 'X (Twitter) TON Tech', href: 'https://x.com/TONTechHQ' },
             { label: 'Telegram AI Dev Wall', href: 'https://t.me/ai_dev_wall' },
         ],
