@@ -7,7 +7,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { ArrowRight, Eye, Wallet, ShieldOff, KeyRound } from 'lucide-react';
+import { Eye, Wallet, ShieldOff, KeyRound } from 'lucide-react';
 
 const features = [
     {

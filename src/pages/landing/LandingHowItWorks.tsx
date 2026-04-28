@@ -7,7 +7,6 @@
  */
 
 import { useState } from 'react';
-import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { DeveloperInstructions, configCommand } from './LandingForDevelopers';

@@ -8,7 +8,7 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Check, Copy } from 'lucide-react';
+import { Check, Copy } from 'lucide-react';
 
 export const configCommand = 'npx skills add ton-connect/kit/packages/mcp';
 
