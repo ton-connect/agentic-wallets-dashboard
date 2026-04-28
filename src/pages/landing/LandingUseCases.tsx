@@ -31,8 +31,8 @@ const useCases: { title: string; description: ReactNode }[] = [
         title: 'Payment automation',
         description: (
             <>
-                Let agents handle recurring <span className="whitespace-nowrap">on-chain</span> payments for
-                subscriptions and purchases
+                Let agents handle recurring <span className="whitespace-nowrap">on-chain</span> payments{' '}
+                <span className="whitespace-nowrap">for subscriptions</span> and purchases
             </>
         ),
     },
