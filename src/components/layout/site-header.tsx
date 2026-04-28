@@ -14,6 +14,7 @@ import { Menu, X } from 'lucide-react';
 
 import { AgentLogo } from '@/components/layout/agent-logo';
 import { WalletButton } from '@/components/shared/wallet-button';
+import { trackLandingCtaClick } from '@/core/analytics/google-analytics';
 
 type NavItem = {
     label: string;
@@ -58,6 +59,17 @@ export function SiteHeader() {
     );
 
     const closeMobileMenu = () => setMobileOpen(false);
+    const trackHeaderCta = (label: string, destination: string) => {
+        if (!isLandingPage) {
+            return;
+        }
+
+        trackLandingCtaClick({
+            label,
+            destination,
+            section: 'header',
+        });
+    };
 
     useEffect(() => {
         if (mobileOpen) {
@@ -192,6 +204,11 @@ export function SiteHeader() {
                             key={item.href}
                             to={item.href}
                             className={`text-sm transition-colors hover:text-primary ${activeHref === item.href ? 'text-primary' : 'text-tertiary'}`}
+                            onClick={() => {
+                                if (item.href === DASHBOARD_HREF) {
+                                    trackHeaderCta(item.label, item.href);
+                                }
+                            }}
                         >
                             {item.label}
                         </Link>
@@ -203,6 +220,7 @@ export function SiteHeader() {
                         <Link
                             to="/getting-started"
                             className="inline-flex items-center rounded-full bg-accent px-5 py-2 text-sm font-medium text-on-accent transition-colors hover:bg-accent-hover"
+                            onClick={() => trackHeaderCta('Get started', '/getting-started')}
                         >
                             Get started
                         </Link>
@@ -216,6 +234,7 @@ export function SiteHeader() {
                         <Link
                             to="/getting-started"
                             className="inline-flex items-center rounded-full bg-accent px-4 py-2 text-sm font-medium text-on-accent transition-colors hover:bg-accent-hover"
+                            onClick={() => trackHeaderCta('Get started', '/getting-started')}
                         >
                             Get started
                         </Link>
@@ -254,7 +273,12 @@ export function SiteHeader() {
                                     key={item.href}
                                     to={item.href}
                                     className={`text-[17px] transition-colors hover:text-primary ${activeHref === item.href ? 'text-primary' : 'text-secondary'}`}
-                                    onClick={closeMobileMenu}
+                                    onClick={() => {
+                                        if (item.href === DASHBOARD_HREF) {
+                                            trackHeaderCta(item.label, item.href);
+                                        }
+                                        closeMobileMenu();
+                                    }}
                                 >
                                     {item.label}
                                 </Link>

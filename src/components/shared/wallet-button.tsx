@@ -10,6 +10,8 @@ import { useState, useRef, useEffect } from 'react';
 import { useAddress, useConnect, useDisconnect, useNetwork, TONCONNECT_DEFAULT_CONNECTOR_ID } from '@ton/appkit-react';
 
 import { formatTonAddressForNetwork } from '@/features/agents/lib/address';
+import { trackEvent } from '@/core/analytics/google-analytics';
+import { getCurrentAnalyticsPath } from '@/core/analytics/url';
 
 function formatAddress(address: string): string {
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
@@ -52,6 +54,10 @@ export function WalletButton({ variant = 'default', fullWidth = false, onConnect
         return (
             <button
                 onClick={() => {
+                    trackEvent('wallet_connect_click', {
+                        page_path: getCurrentAnalyticsPath(),
+                        network: network?.chainId ?? 'unknown',
+                    });
                     connect({ connectorId: TONCONNECT_DEFAULT_CONNECTOR_ID });
                     onConnect?.();
                 }}

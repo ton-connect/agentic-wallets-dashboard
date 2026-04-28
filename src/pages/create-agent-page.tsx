@@ -30,6 +30,8 @@ import {
     ENV_AGENTIC_COLLECTION_TESTNET,
     ENV_AGENTIC_WALLET_CODE_BOC,
 } from '@/core/configs/env';
+import { trackEvent } from '@/core/analytics/google-analytics';
+import { getCurrentAnalyticsPath } from '@/core/analytics/url';
 import {
     buildWalletStateInit,
     calculateWalletIndex,
@@ -380,6 +382,23 @@ async function sendDeployCallback(callbackUrl: string, payload: DeployCallbackPa
     if (!response.ok) {
         throw new Error(`Callback response status ${response.status}`);
     }
+}
+
+function getAgentCreateErrorReason(message: string): string {
+    const normalized = message.toLowerCase();
+
+    if (normalized.includes('connect wallet')) return 'wallet_not_connected';
+    if (normalized.includes('network')) return 'network_mismatch';
+    if (normalized.includes('collection address')) return 'collection_not_configured';
+    if (normalized.includes('public key')) return 'invalid_public_key';
+    if (normalized.includes('agentname')) return 'invalid_agent_name';
+    if (normalized.includes('ton deposit') || normalized.includes('maximum initial ton')) return 'invalid_ton_deposit';
+    if (normalized.includes('selected asset') || normalized.includes('amount for')) return 'invalid_asset_deposit';
+    if (normalized.includes('already exists')) return 'agent_already_exists';
+    if (normalized.includes('rejected')) return 'transaction_rejected';
+    if (normalized.includes('callback')) return 'callback_failed';
+
+    return 'unknown';
 }
 
 export function CreateAgentPage() {
@@ -822,10 +841,23 @@ export function CreateAgentPage() {
                 }
             }
 
+            trackEvent('agent_create_success', {
+                page_path: getCurrentAnalyticsPath(),
+                network: network.chainId,
+                asset_count: assetDeposits.length,
+                has_callback_url: Boolean(callbackUrlValue),
+                has_ton_deposit: tonDepositNano > 0n,
+            });
+
             queueDeploymentNotice(localAddress.toString());
             navigate(`/agent/${localAddress.toString()}`);
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Failed to create agent wallet';
+            trackEvent('agent_create_error', {
+                page_path: getCurrentAnalyticsPath(),
+                network: network?.chainId ?? 'unknown',
+                reason: getAgentCreateErrorReason(message),
+            });
             toast.error(message);
         } finally {
             setIsAwaitingIndexing(false);
