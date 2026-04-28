@@ -41,7 +41,7 @@ export function LandingUseCases() {
                     {useCases.map((uc) => (
                         <div
                             key={uc.title}
-                            className="flex flex-col justify-between overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.03]"
+                            className="flex flex-col overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.03]"
                         >
                             <div className="border-b border-white/[0.06] px-5 py-3">
                                 <h3 className="text-sm font-semibold text-neutral-200">{uc.title}</h3>
@@ -54,7 +54,7 @@ export function LandingUseCases() {
                 </div>
 
                 <p className="mt-8 text-center text-base text-neutral-400">
-                    And many more. Agentic Wallets are the execution layer, TON is the limit
+                    and many more...
                 </p>
             </div>
         </section>
