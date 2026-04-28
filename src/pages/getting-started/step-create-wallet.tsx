@@ -30,7 +30,7 @@ export function StepCreateWallet() {
         <div className="flex flex-col gap-6">
             <div>
                 <h3 className="text-xl font-bold tracking-tight">Create Your First Agentic Wallet</h3>
-                <p className="mt-2 text-sm leading-relaxed text-neutral-400">
+                <p className="mt-2 text-base leading-relaxed text-neutral-400 sm:text-lg">
                     Tell your AI agent to create a wallet. Here's what happens under the hood.
                 </p>
             </div>
@@ -82,7 +82,7 @@ export function StepCreateWallet() {
                 <p className="text-xs font-medium uppercase tracking-widest text-amber-500">Key points</p>
                 <ul className="flex flex-col gap-2">
                     {keyPoints.map((point, i) => (
-                        <li key={i} className="flex items-start gap-2.5 text-sm text-neutral-400">
+                        <li key={i} className="flex items-start gap-2.5 text-base leading-relaxed text-neutral-400 sm:text-lg">
                             <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-amber-500/50" />
                             {point}
                         </li>

@@ -26,7 +26,7 @@ const principles = [
 
 export function LandingValueProps() {
     return (
-        <section id="features" className="border-b border-white/[0.06] py-12 sm:py-24">
+        <section id="features" className="py-12 sm:py-20">
             <div className="mx-auto max-w-[1240px] px-6">
                 <div className="mx-auto max-w-4xl">
                     <div className="mb-6 text-center sm:mb-12">

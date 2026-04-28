@@ -31,7 +31,7 @@ const useCases = [
 
 export function LandingUseCases() {
     return (
-        <section id="use-cases" className="border-b border-white/[0.06] py-12 sm:py-24">
+        <section id="use-cases" className="py-12 sm:py-20">
             <div className="mx-auto max-w-[1240px] px-6">
                 <div className="mb-6 text-center sm:mb-12">
                     <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Use cases</h2>

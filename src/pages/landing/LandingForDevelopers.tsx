@@ -27,7 +27,7 @@ export function DeveloperInstructions({
                     <span className="h-3 w-3 rounded-full bg-[#febc2e] ring-1 ring-black/10" />
                     <span className="h-3 w-3 rounded-full bg-[#28c840] ring-1 ring-black/10" />
                 </div>
-                <div className="flex flex-1 items-start justify-between gap-4 bg-surface px-5 py-5">
+                <div className="flex flex-1 items-center justify-between gap-4 bg-surface px-5 py-5">
                     <div className="flex min-w-0 items-start gap-3 sm:items-center">
                         <span className="font-mono text-xs text-accent">$</span>
                         <code className="min-w-0 whitespace-normal break-all font-mono text-xs leading-relaxed text-primary sm:truncate sm:text-sm">

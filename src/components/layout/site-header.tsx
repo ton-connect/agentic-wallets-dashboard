@@ -31,10 +31,12 @@ const sectionNavItems: NavItem[] = [
 
 const MOBILE_MENU_ANIMATION_MS = 240;
 const DASHBOARD_HREF = '/dashboard';
+const HEADER_SCROLL_ELEVATE_PX = 8;
 
 export function SiteHeader() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
+    const [headerElevated, setHeaderElevated] = useState(false);
     const [activeHref, setActiveHref] = useState<string | null>(null);
     const headerRef = useRef<HTMLElement>(null);
     const { pathname, hash } = useLocation();
@@ -126,6 +128,21 @@ export function SiteHeader() {
     }, [mobileOpen]);
 
     useEffect(() => {
+        const updateHeaderElevated = () => {
+            setHeaderElevated(window.scrollY > HEADER_SCROLL_ELEVATE_PX || mobileOpen);
+        };
+
+        updateHeaderElevated();
+        window.addEventListener('scroll', updateHeaderElevated, { passive: true });
+        window.addEventListener('resize', updateHeaderElevated);
+
+        return () => {
+            window.removeEventListener('scroll', updateHeaderElevated);
+            window.removeEventListener('resize', updateHeaderElevated);
+        };
+    }, [mobileOpen]);
+
+    useEffect(() => {
         const header = headerRef.current;
         if (!header) {
             return undefined;
@@ -148,10 +165,14 @@ export function SiteHeader() {
         };
     }, []);
 
+    const headerChrome = headerElevated
+        ? 'border-border bg-surface-header backdrop-blur-md'
+        : 'border-transparent bg-transparent backdrop-blur-none';
+
     return (
         <header
             ref={headerRef}
-            className="sticky top-0 z-50 isolate border-b border-border bg-surface-header text-primary backdrop-blur-md"
+            className={`sticky top-0 z-50 isolate border-b text-primary motion-reduce:transition-none transition-[background-color,backdrop-filter,border-color] duration-200 ease-out ${headerChrome}`}
         >
             <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-4 px-6 py-4">
                 <Link to="/" className="flex items-center gap-2.5 text-lg font-semibold tracking-tight">

@@ -42,7 +42,7 @@ export function StepStartUsing() {
         <div className="flex flex-col gap-6">
             <div>
                 <h3 className="text-xl font-bold tracking-tight">Start Using It</h3>
-                <p className="mt-2 text-sm leading-relaxed text-neutral-400">
+                <p className="mt-2 text-base leading-relaxed text-neutral-400 sm:text-lg">
                     Once setup is complete, here are things you can ask your agent to do.
                 </p>
             </div>

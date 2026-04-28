@@ -36,20 +36,20 @@ const footerColumns = [
 
 export function SiteFooter() {
     return (
-        <footer className="pb-8 pt-12 sm:pb-16 sm:pt-24 md:pt-28">
-            <div className="mx-auto max-w-[1240px] border-t border-white/[0.05] px-6 pt-6 sm:pt-10 md:pt-12">
-                <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))]">
+        <footer className="pb-6 pt-10 sm:pb-10 sm:pt-14 md:pt-16">
+            <div className="mx-auto max-w-[1240px] border-t border-white/[0.05] px-6 pt-5 sm:pt-6 md:pt-8">
+                <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))] md:gap-10">
                     <div>
                         <span className="text-lg font-semibold tracking-tight">Agentic Wallets</span>
                         <p className="mt-3 text-sm text-neutral-600">
-                            Self-custody wallets for autonomous agents on TON.
+                            Self-custody wallets for autonomous agents on{'\u00a0'}TON.
                         </p>
                     </div>
 
                     {footerColumns.map((col) => (
                         <div key={col.title}>
-                            <h4 className="mb-4 text-sm font-medium text-neutral-400">{col.title}</h4>
-                            <ul className="flex flex-col gap-3">
+                            <h4 className="mb-3 text-sm font-medium text-neutral-400">{col.title}</h4>
+                            <ul className="flex flex-col gap-2.5">
                                 {col.links.map((link) => (
                                     <li key={link.label}>
                                         <a
@@ -68,7 +68,7 @@ export function SiteFooter() {
                     ))}
                 </div>
 
-                <div className="mt-8 flex flex-col items-center justify-between gap-4 pt-6 text-xs text-neutral-700 sm:mt-12 sm:flex-row sm:pt-8">
+                <div className="mt-6 flex flex-col items-center justify-between gap-4 pt-4 text-xs text-neutral-700 sm:mt-8 sm:flex-row sm:pt-6">
                     <p>&copy; {new Date().getFullYear()} Agentic Wallets. Built on The Open Network.</p>
                 </div>
             </div>
