@@ -6,6 +6,10 @@
  *
  */
 
+import { Link } from 'react-router-dom';
+
+import { AgentLogo } from '@/components/layout/agent-logo';
+
 const footerColumns = [
     {
         title: 'Product',
@@ -43,7 +47,13 @@ export function SiteFooter() {
             <div className="mx-auto max-w-[1240px] border-t border-white/[0.05] px-6 pt-5 sm:pt-6 md:pt-8">
                 <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))] md:gap-10">
                     <div>
-                        <span className="text-lg font-semibold tracking-tight">Agentic Wallets</span>
+                        <Link
+                            to="/"
+                            className="flex items-center gap-2.5 text-lg font-semibold tracking-tight"
+                        >
+                            <AgentLogo />
+                            <span>Agentic Wallets</span>
+                        </Link>
                         <p className="mt-3 text-sm text-neutral-600">
                             Self-custody wallets for autonomous agents on{'\u00a0'}TON.
                         </p>

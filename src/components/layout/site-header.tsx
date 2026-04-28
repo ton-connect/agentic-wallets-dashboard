@@ -12,6 +12,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 
+import { AgentLogo } from '@/components/layout/agent-logo';
 import { WalletButton } from '@/components/shared/wallet-button';
 
 type NavItem = {
@@ -263,13 +264,5 @@ export function SiteHeader() {
                 </div>
             )}
         </header>
-    );
-}
-
-function AgentLogo() {
-    return (
-        <span className="inline-flex shrink-0">
-            <img src="/assets/logo.svg" width="28" height="28" alt="" aria-hidden="true" />
-        </span>
     );
 }
