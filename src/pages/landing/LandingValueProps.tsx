@@ -6,92 +6,53 @@
  *
  */
 
-import type { ReactNode } from 'react';
-
-const pillars: { title: string; description: string; icon: ReactNode }[] = [
+const principles = [
     {
-        title: 'Isolation',
+        title: 'Self-custody.',
         description:
-            "Each agent gets a separate on-chain wallet. A bug in one agent doesn't touch your other wallets.",
-        icon: (
-            <svg viewBox="0 0 48 48" fill="none" className="h-5 w-5" aria-hidden="true">
-                <rect x="4" y="4" width="17" height="17" rx="4" stroke="var(--accent-default)" strokeWidth="1.2" />
-                <rect x="27" y="4" width="17" height="17" rx="4" stroke="currentColor" strokeWidth="1.2" strokeOpacity="0.35" />
-                <rect x="4" y="27" width="17" height="17" rx="4" stroke="currentColor" strokeWidth="1.2" strokeOpacity="0.35" />
-                <rect x="27" y="27" width="17" height="17" rx="4" stroke="currentColor" strokeWidth="1.2" strokeOpacity="0.15" />
-                <circle cx="12.5" cy="12.5" r="2" fill="var(--accent-default)" opacity="0.6" />
-            </svg>
-        ),
+            'The user holds the master key. The agent operates with its own operator key — your seed phrase is never shared or exposed',
     },
     {
-        title: 'Self-custody',
+        title: 'Control.',
         description:
-            'Agent owns the operator key, you own the master key. Keys never live on a platform server.',
-        icon: (
-            <svg viewBox="0 0 48 48" fill="none" className="h-5 w-5" aria-hidden="true">
-                <circle cx="14" cy="16" r="7" stroke="var(--accent-default)" strokeWidth="1.2" />
-                <line x1="21" y1="16" x2="36" y2="16" stroke="var(--accent-default)" strokeWidth="1.2" />
-                <line x1="32" y1="16" x2="32" y2="21" stroke="var(--accent-default)" strokeWidth="1.2" />
-                <line x1="28" y1="16" x2="28" y2="20" stroke="var(--accent-default)" strokeWidth="1.2" />
-                <circle cx="34" cy="34" r="5" stroke="currentColor" strokeWidth="1" strokeOpacity="0.3" />
-                <line x1="29" y1="34" x2="18" y2="34" stroke="currentColor" strokeWidth="1" strokeOpacity="0.3" />
-                <line x1="22" y1="34" x2="22" y2="30" stroke="currentColor" strokeWidth="1" strokeOpacity="0.3" />
-                <line x1="18" y1="22" x2="30" y2="30" stroke="currentColor" strokeWidth="1" strokeOpacity="0.1" strokeDasharray="2 2" />
-            </svg>
-        ),
+            'Each agent gets its own isolated wallet. You set its limits and monitor activity via a dashboard –– where you can revoke access at any time',
     },
     {
-        title: 'Control',
-        description: 'Withdraw funds or revoke access. One tap. On-chain. The owner always wins.',
-        icon: (
-            <svg viewBox="0 0 48 48" fill="none" className="h-5 w-5" aria-hidden="true">
-                <path d="M24 8V24" stroke="var(--accent-default)" strokeWidth="1.2" strokeLinecap="round" />
-                <path
-                    d="M34 14C37.3 17.3 38 22 36 26C34 30 30 33 24 33C18 33 14 30 12 26C10 22 10.7 17.3 14 14"
-                    stroke="var(--accent-default)"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                    strokeOpacity="0.5"
-                />
-                <line x1="10" y1="42" x2="38" y2="42" stroke="currentColor" strokeWidth="1" strokeOpacity="0.15" />
-            </svg>
-        ),
+        title: 'Adaptable.',
+        description:
+            'Works with any AI agent — Claude, ChatGPT, OpenClaw, Cursor and others. Share the link with the AI agent of your choice and let it do the rest',
     },
 ];
 
 export function LandingValueProps() {
     return (
-        <section className="border-b border-white/[0.06] py-12 sm:py-24">
-            <div className="mx-auto max-w-6xl px-6">
-                <div className="grid items-start gap-8 sm:gap-16 lg:grid-cols-2">
-                    <div className="flex flex-col gap-6">
-                        <div>
-                            <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">
-                                Trust & Security
-                            </p>
-                            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                                No middleware. No platform keys.
-                            </h2>
-                        </div>
-
-                        <p className="text-base leading-relaxed text-neutral-400">
-                            Everything lives on-chain where you can verify it. Contract code, SDK, and
-                            dashboard — all open source. Verify everything, trust nothing.
-                        </p>
+        <section id="features" className="py-12 sm:py-20">
+            <div className="mx-auto max-w-[1240px] px-6">
+                <div className="mx-auto max-w-4xl">
+                    <div className="mb-6 text-center sm:mb-12">
+                        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                            Core principles
+                        </h2>
                     </div>
 
-                    <div className="flex flex-col gap-5">
-                        {pillars.map((pillar) => (
-                            <div key={pillar.title} className="flex items-start gap-4">
-                                <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center">
-                                    {pillar.icon}
-                                </div>
-                                <div>
-                                    <p className="text-sm font-semibold text-neutral-200">{pillar.title}</p>
-                                    <p className="mt-1 text-sm leading-relaxed text-neutral-500">{pillar.description}</p>
-                                </div>
-                            </div>
+                    <ul className="flex list-disc flex-col gap-5 pl-5 text-base leading-relaxed text-neutral-500 marker:text-amber-500 sm:gap-6 sm:text-lg">
+                        {principles.map((principle) => (
+                            <li key={principle.title} className="pl-1">
+                                <span className="font-semibold text-neutral-200">{principle.title}</span>{' '}
+                                {principle.description}
+                            </li>
                         ))}
+                    </ul>
+
+                    <div className="mt-6 flex justify-center sm:mt-8">
+                        <a
+                            href="https://github.com/the-ton-tech/agentic-wallet-contract"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-white/[0.04]"
+                        >
+                            Contracts on GitHub
+                        </a>
                     </div>
                 </div>
             </div>

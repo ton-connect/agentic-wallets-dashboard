@@ -31,7 +31,7 @@ export function StepFundWallet() {
         <div className="flex flex-col gap-6">
             <div>
                 <h3 className="text-xl font-bold tracking-tight">Fund the Wallet</h3>
-                <p className="mt-2 text-sm leading-relaxed text-neutral-400">
+                <p className="mt-2 text-base leading-relaxed text-neutral-400 sm:text-lg">
                     After creation, the agent wallet needs TON to operate. There are three ways to fund it.
                 </p>
             </div>
@@ -44,7 +44,7 @@ export function StepFundWallet() {
                     >
                         <method.icon size={16} className="mb-3 text-amber-500" />
                         <p className="text-sm font-medium text-neutral-200">{method.title}</p>
-                        <p className="mt-1 text-xs leading-relaxed text-neutral-500">{method.description}</p>
+                        <p className="mt-1 text-sm leading-relaxed text-neutral-500">{method.description}</p>
                     </div>
                 ))}
             </div>

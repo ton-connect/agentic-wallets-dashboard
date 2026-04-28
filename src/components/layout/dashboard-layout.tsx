@@ -15,7 +15,9 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
     return (
         <div className="flex min-h-screen flex-col bg-surface text-primary">
             <SiteHeader />
-            <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-8">{children}</main>
+            <main className="mx-auto w-full max-w-[1240px] flex-1 px-6 py-8 sm:py-12">
+                {children}
+            </main>
             <SiteFooter />
         </div>
     );

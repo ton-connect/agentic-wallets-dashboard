@@ -22,31 +22,34 @@ type NavItem = {
 
 const sectionNavItems: NavItem[] = [
     { label: 'What is it?', href: '#what-is-it', sectionId: 'what-is-it' },
-    { label: 'How It Works', href: '#how-it-works', sectionId: 'how-it-works' },
-    { label: 'For Developers', href: '#for-developers', sectionId: 'for-developers' },
-    { label: 'For Users', href: '#for-users', sectionId: 'for-users' },
+    { label: 'How it works?', href: '#how-it-works', sectionId: 'how-it-works' },
+    { label: 'Use cases', href: '#use-cases', sectionId: 'use-cases' },
+    { label: 'Features', href: '#features', sectionId: 'features' },
+    { label: 'Dashboard', href: '#dashboard', sectionId: 'dashboard' },
     { label: 'FAQ', href: '#faq', sectionId: 'faq' },
 ];
 
 const MOBILE_MENU_ANIMATION_MS = 240;
 const DASHBOARD_HREF = '/dashboard';
+const HEADER_SCROLL_ELEVATE_PX = 8;
 
 export function SiteHeader() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
+    const [headerElevated, setHeaderElevated] = useState(false);
     const [activeHref, setActiveHref] = useState<string | null>(null);
     const headerRef = useRef<HTMLElement>(null);
     const { pathname, hash } = useLocation();
     const isLandingPage = pathname === '/';
 
-    const navItems = useMemo(() => {
-        const normalizedSectionLinks = sectionNavItems.map((item) => ({
-            ...item,
-            href: isLandingPage ? item.href : `/${item.href}`,
-        }));
-
-        return [...normalizedSectionLinks, { label: 'Dashboard', href: DASHBOARD_HREF }];
-    }, [isLandingPage]);
+    const navItems = useMemo(
+        () =>
+            sectionNavItems.map((item) => ({
+                ...item,
+                href: isLandingPage ? item.href : `/${item.href}`,
+            })),
+        [isLandingPage],
+    );
 
     const closeMobileMenu = () => setMobileOpen(false);
 
@@ -125,6 +128,21 @@ export function SiteHeader() {
     }, [mobileOpen]);
 
     useEffect(() => {
+        const updateHeaderElevated = () => {
+            setHeaderElevated(window.scrollY > HEADER_SCROLL_ELEVATE_PX || mobileOpen);
+        };
+
+        updateHeaderElevated();
+        window.addEventListener('scroll', updateHeaderElevated, { passive: true });
+        window.addEventListener('resize', updateHeaderElevated);
+
+        return () => {
+            window.removeEventListener('scroll', updateHeaderElevated);
+            window.removeEventListener('resize', updateHeaderElevated);
+        };
+    }, [mobileOpen]);
+
+    useEffect(() => {
         const header = headerRef.current;
         if (!header) {
             return undefined;
@@ -147,21 +165,19 @@ export function SiteHeader() {
         };
     }, []);
 
+    const headerChrome = headerElevated
+        ? 'border-border bg-surface-header backdrop-blur-md'
+        : 'border-transparent bg-transparent backdrop-blur-none';
+
     return (
         <header
             ref={headerRef}
-            className="sticky top-0 z-50 isolate border-b border-border bg-surface-header text-primary backdrop-blur-md"
+            className={`sticky top-0 z-50 isolate border-b text-primary motion-reduce:transition-none transition-[background-color,backdrop-filter,border-color] duration-200 ease-out ${headerChrome}`}
         >
-            <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+            <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-4 px-6 py-4">
                 <Link to="/" className="flex items-center gap-2.5 text-lg font-semibold tracking-tight">
                     <AgentLogo />
                     <span className="hidden min-[1040px]:inline">Agentic Wallets</span>
-                    <span className="rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-accent min-[1040px]:hidden">
-                        Alpha
-                    </span>
-                    <span className="hidden rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-accent min-[1040px]:inline-flex">
-                        Alpha
-                    </span>
                 </Link>
 
                 <nav className="hidden items-center gap-8 min-[1040px]:flex">
@@ -248,22 +264,7 @@ export function SiteHeader() {
 function AgentLogo() {
     return (
         <span className="inline-flex shrink-0">
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-                <rect
-                    x="1"
-                    y="1"
-                    width="26"
-                    height="26"
-                    rx="8"
-                    stroke="currentColor"
-                    strokeWidth="1"
-                    strokeOpacity="0.2"
-                />
-                <rect x="5" y="5" width="8" height="8" rx="2" fill="var(--accent-default)" fillOpacity="0.8" />
-                <rect x="15" y="5" width="8" height="8" rx="2" fill="currentColor" fillOpacity="0.15" />
-                <rect x="5" y="15" width="8" height="8" rx="2" fill="currentColor" fillOpacity="0.15" />
-                <rect x="15" y="15" width="8" height="8" rx="2" fill="currentColor" fillOpacity="0.08" />
-            </svg>
+            <img src="/assets/logo.svg" width="28" height="28" alt="" aria-hidden="true" />
         </span>
     );
 }

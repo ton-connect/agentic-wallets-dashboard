@@ -7,7 +7,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { ArrowRight, Eye, Wallet, ShieldOff, KeyRound } from 'lucide-react';
+import { Eye, Wallet, ShieldOff, KeyRound } from 'lucide-react';
 
 const features = [
     {
@@ -37,7 +37,7 @@ export function StepManageDashboard() {
         <div className="flex flex-col gap-6">
             <div>
                 <h3 className="text-xl font-bold tracking-tight">Manage from Dashboard</h3>
-                <p className="mt-2 text-sm leading-relaxed text-neutral-400">
+                <p className="mt-2 text-base leading-relaxed text-neutral-400 sm:text-lg">
                     Use the dashboard to oversee all your agent wallets in one place.
                 </p>
             </div>
@@ -50,7 +50,7 @@ export function StepManageDashboard() {
                     >
                         <feature.icon size={16} className="mb-3 text-amber-500" />
                         <p className="text-sm font-medium text-neutral-200">{feature.title}</p>
-                        <p className="mt-1 text-xs leading-relaxed text-neutral-500">
+                        <p className="mt-1 text-sm leading-relaxed text-neutral-500">
                             {feature.description}
                         </p>
                     </div>
@@ -59,10 +59,9 @@ export function StepManageDashboard() {
 
             <Link
                 to="/dashboard"
-                className="inline-flex w-fit items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400"
+                className="inline-flex w-fit items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-base font-semibold text-on-accent transition-colors hover:bg-amber-400"
             >
                 Open Dashboard
-                <ArrowRight size={14} />
             </Link>
         </div>
     );

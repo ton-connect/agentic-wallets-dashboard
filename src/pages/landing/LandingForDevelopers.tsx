@@ -8,11 +8,11 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Check, Copy, MessageSquare, Terminal } from 'lucide-react';
+import { Check, Copy } from 'lucide-react';
 
-const configCommand = 'npx skills add ton-connect/kit/packages/mcp';
+export const configCommand = 'npx skills add ton-connect/kit/packages/mcp';
 
-function DeveloperInstructions({
+export function DeveloperInstructions({
     copied,
     onCopy,
 }: {
@@ -20,18 +20,17 @@ function DeveloperInstructions({
     onCopy: () => void;
 }) {
     return (
-        <div className="min-w-0 flex flex-col gap-4">
-            <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02]">
-                <div className="flex items-center gap-2 border-b border-white/[0.06] px-5 py-3">
-                    <Terminal size={12} className="text-neutral-600" />
-                    <span className="text-[10px] font-medium uppercase tracking-wider text-neutral-600">
-                        Add skills
-                    </span>
+        <div className="min-w-0 h-full">
+            <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface-2">
+                <div className="flex h-9 items-center gap-2 border-b border-border bg-surface-1 px-4">
+                    <span className="h-3 w-3 rounded-full bg-[#ff5f57] ring-1 ring-black/10" />
+                    <span className="h-3 w-3 rounded-full bg-[#febc2e] ring-1 ring-black/10" />
+                    <span className="h-3 w-3 rounded-full bg-[#28c840] ring-1 ring-black/10" />
                 </div>
-                <div className="flex items-start justify-between gap-4 px-5 py-4 sm:items-center">
+                <div className="flex flex-1 items-center justify-between gap-4 bg-surface px-5 py-5">
                     <div className="flex min-w-0 items-start gap-3 sm:items-center">
-                        <span className="font-mono text-xs text-amber-500/60">$</span>
-                        <code className="min-w-0 whitespace-normal break-all font-mono text-xs leading-relaxed text-neutral-200 sm:truncate sm:text-sm">
+                        <span className="font-mono text-xs text-accent">$</span>
+                        <code className="min-w-0 whitespace-normal break-all font-mono text-xs leading-relaxed text-primary sm:truncate sm:text-sm">
                             {configCommand}
                         </code>
                     </div>
@@ -44,37 +43,6 @@ function DeveloperInstructions({
                     >
                         {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
                     </button>
-                </div>
-                <div className="flex flex-col items-start gap-2 border-t border-white/[0.04] px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="max-w-full text-[10px] text-neutral-700 [overflow-wrap:anywhere]">
-                        Cursor · Claude Desktop · Windsurf · any MCP-compatible client
-                    </p>
-                    <Link
-                        to="/getting-started"
-                        className="text-[10px] font-medium text-amber-500/60 transition-colors hover:text-amber-500"
-                    >
-                        See full setup guide →
-                    </Link>
-                </div>
-            </div>
-
-            <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02]">
-                <div className="flex items-center gap-2 border-b border-white/[0.06] px-5 py-3">
-                    <MessageSquare size={12} className="text-neutral-600" />
-                    <span className="text-[10px] font-medium uppercase tracking-wider text-neutral-600">
-                        Then ask your AI agent
-                    </span>
-                </div>
-                <div className="px-5 py-4">
-                    <div className="flex items-start gap-3">
-                        <span className="mt-0.5 font-mono text-xs text-amber-500">&gt;</span>
-                        <span className="text-sm font-medium text-neutral-200">
-                            Create agentic wallet
-                        </span>
-                    </div>
-                    <p className="mt-2 pl-5 text-xs text-neutral-600">
-                        The agent handles keys, opens the dashboard, and walks you through setup.
-                    </p>
                 </div>
             </div>
         </div>
@@ -92,7 +60,7 @@ export function LandingForDevelopers() {
 
     return (
         <section id="for-developers" className="border-b border-white/[0.06] py-12 sm:py-24">
-            <div className="mx-auto max-w-6xl px-6">
+            <div className="mx-auto max-w-[1240px] px-6">
                 <div className="grid items-start gap-8 sm:gap-16 lg:grid-cols-2">
                     <div className="hidden lg:block">
                         <DeveloperInstructions copied={copied} onCopy={handleCopy} />
@@ -102,19 +70,17 @@ export function LandingForDevelopers() {
                     <div className="min-w-0 flex flex-col gap-6">
                         <div>
                             <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">
-                                For Developers
+                                How it works?
                             </p>
                             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                                Build with agentic wallets
+                                Get started
                             </h2>
                         </div>
 
-                        <p className="text-base leading-relaxed text-neutral-400">
-                            Install skills for your AI Agent and ask it
-                            to <span className="text-neutral-300">create agentic wallet</span> and
-                            follow the instructions. Your AI agent gets TON wallet capabilities —
-                            transfers, swaps, NFTs. User keeps the
-                            master key, agent keeps the operator key.
+                        <p className="text-base leading-relaxed text-neutral-400 sm:text-lg">
+                            5 simple steps and 0 lines of code. Operate: Agent autonomously
+                            executes transactions using its own key. Monitor: Monitor all
+                            transactions and wallets from a single dashboard.
                         </p>
 
                         <div className="lg:hidden">
@@ -122,25 +88,24 @@ export function LandingForDevelopers() {
                         </div>
 
                         <p className="text-xs leading-relaxed text-amber-500/60">
-                            Developer preview — contracts are not yet audited. Use testnet for experimentation.
+                            Add TON MCP skills to Cursor, Claude Desktop, Windsurf, Codex and others
                         </p>
 
                         <div className="flex items-center gap-3 sm:flex-wrap">
                             <Link
                                 to="/getting-started"
-                                className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400"
+                                className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-base font-semibold text-on-accent transition-colors hover:bg-amber-400"
                             >
-                                Get started
-                                <ArrowRight size={14} />
+                                Give your AI agent a wallet
                             </Link>
                             <a
                                 href="https://github.com/the-ton-tech/agentic-wallet-contract"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/[0.04]"
+                                className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-white/[0.04]"
                             >
-                                <span className="sm:hidden">Contracts source</span>
-                                <span className="hidden sm:inline">Contracts on GitHub</span>
+                                <span className="sm:hidden">Monitor</span>
+                                <span className="hidden sm:inline">Monitor</span>
                             </a>
                         </div>
                     </div>

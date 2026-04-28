@@ -33,7 +33,7 @@ const trustPoints = [
 export function LandingTrust() {
     return (
         <section className="border-b border-white/[0.06] py-24">
-            <div className="mx-auto max-w-6xl px-6">
+            <div className="mx-auto max-w-[1240px] px-6">
                 <div className="mb-16 text-center">
                     <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">
                         Trust & Security

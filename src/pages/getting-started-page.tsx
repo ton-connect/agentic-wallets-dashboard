@@ -4,6 +4,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
+ * Layout/visual rhythm matches the landing page: max-w-[1240px] rail (via DashboardLayout),
+ * spacing-first separation between steps (no full-width rules), eyebrow + h1/h3 scale,
+ * body copy text-base/sm:text-lg text-neutral-400, primary CTAs text-base font-semibold.
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -234,15 +237,15 @@ export function GettingStartedPage() {
 
     return (
         <div>
-            {/* Page header */}
-            <div className="mb-10">
+            {/* Page header — typography + rail rhythm aligned with landing sections */}
+            <div className="mb-10 sm:mb-12">
                 <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">
                     Getting Started
                 </p>
                 <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
                     Set up your first agentic wallet
                 </h1>
-                <p className="mt-3 max-w-2xl text-base leading-relaxed text-neutral-400">
+                <p className="mt-3 max-w-2xl text-base leading-relaxed text-neutral-400 sm:text-lg">
                     Follow these five steps to add TON MCP skills, create a wallet, and start
                     giving your AI agent autonomous access to TON.
                 </p>
@@ -258,7 +261,7 @@ export function GettingStartedPage() {
 
                 {/* Main content */}
                 <div className="min-w-0 flex-1">
-                    <div className="flex flex-col gap-16">
+                    <div className="flex flex-col gap-12 sm:gap-20">
                         <section id="choose-client" ref={setRef('choose-client')} className="scroll-mt-28">
                             <StepChooseClient />
                         </section>
@@ -279,9 +282,7 @@ export function GettingStartedPage() {
                             <StepManageDashboard />
                         </section>
 
-                        <hr className="border-white/[0.06]" />
-
-                        <section className="pb-16">
+                        <section className="pt-12 sm:pt-20">
                             <AdvancedConfig />
                         </section>
                     </div>

@@ -2,7 +2,7 @@ export type ThemeMode = 'auto' | 'light' | 'dark';
 export type ResolvedTheme = 'light' | 'dark';
 
 export const THEME_STORAGE_KEY = 'agentic-wallets-theme';
-export const DEFAULT_THEME_MODE: ThemeMode = 'auto';
+export const DEFAULT_THEME_MODE: ThemeMode = 'dark';
 
 const THEME_MODES: readonly ThemeMode[] = ['auto', 'light', 'dark'];
 
@@ -18,8 +18,9 @@ export function getSystemTheme(): ResolvedTheme {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-export function resolveTheme(mode: ThemeMode): ResolvedTheme {
-    return mode === 'auto' ? getSystemTheme() : mode;
+export function resolveTheme(_mode: ThemeMode): ResolvedTheme {
+    // return mode === 'auto' ? getSystemTheme() : mode;
+    return DEFAULT_THEME_MODE as ResolvedTheme;
 }
 
 export function readStoredThemeMode(): ThemeMode {
