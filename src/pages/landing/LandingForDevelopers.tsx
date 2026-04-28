@@ -10,6 +10,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, Copy } from 'lucide-react';
 
+import { trackLandingCtaClick } from '@/core/analytics/google-analytics';
+
 export const configCommand = 'npx skills add ton-connect/kit/packages/mcp';
 
 export function DeveloperInstructions({
@@ -95,6 +97,13 @@ export function LandingForDevelopers() {
                             <Link
                                 to="/getting-started"
                                 className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-base font-semibold text-on-accent transition-colors hover:bg-amber-400"
+                                onClick={() =>
+                                    trackLandingCtaClick({
+                                        label: 'Give your AI agent a wallet',
+                                        destination: '/getting-started',
+                                        section: 'for-developers',
+                                    })
+                                }
                             >
                                 Give your AI agent a wallet
                             </Link>
@@ -103,6 +112,13 @@ export function LandingForDevelopers() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-white/[0.04]"
+                                onClick={() =>
+                                    trackLandingCtaClick({
+                                        label: 'Monitor',
+                                        destination: 'https://github.com/the-ton-tech/agentic-wallet-contract',
+                                        section: 'for-developers',
+                                    })
+                                }
                             >
                                 <span className="sm:hidden">Monitor</span>
                                 <span className="hidden sm:inline">Monitor</span>

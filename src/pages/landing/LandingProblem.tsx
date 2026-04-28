@@ -9,6 +9,7 @@
 import { Link } from 'react-router-dom';
 
 import { WalletHierarchySVG } from './LandingHero';
+import { trackLandingCtaClick } from '@/core/analytics/google-analytics';
 
 export function LandingProblem() {
     return (
@@ -35,6 +36,13 @@ export function LandingProblem() {
                             <Link
                                 to="/getting-started"
                                 className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-base font-semibold text-on-accent transition-colors hover:bg-amber-400"
+                                onClick={() =>
+                                    trackLandingCtaClick({
+                                        label: 'Give your AI agent a wallet',
+                                        destination: '/getting-started',
+                                        section: 'what-is-it',
+                                    })
+                                }
                             >
                                 Give your AI agent a wallet
                             </Link>

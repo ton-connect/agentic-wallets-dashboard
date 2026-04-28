@@ -12,6 +12,7 @@ import { Toaster } from 'sonner';
 import { AppKitProvider } from '@ton/appkit-react';
 
 import { appKit } from '@/core/configs/app-kit';
+import { AnalyticsRouteTracker } from '@/core/analytics/analytics-route-tracker';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { ScrollRestoration } from '@/components/layout/scroll-restoration';
 import { DashboardPage } from '@/pages/dashboard-page';
@@ -49,6 +50,7 @@ function AppContent() {
         <QueryClientProvider client={queryClient}>
             <AppKitProvider appKit={appKit}>
                 <BrowserRouter>
+                    <AnalyticsRouteTracker />
                     <ScrollRestoration />
                     <Routes>
                         <Route path="/" element={<LandingPage />} />

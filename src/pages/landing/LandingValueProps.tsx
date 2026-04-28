@@ -6,6 +6,8 @@
  *
  */
 
+import { trackLandingCtaClick } from '@/core/analytics/google-analytics';
+
 const principles = [
     {
         title: 'Self-custody.',
@@ -50,6 +52,13 @@ export function LandingValueProps() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-white/[0.04]"
+                            onClick={() =>
+                                trackLandingCtaClick({
+                                    label: 'Contracts on GitHub',
+                                    destination: 'https://github.com/the-ton-tech/agentic-wallet-contract',
+                                    section: 'features',
+                                })
+                            }
                         >
                             Contracts on GitHub
                         </a>

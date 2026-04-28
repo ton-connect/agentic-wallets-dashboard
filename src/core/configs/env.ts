@@ -12,6 +12,8 @@ export const ENV_TON_API_KEY_TESTNET =
     import.meta.env.VITE_TON_API_TESTNET_KEY ?? 'AECTPKOIYZUDZ7AAAAAMSOZQCF2U46X2VU6LGOCWRTA4ARB3SIDBKPY6KJDLCXXIBWMHPPQ';
 export const ENV_TON_API_MIN_REQUEST_INTERVAL_MS = Number(import.meta.env.VITE_TON_API_MIN_REQUEST_INTERVAL_MS ?? '10');
 export const ENV_TON_API_PROVIDER = import.meta.env.VITE_TON_API_PROVIDER === 'tonapi' ? 'tonapi' : 'toncenter';
+export const ENV_GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID ?? '';
+export const ENV_GA_DEBUG_MODE = import.meta.env.VITE_GA_DEBUG_MODE === 'true';
 
 export const ENV_AGENTIC_COLLECTION_MAINNET = import.meta.env.VITE_AGENTIC_COLLECTION_MAINNET ?? 'EQByQ19qvWxW7VibSbGEgZiYMqilHY5y1a_eeSL2VaXhfy07';
 export const ENV_AGENTIC_COLLECTION_TESTNET =

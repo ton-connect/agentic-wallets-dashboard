@@ -8,6 +8,8 @@
 
 import { Link } from 'react-router-dom';
 
+import { trackLandingCtaClick } from '@/core/analytics/google-analytics';
+
 export function LandingCTA() {
     return (
         <section id="get-started" className="py-12 sm:py-20">
@@ -21,12 +23,26 @@ export function LandingCTA() {
                         <Link
                             to="/getting-started"
                             className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-6 py-3 text-base font-semibold text-on-accent transition-colors hover:bg-amber-400"
+                            onClick={() =>
+                                trackLandingCtaClick({
+                                    label: 'Create a wallet for your agent',
+                                    destination: '/getting-started',
+                                    section: 'get-started',
+                                })
+                            }
                         >
                             Create a wallet for your agent
                         </Link>
                         <Link
                             to="/dashboard"
                             className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-white/[0.04]"
+                            onClick={() =>
+                                trackLandingCtaClick({
+                                    label: 'Try dashboard',
+                                    destination: '/dashboard',
+                                    section: 'get-started',
+                                })
+                            }
                         >
                             Try dashboard
                         </Link>
@@ -35,6 +51,13 @@ export function LandingCTA() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-white/[0.04]"
+                            onClick={() =>
+                                trackLandingCtaClick({
+                                    label: 'Smart contracts on GitHub',
+                                    destination: 'https://github.com/the-ton-tech/agentic-wallet-contract',
+                                    section: 'get-started',
+                                })
+                            }
                         >
                             Smart contracts on GitHub
                         </a>

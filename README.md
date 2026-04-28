@@ -115,11 +115,53 @@ The key can be passed in hex format (`0x...`) or decimal. After the modal opens,
 - preview build: `pnpm preview`
 - typecheck: `pnpm typecheck`
 
+## Analytics
+
+The app supports GA4 collection for landing-page traffic and CTA conversion reporting in Looker Studio.
+
+Configure the GA4 web stream measurement ID:
+
+```bash
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+```
+
+For preview debugging, optionally set:
+
+```bash
+VITE_GA_DEBUG_MODE=true
+```
+
+When the variable is missing, the analytics helper is a no-op and the Google script is not loaded. In Vercel, add
+`VITE_GA_MEASUREMENT_ID` to the project environment variables for the preview/production deployments that should collect
+analytics. Redeploy after changing Vercel environment variables.
+
+Tracked events:
+
+- SPA `page_view` on route changes, with sensitive URLs normalized (`/agent/:id`) and only campaign query params preserved.
+- `landing_cta_click` for landing CTA links. Mark this event as a GA4 key event/conversion.
+- `wallet_connect_click`, `agent_create_success`, and `agent_create_error` as secondary funnel context.
+
+Suggested Looker Studio report widgets:
+
+- scorecards: Active users, New users, Engagement rate, Views per user;
+- time series: Active users and New users by date;
+- traffic source table: Session source / medium, Session default channel group, Active users, New users, Engagement rate;
+- conversion chart: `landing_cta_click` count and event rate by source / medium.
+
+Verification:
+
+- open the deployed site with a clean browser profile and filter Network by `collect`;
+- confirm requests to `https://www.google-analytics.com/g/collect` or `https://region1.google-analytics.com/g/collect`;
+- click a landing CTA and confirm the request includes `en=landing_cta_click`;
+- when `VITE_GA_DEBUG_MODE=true`, use GA4 DebugView to inspect `page_view` and `landing_cta_click`.
+
 ## Environment Configuration
 
 File: `src/core/configs/env.ts`.
 
 Key variables:
+- `VITE_GA_MEASUREMENT_ID`
+- `VITE_GA_DEBUG_MODE`
 - `VITE_TON_API_PROVIDER` (`toncenter` by default, `tonapi` to switch provider)
 - `VITE_TON_API_KEY`
 - `VITE_TON_API_TESTNET_KEY`
