@@ -15,9 +15,11 @@ export function LandingProblem() {
         <section id="what-is-it" className="py-12 sm:py-20">
             <div className="mx-auto max-w-[1240px] px-6">
                 <div className="grid items-center gap-6 sm:gap-12 lg:grid-cols-2 lg:gap-20">
-                    <div>
+                    <div className="min-w-0">
                         <h2 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-                            Total privacy with complete control
+                            <span className="lg:whitespace-nowrap">
+                                Total privacy with complete control
+                            </span>
                         </h2>
                         <p className="mt-6 max-w-lg text-base leading-relaxed text-neutral-400 sm:text-lg">
                             Before, AI agents required either full access to your on-chain
