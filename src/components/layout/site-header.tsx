@@ -25,7 +25,7 @@ const sectionNavItems: NavItem[] = [
     { label: 'How it works?', href: '#how-it-works', sectionId: 'how-it-works' },
     { label: 'Use cases', href: '#use-cases', sectionId: 'use-cases' },
     { label: 'Features', href: '#features', sectionId: 'features' },
-    { label: 'Dashboard', href: '#dashboard', sectionId: 'dashboard' },
+    { label: 'Dashboard', href: '/dashboard' },
     { label: 'FAQ', href: '#faq', sectionId: 'faq' },
 ];
 
@@ -46,7 +46,12 @@ export function SiteHeader() {
         () =>
             sectionNavItems.map((item) => ({
                 ...item,
-                href: isLandingPage ? item.href : `/${item.href}`,
+                href:
+                    item.href.startsWith('/')
+                        ? item.href
+                        : isLandingPage
+                          ? item.href
+                          : `/${item.href}`,
             })),
         [isLandingPage],
     );

@@ -14,7 +14,7 @@ const footerColumns = [
             { label: 'How it works?', href: '/#how-it-works' },
             { label: 'Use cases', href: '/#use-cases' },
             { label: 'Features', href: '/#features' },
-            { label: 'Dashboard', href: '/#dashboard' },
+            { label: 'Dashboard', href: '/dashboard' },
             { label: 'FAQ', href: '/#faq' },
         ],
     },
@@ -27,9 +27,12 @@ const footerColumns = [
         ],
     },
     {
-        title: 'Community',
+        title: 'Social networks',
         links: [
-            { label: 'Telegram', href: 'https://t.me/ai_dev_wall' },
+            { label: 'Telegram TON Tech RU', href: 'https://t.me/tontechru' },
+            { label: 'Telegram TON Tech EN', href: 'https://t.me/tontech' },
+            { label: 'X (Twitter) TON Tech', href: 'https://x.com/TONTechHQ' },
+            { label: 'Telegram AI Dev Wall', href: 'https://t.me/ai_dev_wall' },
         ],
     },
 ];

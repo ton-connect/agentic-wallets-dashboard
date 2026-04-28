@@ -30,6 +30,14 @@ export function LandingCTA() {
                         >
                             Try dashboard
                         </Link>
+                        <a
+                            href="https://github.com/the-ton-tech/agentic-wallet-contract"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-white/[0.04]"
+                        >
+                            Smart contracts on GitHub
+                        </a>
                     </div>
                 </div>
             </div>

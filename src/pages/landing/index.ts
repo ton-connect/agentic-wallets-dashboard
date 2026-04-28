@@ -13,7 +13,6 @@ export { LandingValueProps } from './LandingValueProps';
 export { LandingTrust } from './LandingTrust';
 export { LandingUseCases } from './LandingUseCases';
 export { LandingForDevelopers } from './LandingForDevelopers';
-export { LandingForUsers } from './LandingForUsers';
 export { LandingFAQ } from './LandingFAQ';
 export { LandingCTA } from './LandingCTA';
 export { LandingFooter } from './LandingFooter';
