@@ -14,20 +14,20 @@ import { WalletHierarchySVG } from './LandingHero';
 export function LandingProblem() {
     return (
         <section id="what-is-it" className="border-b border-white/[0.06] py-12 sm:py-24">
-            <div className="mx-auto max-w-6xl px-6">
+            <div className="mx-auto max-w-[1240px] px-6">
                 <div className="grid items-center gap-6 sm:gap-12 lg:grid-cols-2 lg:gap-20">
                     <div>
-                        <p className="mb-4 text-xs font-medium uppercase tracking-widest text-amber-500">
+                        <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">
                             What is it?
                         </p>
                         <h2 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
                             Total privacy with complete control
                         </h2>
-                        <p className="mt-6 max-w-lg text-base leading-relaxed text-neutral-400">
+                        <p className="mt-6 max-w-lg text-base leading-relaxed text-neutral-400 sm:text-lg">
                             Before, AI agents required either full access to your on-chain
                             assets or manual approval for each transaction.
                         </p>
-                        <p className="mt-4 max-w-lg text-base leading-relaxed text-neutral-400">
+                        <p className="mt-4 max-w-lg text-base leading-relaxed text-neutral-400 sm:text-lg">
                             Now, you hold the master key to your main wallet, while your
                             agent holds the operator key to an isolated wallet. You set
                             the limits for the Agentic Wallet and add funds –– so the
@@ -36,7 +36,7 @@ export function LandingProblem() {
                         <div className="mt-6">
                             <Link
                                 to="/getting-started"
-                                className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400"
+                                className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-base font-semibold text-on-accent transition-colors hover:bg-amber-400"
                             >
                                 Give your AI agent a wallet
                                 <ArrowRight size={14} />

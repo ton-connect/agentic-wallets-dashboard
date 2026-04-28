@@ -31,9 +31,9 @@ const useCases = [
 
 export function LandingUseCases() {
     return (
-        <section id="use-cases" className="border-b border-white/[0.06] py-24">
-            <div className="mx-auto max-w-6xl px-6">
-                <div className="mb-16 text-center">
+        <section id="use-cases" className="border-b border-white/[0.06] py-12 sm:py-24">
+            <div className="mx-auto max-w-[1240px] px-6">
+                <div className="mb-6 text-center sm:mb-12">
                     <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Use cases</h2>
                 </div>
 
@@ -41,17 +41,19 @@ export function LandingUseCases() {
                     {useCases.map((uc) => (
                         <div
                             key={uc.title}
-                            className="flex flex-col justify-between rounded-2xl border border-white/[0.06] bg-white/[0.03] p-8"
+                            className="flex flex-col justify-between overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.03]"
                         >
-                            <div>
-                                <h3 className="text-lg font-semibold">{uc.title}</h3>
-                                <p className="mt-3 text-sm leading-relaxed text-neutral-400">{uc.description}</p>
+                            <div className="border-b border-white/[0.06] px-5 py-3">
+                                <h3 className="text-sm font-semibold text-neutral-200">{uc.title}</h3>
+                            </div>
+                            <div className="px-5 py-4">
+                                <p className="text-sm leading-relaxed text-neutral-400">{uc.description}</p>
                             </div>
                         </div>
                     ))}
                 </div>
 
-                <p className="mt-8 text-center text-neutral-400">
+                <p className="mt-8 text-center text-base text-neutral-400">
                     And many more. Agentic Wallets are the execution layer, TON is the limit
                 </p>
             </div>

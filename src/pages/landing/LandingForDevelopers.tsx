@@ -60,7 +60,7 @@ export function LandingForDevelopers() {
 
     return (
         <section id="for-developers" className="border-b border-white/[0.06] py-12 sm:py-24">
-            <div className="mx-auto max-w-6xl px-6">
+            <div className="mx-auto max-w-[1240px] px-6">
                 <div className="grid items-start gap-8 sm:gap-16 lg:grid-cols-2">
                     <div className="hidden lg:block">
                         <DeveloperInstructions copied={copied} onCopy={handleCopy} />
@@ -77,7 +77,7 @@ export function LandingForDevelopers() {
                             </h2>
                         </div>
 
-                        <p className="text-base leading-relaxed text-neutral-400">
+                        <p className="text-base leading-relaxed text-neutral-400 sm:text-lg">
                             5 simple steps and 0 lines of code. Operate: Agent autonomously
                             executes transactions using its own key. Monitor: Monitor all
                             transactions and wallets from a single dashboard.
@@ -94,7 +94,7 @@ export function LandingForDevelopers() {
                         <div className="flex items-center gap-3 sm:flex-wrap">
                             <Link
                                 to="/getting-started"
-                                className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400"
+                                className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-base font-semibold text-on-accent transition-colors hover:bg-amber-400"
                             >
                                 Give your AI agent a wallet
                                 <ArrowRight size={14} />
@@ -103,7 +103,7 @@ export function LandingForDevelopers() {
                                 href="https://github.com/the-ton-tech/agentic-wallet-contract"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/[0.04]"
+                                className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-white/[0.04]"
                             >
                                 <span className="sm:hidden">Monitor</span>
                                 <span className="hidden sm:inline">Monitor</span>

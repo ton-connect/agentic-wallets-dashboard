@@ -6,9 +6,6 @@
  *
  */
 
-import { ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-
 export function WalletHierarchySVG() {
     return (
         <svg viewBox="0 0 400 360" fill="none" className="mx-auto h-auto w-full max-w-md" aria-hidden="true">
@@ -92,11 +89,11 @@ export function WalletHierarchySVG() {
 export function LandingHero() {
     return (
         <section className="relative overflow-hidden border-b border-white/[0.06]">
-            <div className="mx-auto flex max-w-6xl justify-center px-6 pb-12 pt-12 text-center sm:pb-24 sm:pt-20 lg:pt-32">
+            <div className="mx-auto flex max-w-[1240px] justify-center px-6 pb-12 pt-12 text-center sm:pb-24 sm:pt-20 lg:pt-32">
                 <div className="flex max-w-4xl flex-col items-center gap-8">
                     <div>
                         <div>
-                            <h1 className="text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.5rem]">
+                            <h1 className="text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-5xl">
                                 Agentic Wallets on TON
                             </h1>
 

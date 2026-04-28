@@ -2,7 +2,7 @@
 @import './constants.css';
 
 @theme {
-    --font-sans: 'Inter', system-ui, 'Avenir', 'Helvetica', 'Arial', sans-serif;
+    --font-sans: 'Inter', 'Helvetica', 'Arial', sans-serif;
     --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
 
     --color-surface: var(--background-page);
@@ -72,6 +72,7 @@ html {
 html, body {
     margin: 0;
     padding: 0;
+    font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
     background: var(--background-page);
     color: var(--text-primary);
     color-scheme: light dark;

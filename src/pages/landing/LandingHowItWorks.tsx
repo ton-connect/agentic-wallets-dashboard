@@ -79,7 +79,7 @@ export function LandingHowItWorks() {
 
     return (
         <section id="how-it-works" className="border-b border-white/[0.06] py-12 sm:py-24">
-            <div className="mx-auto max-w-6xl px-6">
+            <div className="mx-auto max-w-[1240px] px-6">
                 <div className="mb-6 text-center sm:mb-12">
                     <p className="mb-2 text-xs font-medium uppercase tracking-widest text-amber-500">
                         Get started
@@ -103,7 +103,7 @@ export function LandingHowItWorks() {
                 <div className="mt-6 flex justify-center sm:mt-8">
                     <Link
                         to="/getting-started"
-                        className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400"
+                        className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-base font-semibold text-on-accent transition-colors hover:bg-amber-400"
                     >
                         Give your AI agent a wallet
                         <ArrowRight size={14} />

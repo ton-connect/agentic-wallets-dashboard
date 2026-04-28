@@ -40,14 +40,14 @@ export function SiteHeader() {
     const { pathname, hash } = useLocation();
     const isLandingPage = pathname === '/';
 
-    const navItems = useMemo(() => {
-        const normalizedSectionLinks = sectionNavItems.map((item) => ({
-            ...item,
-            href: isLandingPage ? item.href : `/${item.href}`,
-        }));
-
-        return [...normalizedSectionLinks, { label: 'View dashboard', href: DASHBOARD_HREF }];
-    }, [isLandingPage]);
+    const navItems = useMemo(
+        () =>
+            sectionNavItems.map((item) => ({
+                ...item,
+                href: isLandingPage ? item.href : `/${item.href}`,
+            })),
+        [isLandingPage],
+    );
 
     const closeMobileMenu = () => setMobileOpen(false);
 
@@ -153,7 +153,7 @@ export function SiteHeader() {
             ref={headerRef}
             className="sticky top-0 z-50 isolate border-b border-border bg-surface-header text-primary backdrop-blur-md"
         >
-            <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+            <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-4 px-6 py-4">
                 <Link to="/" className="flex items-center gap-2.5 text-lg font-semibold tracking-tight">
                     <AgentLogo />
                     <span className="hidden min-[1040px]:inline">Agentic Wallets</span>
@@ -243,22 +243,7 @@ export function SiteHeader() {
 function AgentLogo() {
     return (
         <span className="inline-flex shrink-0">
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-                <rect
-                    x="1"
-                    y="1"
-                    width="26"
-                    height="26"
-                    rx="8"
-                    stroke="currentColor"
-                    strokeWidth="1"
-                    strokeOpacity="0.2"
-                />
-                <rect x="5" y="5" width="8" height="8" rx="2" fill="var(--accent-default)" fillOpacity="0.8" />
-                <rect x="15" y="5" width="8" height="8" rx="2" fill="currentColor" fillOpacity="0.15" />
-                <rect x="5" y="15" width="8" height="8" rx="2" fill="currentColor" fillOpacity="0.15" />
-                <rect x="15" y="15" width="8" height="8" rx="2" fill="currentColor" fillOpacity="0.08" />
-            </svg>
+            <img src="/assets/logo.svg" width="28" height="28" alt="" aria-hidden="true" />
         </span>
     );
 }

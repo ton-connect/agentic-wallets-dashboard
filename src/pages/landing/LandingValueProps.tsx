@@ -27,21 +27,34 @@ const principles = [
 export function LandingValueProps() {
     return (
         <section id="features" className="border-b border-white/[0.06] py-12 sm:py-24">
-            <div className="mx-auto max-w-6xl px-6">
-                <div className="mb-6 text-center sm:mb-12">
-                    <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                        Core principles
-                    </h2>
-                </div>
+            <div className="mx-auto max-w-[1240px] px-6">
+                <div className="mx-auto max-w-4xl">
+                    <div className="mb-6 text-center sm:mb-12">
+                        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                            Core principles
+                        </h2>
+                    </div>
 
-                <ul className="mx-auto flex max-w-4xl list-disc flex-col gap-5 pl-5 text-base leading-relaxed text-neutral-500 marker:text-amber-500 sm:gap-6">
-                    {principles.map((principle) => (
-                        <li key={principle.title} className="pl-1">
-                            <span className="font-semibold text-neutral-200">{principle.title}</span>{' '}
-                            {principle.description}
-                        </li>
-                    ))}
-                </ul>
+                    <ul className="flex list-disc flex-col gap-5 pl-5 text-base leading-relaxed text-neutral-500 marker:text-amber-500 sm:gap-6 sm:text-lg">
+                        {principles.map((principle) => (
+                            <li key={principle.title} className="pl-1">
+                                <span className="font-semibold text-neutral-200">{principle.title}</span>{' '}
+                                {principle.description}
+                            </li>
+                        ))}
+                    </ul>
+
+                    <div className="mt-6 flex justify-center sm:mt-8">
+                        <a
+                            href="https://github.com/the-ton-tech/agentic-wallet-contract"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-white/[0.04]"
+                        >
+                            Contracts on GitHub
+                        </a>
+                    </div>
+                </div>
             </div>
         </section>
     );
