@@ -14,7 +14,6 @@ import {
     LandingHowItWorks,
     LandingUseCases,
     LandingValueProps,
-    LandingForUsers,
     LandingFAQ,
     LandingCTA,
     LandingFooter,
@@ -29,7 +28,6 @@ export function LandingPage() {
             <LandingHowItWorks />
             <LandingUseCases />
             <LandingValueProps />
-            <LandingForUsers />
             <LandingCTA />
             <LandingFAQ />
             <LandingFooter />

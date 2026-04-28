@@ -8,17 +8,17 @@
 
 const useCases = [
     {
-        title: 'Trading Bot',
+        title: 'Trading bot',
         description:
             'Build a bot that trades on behalf of users within defined risk limits',
     },
     {
-        title: 'DeFi Agent',
+        title: 'DeFi agent',
         description:
             'Automate staking, farming and rebalancing strategies – each in isolated wallets',
     },
     {
-        title: 'Payment Automation',
+        title: 'Payment automation',
         description:
             'Let agents handle recurring on-chain payments for subscriptions and purchases',
     },
