@@ -6,26 +6,45 @@
  *
  */
 
-const useCases = [
+import type { ReactNode } from 'react';
+
+const useCases: { title: string; description: ReactNode }[] = [
     {
         title: 'Trading bot',
-        description:
-            'Build a bot that trades on behalf of users within defined risk limits',
+        description: (
+            <>
+                Build a bot that trades{' '}
+                <span className="whitespace-nowrap">on behalf of users</span> within defined risk limits
+            </>
+        ),
     },
     {
         title: 'DeFi agent',
-        description:
-            'Automate staking, farming and rebalancing strategies – each in isolated wallets',
+        description: (
+            <>
+                Automate staking, farming and rebalancing strategies –{' '}
+                <span className="whitespace-nowrap">each in isolated</span> wallets
+            </>
+        ),
     },
     {
         title: 'Payment automation',
-        description:
-            'Let agents handle recurring on-chain payments for subscriptions and purchases',
+        description: (
+            <>
+                Let agents handle recurring <span className="whitespace-nowrap">on-chain</span> payments for
+                subscriptions and purchases
+            </>
+        ),
     },
     {
         title: 'TMA with agent execution',
-        description:
-            'Embed agentic wallets directly into a Telegram Mini App. Users fund and manage their agent inside the app',
+        description: (
+            <>
+                Embed agentic wallets directly{' '}
+                <span className="whitespace-nowrap">into a Telegram Mini App</span>. Users fund and manage
+                their agent inside <span className="whitespace-nowrap">the app</span>
+            </>
+        ),
     },
 ];
 
