@@ -402,6 +402,7 @@ export function useAgents() {
         revokedAgents,
         newAgents,
         balancesByAddress,
+        balancesReady: chainWalletAddresses.length === 0 || bulkAccountsData != null,
         isLoading: isNftsLoading && !nftsResponse,
         error: nftsError ?? chainError,
         refresh,

@@ -40,6 +40,7 @@ export function DashboardPage() {
         activeAgents,
         newAgents,
         balancesByAddress,
+        balancesReady,
         isLoading,
         refresh,
         collectionAddress,
@@ -87,7 +88,7 @@ export function DashboardPage() {
         return <ConnectPrompt />;
     }
 
-    if (isLoading) {
+    if (isLoading || !balancesReady) {
         return <LoadingState />;
     }
 
@@ -131,6 +132,7 @@ export function DashboardPage() {
                             key={agent.id}
                             agent={agent}
                             balanceNano={agent.isPendingIndexing ? undefined : getAgentBalance(balancesByAddress, agent.address)}
+                            extrasEnabled={balancesReady}
                             onFund={() => {
                                 markAgentKnown(agent.id);
                                 setFundAgent(agent);
