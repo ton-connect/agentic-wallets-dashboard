@@ -25,11 +25,7 @@ import { getMaxOutgoingMessages } from '@ton/walletkit';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import {
-    ENV_AGENTIC_COLLECTION_MAINNET,
-    ENV_AGENTIC_COLLECTION_TESTNET,
-    ENV_AGENTIC_WALLET_CODE_BOC,
-} from '@/core/configs/env';
+import { ENV_AGENTIC_WALLET_CODE_BOC } from '@/core/configs/env';
 import { trackEvent } from '@/core/analytics/google-analytics';
 import { getCurrentAnalyticsPath } from '@/core/analytics/url';
 import {
@@ -40,32 +36,47 @@ import {
     createQueryId,
     getAgentWalletState,
     getCollectionAddressByIndex,
+    type ToncenterLikeClient,
 } from '@/features/agents/lib/agentic-wallet';
 import { useAgentsStore } from '@/features/agents';
+import type { PendingAgentWallet } from '@/features/agents';
 import { buildOnchainMetadataCell } from '@/features/agents/lib/metadata';
 import { isEligibleFundingNft } from '@/features/agents/lib/nft-trust';
-import { parseUint256PublicKey } from '@/features/agents/lib/public-key';
+import { formatUint256PublicKey, parseUint256PublicKey } from '@/features/agents/lib/public-key';
 import { formatUnitsTrimmed, parseUiAmountToUnits, tryParseUiAmountToUnits } from '@/features/agents/lib/amount';
 import { isSameTonAddress } from '@/features/agents/lib/address';
+import { delay } from '@/features/agents/lib/async';
+import { getCollectionAddressForNetwork } from '@/features/agents/hooks/use-agents';
 
 const DEPLOY_BASE_NANO = toNano('0.05');
 const PER_ASSET_RESERVE_NANO = toNano('0.06');
-const AGENT_INDEXING_RETRY_ATTEMPTS = 40;
+const AGENT_DEPLOYMENT_RETRY_ATTEMPTS = 40;
+const AGENT_DEPLOYMENT_RETRY_DELAY_MS = 250;
 
-function delay(ms: number): Promise<void> {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-}
+async function waitForDeployedAgentWallet(
+    client: ToncenterLikeClient,
+    address: string,
+): Promise<Awaited<ReturnType<typeof getAgentWalletState>> | null> {
+    if (!client.getAccountState) {
+        return null;
+    }
 
-function collectionAddressByChain(chainId: string | undefined): string {
-    if (chainId === '-239') {
-        return ENV_AGENTIC_COLLECTION_MAINNET;
+    for (let attempt = 0; attempt < AGENT_DEPLOYMENT_RETRY_ATTEMPTS; attempt += 1) {
+        try {
+            const state = await getAgentWalletState(client, address);
+            if (state.isInitialized) {
+                return state;
+            }
+        } catch (error) {
+            if (!(error instanceof Error) || !error.message.startsWith('Account state data is empty for')) {
+                throw error;
+            }
+        }
+
+        await delay(AGENT_DEPLOYMENT_RETRY_DELAY_MS);
     }
-    if (chainId === '-3') {
-        return ENV_AGENTIC_COLLECTION_TESTNET;
-    }
-    return '';
+
+    return null;
 }
 
 type DepositAssetKind = 'jetton' | 'nft';
@@ -404,6 +415,7 @@ function getAgentCreateErrorReason(message: string): string {
 export function CreateAgentPage() {
     const navigate = useNavigate();
     const queueDeploymentNotice = useAgentsStore((s) => s.queueDeploymentNotice);
+    const upsertPendingAgent = useAgentsStore((s) => s.upsertPendingAgent);
     const [searchParams] = useSearchParams();
     const queryClient = useQueryClient();
     const appKit = useAppKit();
@@ -429,7 +441,7 @@ export function CreateAgentPage() {
     const isDeepLinkAssetsAppliedRef = useRef(false);
     const deepLinkPayload = useMemo(() => parseCreateDeepLink(searchParams), [searchParams]);
 
-    const collectionAddress = useMemo(() => collectionAddressByChain(network?.chainId), [network?.chainId]);
+    const collectionAddress = useMemo(() => getCollectionAddressForNetwork(network?.chainId), [network?.chainId]);
     const walletFeatures = (
         wallet as unknown as { tonConnectWallet?: { device?: { features?: unknown[] } } } | null
     )?.tonConnectWallet?.device?.features;
@@ -774,35 +786,38 @@ export function CreateAgentPage() {
                 ],
             });
 
-            let isIndexed = false;
-            for (let attempt = 0; attempt < AGENT_INDEXING_RETRY_ATTEMPTS; attempt += 1) {
-                let found = false;
-                for (let page = 0; page < 5; page += 1) {
-                    const ownerNfts = await client.nftItemsByOwner({
-                        ownerAddress,
-                        collectionAddress: collection.toString(),
-                        pagination: {
-                            limit: 100,
-                            offset: page * 100,
-                        },
-                    });
-
-                    found = (ownerNfts.nfts ?? []).some((nft) => isSameTonAddress(nft.address, localAddress.toString()));
-                    if (found || (ownerNfts.nfts ?? []).length < 100) {
-                        break;
-                    }
-                }
-                if (found) {
-                    isIndexed = true;
-                    break;
-                }
-
-                await delay(250);
+            const deployedState = await waitForDeployedAgentWallet(client, localAddress.toString());
+            if (!deployedState) {
+                toast.message('Transaction sent, but wallet state is not available via API yet. It will appear after indexing.');
+                return;
             }
+            const createdAtIso = new Date(Number(creationTimestamp) * 1000).toISOString();
+            const nowIso = new Date().toISOString();
+            const pendingAgent: PendingAgentWallet = {
+                id: localAddress.toString(),
+                name,
+                address: localAddress.toString(),
+                operatorPubkey: formatUint256PublicKey(deployedState.operatorPublicKey),
+                originOperatorPublicKey: formatUint256PublicKey(deployedState.originOperatorPublicKey),
+                extensions: deployedState.extensions,
+                ownerAddress: deployedState.ownerAddress?.toString() ?? ownerAddress,
+                creationDateTimestamp: Number(creationTimestamp) * 1000,
+                createdAt: createdAtIso,
+                detectedAt: nowIso,
+                isNew: false,
+                status: deployedState.operatorPublicKey === 0n ? 'revoked' : 'active',
+                source: sourceValue || 'Local deployment',
+                collectionAddress: deployedState.collectionAddress.toString(),
+                nftItemContent: null,
+                isPendingIndexing: true,
+                networkChainId: network.chainId,
+            };
+            upsertPendingAgent(pendingAgent);
 
             await Promise.all([
                 queryClient.invalidateQueries({ queryKey: ['agentic-wallets-owner-nfts'] }),
                 queryClient.invalidateQueries({ queryKey: ['agentic-wallets-chain-state'] }),
+                queryClient.invalidateQueries({ queryKey: ['agentic-wallets-bulk-poll'] }),
                 queryClient.invalidateQueries({ queryKey: ['balance'] }),
                 queryClient.invalidateQueries({ queryKey: ['jettons'] }),
                 queryClient.invalidateQueries({ queryKey: ['nfts'] }),
@@ -812,16 +827,16 @@ export function CreateAgentPage() {
                 const callbackPayload: DeployCallbackPayload = {
                     event: 'agent_wallet_deployed',
                     deployedAt: new Date().toISOString(),
-                    indexed: isIndexed,
+                    indexed: false,
                     network: {
                         chainId: network.chainId,
                         collectionAddress: collection.toString(),
                     },
                     wallet: {
                         address: localAddress.toString(),
-                        ownerAddress,
-                        originOperatorPublicKey: `0x${originKey.toString(16)}`,
-                        operatorPublicKey: `0x${originKey.toString(16)}`,
+                        ownerAddress: deployedState.ownerAddress?.toString() ?? ownerAddress,
+                        originOperatorPublicKey: formatUint256PublicKey(deployedState.originOperatorPublicKey),
+                        operatorPublicKey: formatUint256PublicKey(deployedState.operatorPublicKey),
                         deployedByUser: true,
                         name,
                         source: sourceValue,
@@ -865,7 +880,7 @@ export function CreateAgentPage() {
     };
 
     return (
-        <div className="animate-fade-in">
+        <div className="animate-fade-in mx-auto max-w-2xl">
             <Link
                 to="/dashboard"
                 className="mb-6 inline-flex items-center gap-1.5 text-xs text-neutral-500 transition-colors hover:text-white"
@@ -874,7 +889,7 @@ export function CreateAgentPage() {
                 Back to dashboard
             </Link>
 
-            <div className="max-w-2xl rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
+            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
                 <h1 className="text-2xl font-bold tracking-tight">Create Agent Wallet</h1>
                 <p className="mt-2 text-sm text-neutral-500">
                     Deploy a wallet NFT and send first funding in one wallet confirmation flow.
