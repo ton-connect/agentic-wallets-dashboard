@@ -16,12 +16,18 @@ interface NftBalancesProps {
     compact?: boolean;
     network?: Network;
     title?: string;
+    enabled?: boolean;
 }
 
-export function NftBalances({ address, compact = false, network, title }: NftBalancesProps) {
+export function NftBalances({ address, compact = false, network, title, enabled = true }: NftBalancesProps) {
     const connectedNetwork = useNetwork();
     const effectiveNetwork = network ?? connectedNetwork;
-    const { data: nftsResponse } = useNftsByAddress({ address, network: effectiveNetwork, limit: 30 });
+    const { data: nftsResponse } = useNftsByAddress({
+        address,
+        network: effectiveNetwork,
+        limit: 30,
+        query: { enabled },
+    });
     const nfts = (nftsResponse?.nfts ?? []).filter(isAllowedNftTrust);
 
     if (nfts.length === 0) return null;

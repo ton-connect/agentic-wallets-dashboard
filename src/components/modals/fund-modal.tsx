@@ -33,6 +33,7 @@ import { Modal } from './modal';
 import type { AgentWallet } from '@/features/agents';
 import { isEligibleFundingNft } from '@/features/agents/lib/nft-trust';
 import { formatUnitsTrimmed, parseUiAmountToUnits, tryParseUiAmountToUnits } from '@/features/agents/lib/amount';
+import { delay } from '@/features/agents/lib/async';
 import { waitForTransactionStatus } from '@/features/agents/lib/transaction-status';
 
 interface FundModalProps {
@@ -59,12 +60,6 @@ interface FundingItem {
     uid: string;
     assetId: string;
     amount: string;
-}
-
-function delay(ms: number): Promise<void> {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
 }
 
 const PER_NON_TON_RESERVE_NANO = toNano('0.06');

@@ -17,12 +17,17 @@ interface JettonBalancesProps {
     compact?: boolean;
     network?: Network;
     title?: string;
+    enabled?: boolean;
 }
 
-export function JettonBalances({ address, compact = false, network, title }: JettonBalancesProps) {
+export function JettonBalances({ address, compact = false, network, title, enabled = true }: JettonBalancesProps) {
     const connectedNetwork = useNetwork();
     const effectiveNetwork = network ?? connectedNetwork;
-    const { data: jettonsResponse } = useJettonsByAddress({ address, network: effectiveNetwork });
+    const { data: jettonsResponse } = useJettonsByAddress({
+        address,
+        network: effectiveNetwork,
+        query: { enabled },
+    });
     const jettons = useMemo(
         () =>
             [...(jettonsResponse?.jettons ?? [])]

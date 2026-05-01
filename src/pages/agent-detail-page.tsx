@@ -10,6 +10,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
+import { Network } from '@ton/appkit';
 import { useAddress, useAppKit, useBalanceByAddress, useNetwork } from '@ton/appkit-react';
 import { ArrowLeft, AlertTriangle, Check, CheckCircle2, Copy, Pencil, X } from 'lucide-react';
 import { toast } from 'sonner';
@@ -31,7 +32,7 @@ import { ActivityFeedV2 } from '@/components/dashboard/activity-feed-v2';
 import { getAgentWalletState } from '@/features/agents/lib/agentic-wallet';
 import { extractCreationDateFromMetadata, extractNameFromMetadata } from '@/features/agents/lib/metadata';
 import { formatTonAddressForNetwork, isSameTonAddress } from '@/features/agents/lib/address';
-import { parseUint256PublicKey } from '@/features/agents/lib/public-key';
+import { formatUint256PublicKey, parseUint256PublicKey } from '@/features/agents/lib/public-key';
 import { formatUiAmountFixed } from '@/features/agents/lib/amount';
 
 const CHANGE_PUBLIC_KEY_PARAM_KEYS = [
@@ -97,7 +98,7 @@ export function AgentDetailPage() {
     const listedAgent = agents.find(
         (a) => id && (a.id === id || isSameTonAddress(a.id, id) || isSameTonAddress(a.address, id)),
     );
-    const network = useNetwork();
+    const network = useNetwork() ?? Network.mainnet();
     const { data: fallbackAgent, isLoading: isFallbackAgentLoading, refetch: refetchFallbackAgent } = useQuery({
         queryKey: ['agent-detail-fallback', network?.chainId, id],
         enabled: !!network && !!id && !isAgentsLoading && !listedAgent,
@@ -126,8 +127,8 @@ export function AgentDetailPage() {
                 id,
                 name,
                 address: id,
-                operatorPubkey: `0x${state.operatorPublicKey.toString(16)}`,
-                originOperatorPublicKey: `0x${state.originOperatorPublicKey.toString(16)}`,
+                operatorPubkey: formatUint256PublicKey(state.operatorPublicKey),
+                originOperatorPublicKey: formatUint256PublicKey(state.originOperatorPublicKey),
                 extensions: state.extensions,
                 ownerAddress: state.ownerAddress?.toString() ?? '',
                 creationDateTimestamp:
