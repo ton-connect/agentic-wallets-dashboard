@@ -48,7 +48,7 @@ import { isSameTonAddress } from '@/features/agents/lib/address';
 import { delay } from '@/features/agents/lib/async';
 import { getCollectionAddressForNetwork } from '@/features/agents/hooks/use-agents';
 
-const DEPLOY_BASE_NANO = toNano('0.05');
+const DEPLOY_BASE_NANO = toNano('0.01');
 const PER_ASSET_RESERVE_NANO = toNano('0.06');
 const AGENT_DEPLOYMENT_RETRY_ATTEMPTS = 40;
 const AGENT_DEPLOYMENT_RETRY_DELAY_MS = 250;
@@ -431,7 +431,7 @@ export function CreateAgentPage() {
     const [agentName, setAgentName] = useState('');
     const [source, setSource] = useState('');
     const [callbackUrl, setCallbackUrl] = useState('');
-    const [tonDeposit, setTonDeposit] = useState('0.2');
+    const [tonDeposit, setTonDeposit] = useState('0.1');
     const [assetDeposits, setAssetDeposits] = useState<DepositAssetDraft[]>([]);
     const [openSelectorId, setOpenSelectorId] = useState<string | null>(null);
     const [jettonsOpenById, setJettonsOpenById] = useState<Record<string, boolean>>({});
