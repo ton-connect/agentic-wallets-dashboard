@@ -29,3 +29,7 @@ export function parseUint256PublicKey(value: string): bigint {
 
     return parsed;
 }
+
+export function formatUint256PublicKey(value: bigint): string {
+    return `0x${value.toString(16).padStart(64, '0')}`;
+}

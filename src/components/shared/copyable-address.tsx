@@ -6,6 +6,7 @@
  *
  */
 
+import type { MouseEvent } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNetwork } from '@ton/appkit-react';
 import { Copy, Check } from 'lucide-react';
@@ -129,7 +130,9 @@ function CopyableValueBase({ value, copyValue, truncate = true, className, adapt
         };
     }, [adaptive, recalculateDisplay]);
 
-    const handleCopy = async () => {
+    const handleCopy = async (event: MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
         await navigator.clipboard.writeText(copyValue ?? value);
         setCopied(true);
         setTimeout(() => setCopied(false), 1500);
@@ -137,8 +140,11 @@ function CopyableValueBase({ value, copyValue, truncate = true, className, adapt
 
     return (
         <button
+            type="button"
             ref={buttonRef}
-            onClick={handleCopy}
+            onClick={(event) => {
+                void handleCopy(event);
+            }}
             className={`relative inline-flex w-full min-w-0 max-w-full items-center gap-1.5 font-mono text-xs text-neutral-500 transition-colors hover:text-neutral-300 ${className ?? ''}`}
         >
             <span className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">

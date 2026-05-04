@@ -28,6 +28,7 @@ import type { WithdrawJettonAction, WithdrawNftAction } from '../lib/agentic-wal
 import { buildUpdatedMetadataCell, extractNameFromMetadata } from '../lib/metadata';
 import { isEligibleFundingNft } from '../lib/nft-trust';
 import { parseUint256PublicKey } from '../lib/public-key';
+import { delay } from '../lib/async';
 import { waitForTransactionStatus } from '../lib/transaction-status';
 
 import { ENV_AGENTIC_OWNER_OP_GAS } from '@/core/configs/env';
@@ -54,12 +55,6 @@ type WithdrawSelection = {
 type OperatorUpdateOptions = {
     removeAllExtensions?: boolean;
 };
-
-function delay(ms: number): Promise<void> {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-}
 
 function parseGasNano(value: string): bigint {
     const parsed = value.trim();

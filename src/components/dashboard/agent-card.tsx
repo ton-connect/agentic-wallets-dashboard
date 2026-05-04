@@ -20,12 +20,13 @@ import { formatUnitsFixed } from '@/features/agents/lib/amount';
 interface AgentCardProps {
     agent: AgentWallet;
     balanceNano?: bigint;
+    extrasEnabled?: boolean;
     onFund?: () => void;
     onWithdraw?: () => void;
     onRevoke?: () => void;
 }
 
-export function AgentCard({ agent, balanceNano, onFund, onWithdraw, onRevoke }: AgentCardProps) {
+export function AgentCard({ agent, balanceNano, extrasEnabled = true, onFund, onWithdraw, onRevoke }: AgentCardProps) {
     const network = useNetwork();
     const balanceStr = balanceNano != null ? formatUnitsFixed(balanceNano, 9, 2) : '—';
     const isZero = balanceNano === 0n;
@@ -51,10 +52,10 @@ export function AgentCard({ agent, balanceNano, onFund, onWithdraw, onRevoke }: 
                     </div>
                 </div>
                 <div className="mt-2">
-                    <JettonBalances address={agent.address} compact network={network} />
+                    <JettonBalances address={agent.address} compact network={network} enabled={extrasEnabled} />
                 </div>
                 <div className="mt-1.5">
-                    <NftBalances address={agent.address} compact network={network} />
+                    <NftBalances address={agent.address} compact network={network} enabled={extrasEnabled} />
                 </div>
             </Link>
 

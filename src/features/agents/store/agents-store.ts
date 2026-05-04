@@ -10,14 +10,18 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { isSameTonAddress, normalizeTonAddress } from '@/features/agents/lib/address';
+import type { PendingAgentWallet } from '@/features/agents/types';
 
 interface AgentsState {
     knownAgentIds: string[];
     pendingDeploymentNoticeAgentIds: string[];
+    pendingAgents: PendingAgentWallet[];
     markKnown: (id: string) => void;
     markManyKnown: (ids: string[]) => void;
     queueDeploymentNotice: (id: string) => void;
     consumeDeploymentNotice: (id: string) => void;
+    upsertPendingAgent: (agent: PendingAgentWallet) => void;
+    removePendingAgent: (id: string, networkChainId?: string) => void;
 }
 
 function normalizeAgentId(id: string): string {
@@ -33,6 +37,7 @@ export const useAgentsStore = create<AgentsState>()(
         (set) => ({
             knownAgentIds: [],
             pendingDeploymentNoticeAgentIds: [],
+            pendingAgents: [],
             markKnown: (id) => {
                 set((state) => {
                     if (state.knownAgentIds.includes(id)) {
@@ -100,9 +105,65 @@ export const useAgentsStore = create<AgentsState>()(
                     };
                 });
             },
+            upsertPendingAgent: (agent) => {
+                const normalizedId = normalizeAgentId(agent.id);
+                if (!normalizedId) {
+                    return;
+                }
+
+                set((state) => {
+                    const nextAgent = {
+                        ...agent,
+                        id: normalizedId,
+                        address: normalizedId,
+                    };
+                    const existingIndex = state.pendingAgents.findIndex(
+                        (storedAgent) =>
+                            storedAgent.networkChainId === agent.networkChainId &&
+                            isSameTonAddress(storedAgent.id, normalizedId),
+                    );
+
+                    if (existingIndex === -1) {
+                        return {
+                            pendingAgents: [...state.pendingAgents, nextAgent],
+                        };
+                    }
+
+                    const pendingAgents = [...state.pendingAgents];
+                    pendingAgents[existingIndex] = nextAgent;
+                    return { pendingAgents };
+                });
+            },
+            removePendingAgent: (id, networkChainId) => {
+                const normalizedId = normalizeAgentId(id);
+                if (!normalizedId) {
+                    return;
+                }
+
+                set((state) => {
+                    const nextPendingAgents = state.pendingAgents.filter((agent) => {
+                        if (networkChainId && agent.networkChainId !== networkChainId) {
+                            return true;
+                        }
+                        return !isSameTonAddress(agent.id, normalizedId);
+                    });
+
+                    if (nextPendingAgents.length === state.pendingAgents.length) {
+                        return state;
+                    }
+
+                    return {
+                        pendingAgents: nextPendingAgents,
+                    };
+                });
+            },
         }),
         {
             name: 'agentic-wallets-known-agent-ids',
+            partialize: (state) => ({
+                knownAgentIds: state.knownAgentIds,
+                pendingDeploymentNoticeAgentIds: state.pendingDeploymentNoticeAgentIds,
+            }),
         },
     ),
 );
