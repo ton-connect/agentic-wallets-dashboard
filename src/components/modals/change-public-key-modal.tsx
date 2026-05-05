@@ -26,7 +26,7 @@ export function ChangePublicKeyModal({ agent, initialPublicKey, onClose, onSucce
     const { changeAgentPublicKey, isPending } = useAgentOperations();
     const [publicKey, setPublicKey] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [removeAllExtensions, setRemoveAllExtensions] = useState(false);
+    const [removeAllExtensions, setRemoveAllExtensions] = useState(true);
 
     useEffect(() => {
         if (!agent) {
