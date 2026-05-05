@@ -43,7 +43,7 @@
   "pnpm": {
     "overrides": {
       "@ton/appkit": "https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-0.0.2.tgz",
-      "@ton/walletkit": "file:./vendor/ton-walletkit-0.0.12-alpha.2.tgz",
+      "@ton/walletkit": "https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.1/ton-walletkit-0.0.12-alpha.2.tgz",
       "@tonconnect/bridge-sdk": "file:./vendor/tonconnect-bridge-sdk-0.2.6.tgz"
     }
   }
