@@ -15,6 +15,7 @@ import { Modal } from './modal';
 import type { AgentWallet } from '@/features/agents';
 import { ENV_TON_API_KEY_MAINNET, ENV_TON_API_KEY_TESTNET } from '@/core/configs/env';
 import { useAgentOperations } from '@/features/agents';
+import { hasPositiveJettonBalance } from '@/features/agents/lib/amount';
 import { isEligibleFundingNft } from '@/features/agents/lib/nft-trust';
 
 interface WithdrawModalProps {
@@ -30,7 +31,10 @@ export function WithdrawModal({ agent, onClose, onSuccess }: WithdrawModalProps)
     const { data: balance } = useBalanceByAddress({ address: agent?.address ?? '', network });
     const { data: jettonsResponse } = useJettonsByAddress({ address: agent?.address ?? '', network });
     const { data: nftsResponse } = useNftsByAddress({ address: agent?.address ?? '', network, limit: 30 });
-    const jettons = jettonsResponse?.jettons ?? [];
+    const jettons = useMemo(
+        () => (jettonsResponse?.jettons ?? []).filter((jetton) => hasPositiveJettonBalance(jetton.balance, jetton.decimalsNumber)),
+        [jettonsResponse?.jettons],
+    );
     const nfts = (nftsResponse?.nfts ?? []).filter((nft) => isEligibleFundingNft(nft, nftsResponse?.addressBook));
     const [includeTon, setIncludeTon] = useState(true);
     const [selectedJettons, setSelectedJettons] = useState<Record<string, boolean>>({});

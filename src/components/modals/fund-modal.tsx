@@ -32,7 +32,12 @@ import { Modal } from './modal';
 
 import type { AgentWallet } from '@/features/agents';
 import { isEligibleFundingNft } from '@/features/agents/lib/nft-trust';
-import { formatUnitsTrimmed, parseUiAmountToUnits, tryParseUiAmountToUnits } from '@/features/agents/lib/amount';
+import {
+    formatUnitsTrimmed,
+    hasPositiveJettonBalance,
+    parseUiAmountToUnits,
+    tryParseUiAmountToUnits,
+} from '@/features/agents/lib/amount';
 import { delay } from '@/features/agents/lib/async';
 import { waitForTransactionStatus } from '@/features/agents/lib/transaction-status';
 
@@ -95,7 +100,7 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
         const ton: AssetItem = { id: 'ton', kind: 'ton', label: 'TON', sublabel: 'Toncoin' };
 
         const jettons: AssetItem[] = (jettonsResponse?.jettons ?? [])
-            .filter((j) => (tryParseUiAmountToUnits(j.balance, j.decimalsNumber ?? 9) ?? 0n) > 0n)
+            .filter((j) => hasPositiveJettonBalance(j.balance, j.decimalsNumber))
             .map((j) => {
                 const balance = j.balance;
                 const usdPrice = Number(j.prices?.find((p) => p.currency === 'USD')?.value ?? '0');
