@@ -6,11 +6,16 @@
  *
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Network } from '@ton/appkit';
+import {
+    getBalanceByAddressQueryOptions,
+    getJettonsByAddressQueryOptions,
+    getNFTsQueryOptions,
+} from '@ton/appkit/queries';
 import { useAddress, useAppKit, useBalanceByAddress, useNetwork } from '@ton/appkit-react';
 import { ArrowLeft, AlertTriangle, Check, CheckCircle2, Copy, Pencil, X } from 'lucide-react';
 import { toast } from 'sonner';
@@ -91,6 +96,7 @@ export function AgentDetailPage() {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const appKit = useAppKit();
+    const queryClient = useQueryClient();
     const connectedAddress = useAddress();
     const markKnown = useAgentsStore((s) => s.markKnown);
     const { agents, refresh, isLoading: isAgentsLoading } = useAgents();
@@ -152,6 +158,7 @@ export function AgentDetailPage() {
         agent?.address ?? null,
         agent?.ownerAddress ?? null,
     );
+    const lastActivityMarkerRef = useRef<string | null>(null);
 
     const [showFund, setShowFund] = useState(false);
     const [showWithdraw, setShowWithdraw] = useState(false);
@@ -166,6 +173,14 @@ export function AgentDetailPage() {
     const [deepLinkedPublicKey, setDeepLinkedPublicKey] = useState<string | null>(null);
     const [selectedExtensions, setSelectedExtensions] = useState<string[]>([]);
     const changePublicKeyDeepLink = useMemo(() => parseChangePublicKeyDeepLink(searchParams), [searchParams]);
+    const latestActivityMarker = useMemo(() => {
+        const latestItem = activity?.[0];
+        if (!latestItem) {
+            return null;
+        }
+
+        return latestItem.hash ?? `${latestItem.id}:${latestItem.timestamp}`;
+    }, [activity]);
     const pendingDeploymentNoticeAgentIds = useAgentsStore((s) => s.pendingDeploymentNoticeAgentIds);
     const consumeDeploymentNotice = useAgentsStore((s) => s.consumeDeploymentNotice);
 
@@ -215,6 +230,37 @@ export function AgentDetailPage() {
             markKnown(agent.id);
         }
     }, [agent, markKnown]);
+
+    useEffect(() => {
+        lastActivityMarkerRef.current = null;
+    }, [agent?.address]);
+
+    useEffect(() => {
+        if (!agent?.address || !latestActivityMarker) {
+            return;
+        }
+
+        const previousMarker = lastActivityMarkerRef.current;
+        lastActivityMarkerRef.current = latestActivityMarker;
+
+        if (previousMarker === latestActivityMarker) {
+            return;
+        }
+
+        const queryScope = { address: agent.address, network };
+        void queryClient.invalidateQueries({
+            queryKey: getBalanceByAddressQueryOptions(appKit, queryScope).queryKey,
+            exact: true,
+        });
+        void queryClient.invalidateQueries({
+            queryKey: getJettonsByAddressQueryOptions(appKit, queryScope).queryKey,
+            exact: true,
+        });
+        void queryClient.invalidateQueries({
+            queryKey: getNFTsQueryOptions(appKit, queryScope).queryKey,
+            exact: true,
+        });
+    }, [agent, appKit, latestActivityMarker, network, queryClient]);
 
     useEffect(() => {
         if (!agent || showChangePublicKey || !changePublicKeyDeepLink.shouldOpenModal) {
