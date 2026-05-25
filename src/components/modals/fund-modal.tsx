@@ -18,7 +18,6 @@ import {
     useBalanceByAddress,
     useJettonsByAddress,
     useNetwork,
-    useNfts,
     useSelectedWallet,
     useSendTransaction,
 } from '@ton/appkit-react';
@@ -31,6 +30,7 @@ import { toast } from 'sonner';
 import { Modal } from './modal';
 
 import type { AgentWallet } from '@/features/agents';
+import { useEnrichedNftsByAddress } from '@/features/agents/hooks/use-enriched-nfts-by-address';
 import { isEligibleFundingNft } from '@/features/agents/lib/nft-trust';
 import {
     formatUnitsTrimmed,
@@ -94,7 +94,11 @@ export function FundModal({ agent, onClose, onSuccess }: FundModalProps) {
         isFetching: jettonsFetching,
     } = useJettonsByAddress({ address: ownerAddress, network });
 
-    const { data: nftsResponse, isLoading: nftsLoading, isFetching: nftsFetching } = useNfts({ network, limit: 1000 });
+    const { data: nftsResponse, isLoading: nftsLoading, isFetching: nftsFetching } = useEnrichedNftsByAddress({
+        address: ownerAddress ?? '',
+        network,
+        limit: 1000,
+    });
 
     const assets = useMemo<AssetItem[]>(() => {
         const ton: AssetItem = { id: 'ton', kind: 'ton', label: 'TON', sublabel: 'Toncoin' };

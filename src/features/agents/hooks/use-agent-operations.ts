@@ -26,6 +26,7 @@ import {
 } from '../lib/agentic-wallet';
 import type { WithdrawJettonAction, WithdrawNftAction } from '../lib/agentic-wallet';
 import { buildUpdatedMetadataCell, extractNameFromMetadata } from '../lib/metadata';
+import { fetchNftInterfaces, mergeAddressBookInterfaces } from '../lib/nft-interfaces';
 import { isEligibleFundingNft } from '../lib/nft-trust';
 import { parseUint256PublicKey } from '../lib/public-key';
 import { delay } from '../lib/async';
@@ -390,8 +391,14 @@ export function useAgentOperations() {
                     });
                     const pageNfts = response.nfts ?? [];
 
+                    const interfaces = await fetchNftInterfaces(
+                        network?.chainId,
+                        pageNfts.map((nft) => nft.address),
+                    );
+                    const addressBook = mergeAddressBookInterfaces(response.addressBook, interfaces);
+
                     for (const nft of pageNfts) {
-                        if (!isEligibleFundingNft(nft, response.addressBook)) {
+                        if (!isEligibleFundingNft(nft, addressBook)) {
                             continue;
                         }
                         nfts.push({ nftAddress: Address.parse(nft.address) });

@@ -17,7 +17,6 @@ import {
     useBalanceByAddress,
     useJettonsByAddress,
     useNetwork,
-    useNfts,
     useSelectedWallet,
     useSendTransaction,
 } from '@ton/appkit-react';
@@ -40,6 +39,7 @@ import {
 } from '@/features/agents/lib/agentic-wallet';
 import { useAgentsStore } from '@/features/agents';
 import type { PendingAgentWallet } from '@/features/agents';
+import { useEnrichedNftsByAddress } from '@/features/agents/hooks/use-enriched-nfts-by-address';
 import { buildOnchainMetadataCell } from '@/features/agents/lib/metadata';
 import { isEligibleFundingNft } from '@/features/agents/lib/nft-trust';
 import { formatUint256PublicKey, parseUint256PublicKey } from '@/features/agents/lib/public-key';
@@ -430,7 +430,11 @@ export function CreateAgentPage() {
     const { data: ownerTonBalance } = useBalanceByAddress({ address: ownerAddress ?? '', network });
     const { mutateAsync: sendTransaction, isPending } = useSendTransaction();
     const { data: jettonsResponse } = useJettonsByAddress({ address: ownerAddress, network });
-    const { data: nftsResponse } = useNfts({ network, limit: 1000 });
+    const { data: nftsResponse } = useEnrichedNftsByAddress({
+        address: ownerAddress ?? '',
+        network,
+        limit: 1000,
+    });
 
     const [originOperatorPublicKey, setOriginOperatorPublicKey] = useState('');
     const [agentName, setAgentName] = useState('');
