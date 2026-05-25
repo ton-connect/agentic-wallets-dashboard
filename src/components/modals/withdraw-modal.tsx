@@ -6,7 +6,7 @@
  *
  */
 
-import { useBalanceByAddress, useJettonsByAddress, useNetwork, useNftsByAddress } from '@ton/appkit-react';
+import { useBalanceByAddress, useJettonsByAddress, useNetwork } from '@ton/appkit-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -15,6 +15,8 @@ import { Modal } from './modal';
 import type { AgentWallet } from '@/features/agents';
 import { ENV_TON_API_KEY_MAINNET, ENV_TON_API_KEY_TESTNET } from '@/core/configs/env';
 import { useAgentOperations } from '@/features/agents';
+import { hasPositiveJettonBalance } from '@/features/agents/lib/amount';
+import { useEnrichedNftsByAddress } from '@/features/agents/hooks/use-enriched-nfts-by-address';
 import { isEligibleFundingNft } from '@/features/agents/lib/nft-trust';
 
 interface WithdrawModalProps {
@@ -29,8 +31,11 @@ export function WithdrawModal({ agent, onClose, onSuccess }: WithdrawModalProps)
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { data: balance } = useBalanceByAddress({ address: agent?.address ?? '', network });
     const { data: jettonsResponse } = useJettonsByAddress({ address: agent?.address ?? '', network });
-    const { data: nftsResponse } = useNftsByAddress({ address: agent?.address ?? '', network, limit: 30 });
-    const jettons = jettonsResponse?.jettons ?? [];
+    const { data: nftsResponse } = useEnrichedNftsByAddress({ address: agent?.address ?? '', network, limit: 30 });
+    const jettons = useMemo(
+        () => (jettonsResponse?.jettons ?? []).filter((jetton) => hasPositiveJettonBalance(jetton.balance, jetton.decimalsNumber)),
+        [jettonsResponse?.jettons],
+    );
     const nfts = (nftsResponse?.nfts ?? []).filter((nft) => isEligibleFundingNft(nft, nftsResponse?.addressBook));
     const [includeTon, setIncludeTon] = useState(true);
     const [selectedJettons, setSelectedJettons] = useState<Record<string, boolean>>({});

@@ -33,7 +33,7 @@ export function ChangePublicKeyModal({ agent, initialPublicKey, onClose, onSucce
             return;
         }
         setPublicKey(initialPublicKey?.trim() || agent.operatorPubkey);
-        setRemoveAllExtensions(false);
+        setRemoveAllExtensions(true);
     }, [agent, initialPublicKey]);
 
     if (!agent) return null;

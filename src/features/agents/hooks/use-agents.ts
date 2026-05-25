@@ -10,14 +10,14 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAddress, useAppKit, useNetwork } from '@ton/appkit-react';
 import type { NFT } from '@ton/appkit';
+import type { AccountState } from '@ton/walletkit';
 import { ENV_AGENTIC_ACTIVITY_POLL_MS, ENV_AGENTIC_COLLECTION_MAINNET, ENV_AGENTIC_COLLECTION_TESTNET } from '@/core/configs/env';
 
 import { useAgentsStore } from '../store/agents-store';
 import type { AgentWallet } from '../types';
 import { extractCreationDateFromMetadata, extractNameFromMetadata } from '../lib/metadata';
-import { getAgentWalletState } from '../lib/agentic-wallet';
+import { parseAgentWalletStateData, parseCellFromBase64Boc } from '../lib/agentic-wallet';
 import { isSameTonAddress, normalizeTonAddress } from '../lib/address';
-import { mapWithConcurrency } from '../lib/async';
 import { formatUint256PublicKey } from '../lib/public-key';
 
 export function getCollectionAddressForNetwork(chainId: string | undefined): string {
@@ -45,14 +45,6 @@ function parseBigint(value: string | undefined): bigint | null {
         return null;
     }
 }
-
-const CHAIN_STATE_CONCURRENCY = 8;
-
-type PolledAccount = {
-    address: string;
-    balance: string;
-    activityMarker: string | null;
-};
 
 function getBalanceLookupKey(address: string): string {
     return normalizeTonAddress(address) ?? address.trim();
@@ -99,7 +91,6 @@ export function useAgents() {
             for (let page = 0; page < maxPages; page += 1) {
                 const response = await client.nftItemsByOwner({
                     ownerAddress,
-                    collectionAddress,
                     pagination: {
                         limit: pageLimit,
                         offset: page * pageLimit,
@@ -125,6 +116,8 @@ export function useAgents() {
     const markManyKnown = useAgentsStore((s) => s.markManyKnown);
     const pendingAgents = useAgentsStore((s) => s.pendingAgents);
     const removePendingAgent = useAgentsStore((s) => s.removePendingAgent);
+    const operatorKeyOverrides = useAgentsStore((s) => s.operatorKeyOverrides);
+    const clearOperatorKeyOverrideIfMatches = useAgentsStore((s) => s.clearOperatorKeyOverrideIfMatches);
 
     const chainStateCandidates = useMemo(() => nftsResponse?.nfts ?? [], [nftsResponse]);
 
@@ -151,60 +144,68 @@ export function useAgents() {
         collectionAddress: string;
     };
 
-    const chainStateQueryKey = ['agentic-wallets-chain-state', chainId, chainWalletAddresses] as const;
+    const bulkAccountsQueryKey = ['agentic-wallets-bulk-accounts', chainId, chainWalletAddresses] as const;
 
     const {
-        data: chainState,
-        error: chainError,
-        refetch: refetchChain,
+        data: bulkAccountsData,
+        error: bulkAccountsError,
+        refetch: refetchBulkAccounts,
     } = useQuery({
-        queryKey: chainStateQueryKey,
+        queryKey: bulkAccountsQueryKey,
         enabled: !!network && chainWalletAddresses.length > 0,
-        staleTime: 30_000,
-        refetchOnMount: false,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-        queryFn: async () => {
-            if (!network) {
-                return {} as Record<string, ChainStateEntry>;
+        refetchInterval: ENV_AGENTIC_ACTIVITY_POLL_MS,
+        refetchIntervalInBackground: true,
+        staleTime: 0,
+        queryFn: async (): Promise<AccountState[]> => {
+            if (!network || chainWalletAddresses.length === 0) {
+                return [];
             }
 
             const client = appKit.networkManager.getClient(network);
-            const previousState = queryClient.getQueryData<Record<string, ChainStateEntry>>(chainStateQueryKey) ?? {};
-            const nftByAddress = new Map(chainStateCandidates.map((nft) => [nft.address, nft] as const));
-
-            const entries = await mapWithConcurrency(
-                chainWalletAddresses,
-                CHAIN_STATE_CONCURRENCY,
-                async (walletAddress) => {
-                    const nft = nftByAddress.get(walletAddress);
-                    try {
-                        const state = await getAgentWalletState(client, walletAddress);
-                        if (!state.isInitialized) {
-                            return null;
-                        }
-
-                        return [
-                            walletAddress,
-                            {
-                                publicKey: state.operatorPublicKey,
-                                originPublicKey: state.originOperatorPublicKey,
-                                extensions: state.extensions,
-                                nftItemContent: state.nftItemContent,
-                                ownerAddress: state.ownerAddress?.toString() ?? nft?.ownerAddress ?? '',
-                                collectionAddress: state.collectionAddress.toString(),
-                            },
-                        ] as const;
-                    } catch {
-                        const prev = previousState[walletAddress];
-                        return prev ? ([walletAddress, prev] as const) : null;
-                    }
-                },
-            );
-
-            return Object.fromEntries(entries.filter((entry): entry is readonly [string, ChainStateEntry] => entry !== null));
+            const states = await client.getAccountStates(chainWalletAddresses);
+            return Object.values(states);
         },
     });
+
+    const chainState = useMemo((): Record<string, ChainStateEntry> => {
+        if (!bulkAccountsData) {
+            return {};
+        }
+
+        const nftByAddress = new Map(
+            chainStateCandidates.map((nft) => [normalizeTonAddress(nft.address) ?? nft.address, nft] as const),
+        );
+        const entries: Array<readonly [string, ChainStateEntry]> = [];
+
+        for (const account of bulkAccountsData) {
+            if (!account.data) {
+                continue;
+            }
+
+            const lookupKey = normalizeTonAddress(account.address) ?? account.address;
+            const nft = nftByAddress.get(lookupKey);
+            const walletAddress = nft?.address ?? account.address;
+            const state = parseAgentWalletStateData(parseCellFromBase64Boc(account.data), walletAddress);
+
+            if (!state.isInitialized) {
+                continue;
+            }
+
+            entries.push([
+                walletAddress,
+                {
+                    publicKey: state.operatorPublicKey,
+                    originPublicKey: state.originOperatorPublicKey,
+                    extensions: state.extensions,
+                    nftItemContent: state.nftItemContent,
+                    ownerAddress: state.ownerAddress?.toString() ?? nft?.ownerAddress ?? '',
+                    collectionAddress: state.collectionAddress.toString(),
+                },
+            ] as const);
+        }
+
+        return Object.fromEntries(entries);
+    }, [bulkAccountsData, chainStateCandidates]);
 
     useEffect(() => {
         if (knownAgentIds.length > 0) {
@@ -254,9 +255,13 @@ export function useAgents() {
             const fallbackOriginPublicKey =
                 parseBigint(getAttribute(nft, 'origin_operator_public_key')) ?? fallbackPublicKey;
 
-            const publicKey = chain?.publicKey ?? fallbackPublicKey;
+            const chainPublicKey = chain?.publicKey ?? fallbackPublicKey;
+            const overrideKey = operatorKeyOverrides[normalizeTonAddress(nft.address) ?? nft.address];
+            const publicKey = overrideKey !== undefined ? BigInt(overrideKey) : chainPublicKey;
             const originPublicKey = chain?.originPublicKey ?? fallbackOriginPublicKey;
-            const status: AgentWallet['status'] = chain ? (chain.publicKey === 0n ? 'revoked' : 'active') : 'active';
+            const status: AgentWallet['status'] = chain || overrideKey !== undefined
+                ? (publicKey === 0n ? 'revoked' : 'active')
+                : 'active';
 
             return {
                 id: nft.address,
@@ -295,7 +300,24 @@ export function useAgents() {
             seen.add(key);
             return true;
         });
-    }, [chainStateCandidates, chainState, knownAgentIds, pendingAgentsForOwner]);
+    }, [chainStateCandidates, chainState, knownAgentIds, pendingAgentsForOwner, operatorKeyOverrides]);
+
+    useEffect(() => {
+        if (Object.keys(operatorKeyOverrides).length === 0) {
+            return;
+        }
+
+        for (const [address, chainEntry] of Object.entries(chainState)) {
+            const normalizedAddress = normalizeTonAddress(address) ?? address;
+            const override = operatorKeyOverrides[normalizedAddress];
+            if (override === undefined) {
+                continue;
+            }
+            if (chainEntry.publicKey.toString() === override) {
+                clearOperatorKeyOverrideIfMatches(normalizedAddress, chainEntry.publicKey);
+            }
+        }
+    }, [chainState, operatorKeyOverrides, clearOperatorKeyOverrideIfMatches]);
 
     const activeAgents = useMemo(() => agents.filter((a) => a.status === 'active'), [agents]);
     const revokedAgents = useMemo(() => agents.filter((a) => a.status === 'revoked'), [agents]);
@@ -303,47 +325,8 @@ export function useAgents() {
 
     // --- Bulk activity polling ---
 
-    // Tracks last known last_activity per address to detect changes
+    // Tracks last known activity marker per address to detect changes.
     const lastActivityRef = useRef<Map<string, string>>(new Map());
-
-    const bulkPollQueryKey = ['agentic-wallets-bulk-poll', chainId, chainWalletAddresses] as const;
-
-    const { data: bulkAccountsData } = useQuery({
-        queryKey: bulkPollQueryKey,
-        enabled: !!network && chainWalletAddresses.length > 0,
-        refetchInterval: ENV_AGENTIC_ACTIVITY_POLL_MS,
-        refetchIntervalInBackground: true,
-        staleTime: 0,
-        queryFn: async (): Promise<PolledAccount[]> => {
-            if (!network || chainWalletAddresses.length === 0) return [];
-            const client = appKit.networkManager.getClient(network);
-            if (typeof client.getBulkAccounts === 'function') {
-                try {
-                    const result = await client.getBulkAccounts(chainWalletAddresses);
-                    return result.map((account) => ({
-                        address: account.address,
-                        balance: String(account.balance),
-                        activityMarker:
-                            account.last_activity != null
-                                ? String(account.last_activity)
-                                : account.last_transaction_lt ?? account.last_transaction_hash ?? null,
-                    }));
-                } catch {
-                    // Some clients may expose the method but fail against the current backend.
-                    // Fall back to per-account polling in that case.
-                }
-            }
-            const accounts = await mapWithConcurrency(chainWalletAddresses, CHAIN_STATE_CONCURRENCY, async (walletAddress) => {
-                const accountState = await client.getAccountState(walletAddress);
-                return {
-                    address: walletAddress,
-                    balance: accountState.balance,
-                    activityMarker: getActivityMarker(accountState),
-                };
-            });
-            return accounts;
-        },
-    });
 
     // Map address → balance in nanotons.
     // TonAPI bulk returns addresses in raw format ("0:abc..."),
@@ -354,26 +337,27 @@ export function useAgents() {
         const result: Record<string, bigint> = {};
         for (const account of bulkAccountsData) {
             try {
-                result[getBalanceLookupKey(account.address)] = BigInt(account.balance);
+                result[getBalanceLookupKey(account.address)] = BigInt(account.rawBalance);
             } catch {
-                result[account.address] = BigInt(account.balance);
+                result[account.address] = BigInt(account.rawBalance);
             }
         }
         return result;
     }, [bulkAccountsData]);
 
-    // When last_activity changes for any wallet, invalidate its active queries
+    // When the activity marker changes for any wallet, invalidate its active queries.
     useEffect(() => {
         if (!bulkAccountsData) return;
 
         const changedAddresses: string[] = [];
         for (const account of bulkAccountsData) {
+            const activityMarker = getActivityMarker(account);
             const prev = lastActivityRef.current.get(account.address);
-            if (prev !== undefined && account.activityMarker !== null && prev !== account.activityMarker) {
+            if (prev !== undefined && activityMarker !== null && prev !== activityMarker) {
                 changedAddresses.push(account.address);
             }
-            if (account.activityMarker !== null) {
-                lastActivityRef.current.set(account.address, account.activityMarker);
+            if (activityMarker !== null) {
+                lastActivityRef.current.set(account.address, activityMarker);
             }
         }
 
@@ -388,7 +372,7 @@ export function useAgents() {
     const refresh = async () => {
         await Promise.all([
             refetchNfts(),
-            refetchChain(),
+            refetchBulkAccounts(),
             queryClient.invalidateQueries({ queryKey: ['balance'] }),
             queryClient.invalidateQueries({ queryKey: ['jettons'] }),
             queryClient.invalidateQueries({ queryKey: ['nfts'] }),
@@ -404,7 +388,7 @@ export function useAgents() {
         balancesByAddress,
         balancesReady: chainWalletAddresses.length === 0 || bulkAccountsData != null,
         isLoading: isNftsLoading && !nftsResponse,
-        error: nftsError ?? chainError,
+        error: nftsError ?? bulkAccountsError,
         refresh,
         collectionAddress: collectionAddress || null,
         markAgentKnown: markKnown,

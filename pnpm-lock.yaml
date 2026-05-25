@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@ton/appkit': https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-0.0.2.tgz
-  '@ton/walletkit': https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-walletkit-0.0.9.tgz
-  '@tonconnect/bridge-sdk': file:./vendor/tonconnect-bridge-sdk-0.2.6.tgz
-
 importers:
 
   .:
@@ -20,11 +15,11 @@ importers:
         specifier: 5.90.20
         version: 5.90.20(react@19.2.3)
       '@ton/appkit':
-        specifier: https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-0.0.2.tgz
-        version: https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-0.0.2.tgz(@tanstack/query-core@5.90.20)(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(@tonconnect/ui@2.4.1)
+        specifier: 1.0.0-alpha.1
+        version: 1.0.0-alpha.1(@tanstack/query-core@5.90.20)(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(@tonconnect/ui@2.4.1)
       '@ton/appkit-react':
-        specifier: https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-react-0.0.3.tgz
-        version: https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-react-0.0.3.tgz(@tanstack/query-core@5.90.20)(@tanstack/react-query@5.90.20(react@19.2.3))(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(@tonconnect/ui-react@2.4.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tonconnect/ui@2.4.1)(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: 1.0.0-alpha.1
+        version: 1.0.0-alpha.1(@tanstack/query-core@5.90.20)(@tanstack/react-query@5.90.20(react@19.2.3))(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(@tonconnect/ui-react@2.4.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tonconnect/ui@2.4.1)(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@ton/core':
         specifier: 0.63.0
         version: 0.63.0(@ton/crypto@3.3.0)
@@ -32,8 +27,8 @@ importers:
         specifier: 3.3.0
         version: 3.3.0
       '@ton/walletkit':
-        specifier: https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-walletkit-0.0.9.tgz
-        version: https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-walletkit-0.0.9.tgz(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
+        specifier: 1.0.0-alpha.1
+        version: 1.0.0-alpha.1(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
       '@tonconnect/sdk':
         specifier: 3.4.1
         version: 3.4.1
@@ -1195,8 +1190,8 @@ packages:
   '@scure/bip39@2.0.1':
     resolution: {integrity: sha512-PsxdFj/d2AcJcZDX1FXN3dDgitDDTmwf78rKZq1a6c1P1Nan1X/Sxc7667zU3U+AN60g7SxxP0YCVw2H/hBycg==}
 
-  '@ston-fi/omniston-sdk@0.7.8':
-    resolution: {integrity: sha512-2qXKbFGgwcPEVxTGBqvOjoH8914KAuXzUN7Id1KGe1rCLafZG8OKRg1u+c72ER/vthPhAMANWUsnitjhxoXXvg==}
+  '@ston-fi/omniston-sdk@0.7.9':
+    resolution: {integrity: sha512-vzjFWaUTnSY+nUrYf4GC4q0SPdSfcoW3mVWVT8awhiSK1/+S6xubxNU29z18rmaavZN9jIrG/zNzNCM/wo928Q==}
 
   '@tailwindcss/node@4.1.18':
     resolution: {integrity: sha512-DoR7U1P7iYhw16qJ49fgXUlry1t4CpXeErJHnQ44JgTSKMaZUdf17cfn5mHchfJ4KRBZRFA/Coo+MUF5+gOaCQ==}
@@ -1296,9 +1291,8 @@ packages:
     peerDependencies:
       react: ^18 || ^19
 
-  '@ton/appkit-react@https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-react-0.0.3.tgz':
-    resolution: {tarball: https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-react-0.0.3.tgz}
-    version: 0.0.3
+  '@ton/appkit-react@1.0.0-alpha.1':
+    resolution: {integrity: sha512-ox+N7Vky8K/iwlR7wVI/993v3H7fExPkaQDdfiDd+h8Ld4Vz9NxfmFBI0S9/2jAP09wHNVWvP5kaDXTJuq0ivg==}
     peerDependencies:
       '@tanstack/react-query': '>=5.0.0'
       '@tonconnect/ui': '>=2.4.1'
@@ -1311,9 +1305,8 @@ packages:
       '@tonconnect/ui-react':
         optional: true
 
-  '@ton/appkit@https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-0.0.2.tgz':
-    resolution: {tarball: https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-0.0.2.tgz}
-    version: 0.0.2
+  '@ton/appkit@1.0.0-alpha.1':
+    resolution: {integrity: sha512-bAHFhciG1mrowjLy31ZuZLhbWsVIqbFKOkYspnzXJRWdq8MMbFsTpcTHB6ltqU/Ok+TkRDIs27yBCekXuxK5jw==}
     peerDependencies:
       '@ston-fi/omniston-sdk': '*'
       '@tanstack/query-core': '>=5.0.0'
@@ -1339,16 +1332,14 @@ packages:
   '@ton/crypto@3.3.0':
     resolution: {integrity: sha512-/A6CYGgA/H36OZ9BbTaGerKtzWp50rg67ZCH2oIjV1NcrBaCK9Z343M+CxedvM7Haf3f/Ee9EhxyeTp0GKMUpA==}
 
-  '@ton/walletkit@https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-walletkit-0.0.9.tgz':
-    resolution: {tarball: https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-walletkit-0.0.9.tgz}
-    version: 0.0.9
+  '@ton/walletkit@1.0.0-alpha.1':
+    resolution: {integrity: sha512-F4hgcXJVsd96q0Fyz8hPqbMygMIk422p6DGqiwMiUHcHYPB31JS0RLmH0MBuddKfhb6tLKQH+oyilkdqJi9FwQ==}
     peerDependencies:
       '@ton/core': ^0.62.0 || ^0.63.0
       '@ton/crypto': ^3.3.0
 
-  '@tonconnect/bridge-sdk@file:vendor/tonconnect-bridge-sdk-0.2.6.tgz':
-    resolution: {integrity: sha512-P2/Fl8L5oM5pMn+y/KJ+3CO9JsqbdO3Wv3PeF1s5RJCEcp9k9g+FZqSPeu0huRSwqsh52JsqV8EF1aNPuor03g==, tarball: file:vendor/tonconnect-bridge-sdk-0.2.6.tgz}
-    version: 0.2.6
+  '@tonconnect/bridge-sdk@0.2.8':
+    resolution: {integrity: sha512-bii7xs8+jeoBCXQM/VTA83EWGVnDhURrxI9YPGR3RQdSoA+EcxEiX2AGW6god3Ar8mk989eMXRCxcAVLGGHeLw==}
 
   '@tonconnect/isomorphic-eventsource@0.0.2':
     resolution: {integrity: sha512-B4UoIjPi0QkvIzZH5fV3BQLWrqSYABdrzZQSI9sJA9aA+iC0ohOzFwVVGXanlxeDAy1bcvPbb29f6sVUk0UnnQ==}
@@ -1359,8 +1350,14 @@ packages:
   '@tonconnect/protocol@2.4.0':
     resolution: {integrity: sha512-3xg6sMWIrSgW7/f7iPgOb2BI3LaMScjDMqfu20fcEMbOVvNFk3TGAUKK5cJ3pfvUINsyLgPoylcIbPap37jXiA==}
 
+  '@tonconnect/protocol@2.5.0-alpha.0':
+    resolution: {integrity: sha512-9cUWsCkM53bYlqxEvohj0Ks1Zb6huZvJnCFQIPswzwQVlW1tySIuElU4Ei2WC471V8TngkvT4WDOnuEPsyjbvA==}
+
   '@tonconnect/sdk@3.4.1':
     resolution: {integrity: sha512-eVH8erAFout89gXYHXua/es+mmLPiW1r7ng9hgHKYQv85HLq8/zzQEkbJpbTlnIuQ6CJ/QKchjMsIgYz3BYCUQ==}
+
+  '@tonconnect/sdk@3.5.0-alpha.0':
+    resolution: {integrity: sha512-N6nvinZeIapIKO7P1fY0thfHVY8oLV5wcaqiM3XvskYJ9+29KqH/li5v8wliHisecHF209OTghFiLjEVgHTBOA==}
 
   '@tonconnect/ui-react@2.4.1':
     resolution: {integrity: sha512-99NOq5Dj7Z0s0FE+bSrS9dAYlfeUGucZKw431+qeiBFvgpqNxzxfoiSI4mef/ezns8wI4UiDrdXyEulek3RwBw==}
@@ -1615,8 +1612,8 @@ packages:
     resolution: {integrity: sha512-utfs7Pr5uJyyvDETitgsaqSyjCb2qNRAtuqUeWIAKztsOYdcACf2KtARYXg2pSvhkt+9NfoaNY7fxjl6nuMjIQ==}
     engines: {node: '>= 12.0.0'}
 
-  lru-cache@11.2.6:
-    resolution: {integrity: sha512-ESL2CrkS/2wTPfuend7Zhkzo2u0daGJ/A2VucJOgQ/C48S/zB8MMeMHSGKYpXhIjbPxfuezITkaBH1wqv00DDQ==}
+  lru-cache@11.3.5:
+    resolution: {integrity: sha512-NxVFwLAnrd9i7KUBxC4DrUhmgjzOs+1Qm50D3oF1/oL+r1NpZ4gA7xvG0/zJ8evR7zIKn4vLf7qTNduWFtCrRw==}
     engines: {node: 20 || >=22}
 
   lru-cache@5.1.1:
@@ -2993,7 +2990,7 @@ snapshots:
       '@noble/hashes': 2.0.1
       '@scure/base': 2.0.0
 
-  '@ston-fi/omniston-sdk@0.7.8':
+  '@ston-fi/omniston-sdk@0.7.9':
     dependencies:
       isomorphic-ws: 5.0.0(ws@8.17.1)
       json-rpc-2.0: 1.7.0
@@ -3080,10 +3077,10 @@ snapshots:
       '@tanstack/query-core': 5.90.20
       react: 19.2.3
 
-  '@ton/appkit-react@https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-react-0.0.3.tgz(@tanstack/query-core@5.90.20)(@tanstack/react-query@5.90.20(react@19.2.3))(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(@tonconnect/ui-react@2.4.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tonconnect/ui@2.4.1)(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@ton/appkit-react@1.0.0-alpha.1(@tanstack/query-core@5.90.20)(@tanstack/react-query@5.90.20(react@19.2.3))(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(@tonconnect/ui-react@2.4.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@tonconnect/ui@2.4.1)(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       '@tanstack/react-query': 5.90.20(react@19.2.3)
-      '@ton/appkit': https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-0.0.2.tgz(@tanstack/query-core@5.90.20)(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(@tonconnect/ui@2.4.1)
+      '@ton/appkit': 1.0.0-alpha.1(@tanstack/query-core@5.90.20)(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(@tonconnect/ui@2.4.1)
       clsx: 2.1.1
       radix-ui: 1.4.3(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react: 19.2.3
@@ -3103,11 +3100,12 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@ton/appkit@https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-appkit-0.0.2.tgz(@tanstack/query-core@5.90.20)(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(@tonconnect/ui@2.4.1)':
+  '@ton/appkit@1.0.0-alpha.1(@tanstack/query-core@5.90.20)(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(@tonconnect/ui@2.4.1)':
     dependencies:
       '@ton/core': 0.63.0(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
-      '@ton/walletkit': https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-walletkit-0.0.9.tgz(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
+      '@ton/walletkit': 1.0.0-alpha.1(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
+      lru-cache: 11.3.5
     optionalDependencies:
       '@tanstack/query-core': 5.90.20
       '@tonconnect/ui': 2.4.1
@@ -3130,25 +3128,25 @@ snapshots:
       jssha: 3.2.0
       tweetnacl: 1.0.3
 
-  '@ton/walletkit@https://github.com/ton-connect/agentic-wallets-dashboard/releases/download/v0.1.0/ton-walletkit-0.0.9.tgz(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)':
+  '@ton/walletkit@1.0.0-alpha.1(@ton/core@0.63.0(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)':
     dependencies:
       '@noble/curves': 1.9.7
       '@scure/bip39': 2.0.1
       '@ton/core': 0.63.0(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
-      '@tonconnect/bridge-sdk': file:vendor/tonconnect-bridge-sdk-0.2.6.tgz
-      '@tonconnect/protocol': 2.4.0
-      '@tonconnect/sdk': 3.4.1
-      lru-cache: 11.2.6
+      '@tonconnect/bridge-sdk': 0.2.8
+      '@tonconnect/protocol': 2.5.0-alpha.0
+      '@tonconnect/sdk': 3.5.0-alpha.0
+      lru-cache: 11.3.5
       uuid: 13.0.0
     optionalDependencies:
-      '@ston-fi/omniston-sdk': 0.7.8
+      '@ston-fi/omniston-sdk': 0.7.9
     transitivePeerDependencies:
       - bufferutil
       - encoding
       - utf-8-validate
 
-  '@tonconnect/bridge-sdk@file:vendor/tonconnect-bridge-sdk-0.2.6.tgz':
+  '@tonconnect/bridge-sdk@0.2.8':
     dependencies:
       '@tonconnect/isomorphic-eventsource': 0.0.2
       '@tonconnect/isomorphic-fetch': 0.0.3
@@ -3173,11 +3171,24 @@ snapshots:
       tweetnacl: 1.0.3
       tweetnacl-util: 0.15.1
 
+  '@tonconnect/protocol@2.5.0-alpha.0':
+    dependencies:
+      tweetnacl: 1.0.3
+      tweetnacl-util: 0.15.1
+
   '@tonconnect/sdk@3.4.1':
     dependencies:
       '@tonconnect/isomorphic-eventsource': 0.0.2
       '@tonconnect/isomorphic-fetch': 0.0.3
       '@tonconnect/protocol': 2.4.0
+    transitivePeerDependencies:
+      - encoding
+
+  '@tonconnect/sdk@3.5.0-alpha.0':
+    dependencies:
+      '@tonconnect/isomorphic-eventsource': 0.0.2
+      '@tonconnect/isomorphic-fetch': 0.0.3
+      '@tonconnect/protocol': 2.5.0-alpha.0
     transitivePeerDependencies:
       - encoding
 
@@ -3415,7 +3426,7 @@ snapshots:
       lightningcss-win32-arm64-msvc: 1.30.2
       lightningcss-win32-x64-msvc: 1.30.2
 
-  lru-cache@11.2.6: {}
+  lru-cache@11.3.5: {}
 
   lru-cache@5.1.1:
     dependencies:

@@ -10,7 +10,7 @@ import { useMemo } from 'react';
 import type { Network } from '@ton/appkit-react';
 import { useJettonsByAddress, useNetwork } from '@ton/appkit-react';
 
-import { tryParseUiAmountToUnits } from '@/features/agents/lib/amount';
+import { hasPositiveJettonBalance } from '@/features/agents/lib/amount';
 
 interface JettonBalancesProps {
     address: string;
@@ -31,7 +31,7 @@ export function JettonBalances({ address, compact = false, network, title, enabl
     const jettons = useMemo(
         () =>
             [...(jettonsResponse?.jettons ?? [])]
-                .filter((j) => (tryParseUiAmountToUnits(j.balance ?? '0', j.decimalsNumber ?? 9) ?? 0n) > 0n)
+                .filter((j) => hasPositiveJettonBalance(j.balance, j.decimalsNumber))
                 .sort((a, b) => {
                     const usdPriceA = Number(a.prices?.find((p) => p.currency?.toUpperCase() === 'USD')?.value ?? '0');
                     const usdPriceB = Number(b.prices?.find((p) => p.currency?.toUpperCase() === 'USD')?.value ?? '0');

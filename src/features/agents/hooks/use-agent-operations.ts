@@ -14,6 +14,7 @@ import { useAddress, useAppKit, useNetwork, useSendTransaction } from '@ton/appk
 import { getJettonWalletAddressFromClient, getJettonsFromClient, getNftsFromClient, parseUnits } from '@ton/walletkit';
 
 import type { AgentWallet } from '../types';
+import { useAgentsStore } from '../store/agents-store';
 import {
     cellToBase64,
     buildRenameAgentTransaction,
@@ -26,6 +27,7 @@ import {
 } from '../lib/agentic-wallet';
 import type { WithdrawJettonAction, WithdrawNftAction } from '../lib/agentic-wallet';
 import { buildUpdatedMetadataCell, extractNameFromMetadata } from '../lib/metadata';
+import { fetchNftInterfaces, mergeAddressBookInterfaces } from '../lib/nft-interfaces';
 import { isEligibleFundingNft } from '../lib/nft-trust';
 import { parseUint256PublicKey } from '../lib/public-key';
 import { delay } from '../lib/async';
@@ -91,6 +93,7 @@ export function useAgentOperations() {
 
     const { mutateAsync: sendTransaction, isPending: isSendTransactionPending } = useSendTransaction();
     const [activeOperations, setActiveOperations] = useState(0);
+    const setOperatorKeyOverride = useAgentsStore((s) => s.setOperatorKeyOverride);
 
     const runWithPending = useCallback(async <T>(operation: () => Promise<T>): Promise<T> => {
         setActiveOperations((current) => current + 1);
@@ -278,6 +281,7 @@ export function useAgentOperations() {
             const receipts = await sendAgentMessages(operationMessages);
             await waitForTransactionConfirmations(receipts);
             await waitForPublicKey(agent.address, 0n);
+            setOperatorKeyOverride(agent.address, 0n);
             if (removedExtensions.length > 0) {
                 await waitForRemovedExtensions(agent.address, removedExtensions);
             }
@@ -309,6 +313,7 @@ export function useAgentOperations() {
             const receipts = await sendAgentMessages(operationMessages);
             await waitForTransactionConfirmations(receipts);
             await waitForPublicKey(agent.address, newPublicKey);
+            setOperatorKeyOverride(agent.address, newPublicKey);
             if (removedExtensions.length > 0) {
                 await waitForRemovedExtensions(agent.address, removedExtensions);
             }
@@ -390,8 +395,14 @@ export function useAgentOperations() {
                     });
                     const pageNfts = response.nfts ?? [];
 
+                    const interfaces = await fetchNftInterfaces(
+                        network?.chainId,
+                        pageNfts.map((nft) => nft.address),
+                    );
+                    const addressBook = mergeAddressBookInterfaces(response.addressBook, interfaces);
+
                     for (const nft of pageNfts) {
-                        if (!isEligibleFundingNft(nft, response.addressBook)) {
+                        if (!isEligibleFundingNft(nft, addressBook)) {
                             continue;
                         }
                         nfts.push({ nftAddress: Address.parse(nft.address) });

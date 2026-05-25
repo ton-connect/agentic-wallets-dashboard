@@ -36,6 +36,10 @@ export function tryParseUiAmountToUnits(input: string, decimals: number): bigint
     }
 }
 
+export function hasPositiveJettonBalance(balance: string | undefined, decimals: number | null | undefined): boolean {
+    return (tryParseUiAmountToUnits(balance ?? '0', decimals ?? 9) ?? 0n) > 0n;
+}
+
 export function parseUiAmountToUnits(input: string, decimals: number, fieldName: string): bigint {
     const parsed = tryParseUiAmountToUnits(input, decimals);
     if (parsed === null) {

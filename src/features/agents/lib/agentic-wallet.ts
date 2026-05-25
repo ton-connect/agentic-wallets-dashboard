@@ -334,7 +334,7 @@ export function cellToBase64(cell: Cell): string {
     return cell.toBoc().toString('base64');
 }
 
-function parseCellFromBase64Boc(value: string): Cell {
+export function parseCellFromBase64Boc(value: string): Cell {
     const cells = Cell.fromBoc(Buffer.from(value, 'base64'));
     if (!cells.length) {
         throw new Error('Invalid account state data cell');
