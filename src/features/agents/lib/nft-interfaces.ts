@@ -58,7 +58,7 @@ export async function fetchNftInterfaces(
         const chunk = uniqueAddresses.slice(i, i + BULK_CHUNK_SIZE);
         let response: Response;
         try {
-            response = await fetch(`${baseUrl}/v2/blockchain/accounts/_bulk`, {
+            response = await fetch(`${baseUrl}/v2/accounts/_bulk`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
