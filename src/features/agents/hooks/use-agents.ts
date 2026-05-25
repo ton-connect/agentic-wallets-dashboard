@@ -10,7 +10,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAddress, useAppKit, useNetwork } from '@ton/appkit-react';
 import type { NFT } from '@ton/appkit';
-import type { BulkAccountState } from '@ton/walletkit';
+import type { AccountState } from '@ton/walletkit';
 import { ENV_AGENTIC_ACTIVITY_POLL_MS, ENV_AGENTIC_COLLECTION_MAINNET, ENV_AGENTIC_COLLECTION_TESTNET } from '@/core/configs/env';
 
 import { useAgentsStore } from '../store/agents-store';
@@ -91,7 +91,6 @@ export function useAgents() {
             for (let page = 0; page < maxPages; page += 1) {
                 const response = await client.nftItemsByOwner({
                     ownerAddress,
-                    collectionAddress,
                     pagination: {
                         limit: pageLimit,
                         offset: page * pageLimit,
@@ -155,13 +154,14 @@ export function useAgents() {
         refetchInterval: ENV_AGENTIC_ACTIVITY_POLL_MS,
         refetchIntervalInBackground: true,
         staleTime: 0,
-        queryFn: async (): Promise<BulkAccountState[]> => {
+        queryFn: async (): Promise<AccountState[]> => {
             if (!network || chainWalletAddresses.length === 0) {
                 return [];
             }
 
             const client = appKit.networkManager.getClient(network);
-            return client.getBulkAccounts(chainWalletAddresses);
+            const states = await client.getAccountStates(chainWalletAddresses);
+            return Object.values(states);
         },
     });
 
@@ -314,9 +314,9 @@ export function useAgents() {
         const result: Record<string, bigint> = {};
         for (const account of bulkAccountsData) {
             try {
-                result[getBalanceLookupKey(account.address)] = BigInt(account.balance);
+                result[getBalanceLookupKey(account.address)] = BigInt(account.rawBalance);
             } catch {
-                result[account.address] = BigInt(account.balance);
+                result[account.address] = BigInt(account.rawBalance);
             }
         }
         return result;

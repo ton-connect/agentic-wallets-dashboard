@@ -6,27 +6,23 @@
  *
  */
 
-import { ApiClientTonApi, ApiClientToncenter, AppKit, Network } from '@ton/appkit';
-import { TonConnectConnector } from '@ton/appkit';
+import { ApiClientTonApi, ApiClientToncenter, AppKit, Network, createTonConnectConnector } from '@ton/appkit';
 import { THEME } from '@tonconnect/ui';
 
 import {
     ENV_TON_API_KEY_MAINNET,
     ENV_TON_API_KEY_TESTNET,
-    ENV_TON_API_MIN_REQUEST_INTERVAL_MS,
     ENV_TON_API_PROVIDER,
 } from '@/core/configs/env';
 
 function createApiClient(network: Network) {
     const isTestnet = network.chainId === Network.testnet().chainId;
     const apiKey = isTestnet ? ENV_TON_API_KEY_TESTNET : ENV_TON_API_KEY_MAINNET;
-    const minRequestIntervalMs = ENV_TON_API_MIN_REQUEST_INTERVAL_MS;
 
     if (ENV_TON_API_PROVIDER === 'tonapi') {
         return new ApiClientTonApi({
             network,
             apiKey,
-            minRequestIntervalMs,
         });
     }
 
@@ -34,7 +30,6 @@ function createApiClient(network: Network) {
         network,
         endpoint: isTestnet ? 'https://testnet.toncenter.com' : 'https://toncenter.com',
         apiKey,
-        minRequestIntervalMs,
     });
 }
 
@@ -56,7 +51,7 @@ export const appKit = new AppKit({
         },
     },
     connectors: [
-        new TonConnectConnector({
+        createTonConnectConnector({
             tonConnectOptions: {
                 manifestUrl: 'https://agents.ton.org/tonconnect-manifest.json',
                 uiPreferences: {
