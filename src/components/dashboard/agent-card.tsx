@@ -83,8 +83,14 @@ export function AgentCard({ agent, balanceNano, extrasEnabled = true, onFund, on
             )}
 
             {isRevoked && (
-                <div className="mt-auto border-t border-white/[0.04] pt-3">
+                <div className="mt-auto flex flex-col gap-2 border-t border-white/[0.04] pt-3">
                     <p className="text-xs text-neutral-600">Operator deactivated. Agent can no longer transact.</p>
+                    <button
+                        onClick={onWithdraw}
+                        className="self-start rounded-full border border-white/[0.1] px-4 py-1.5 text-xs text-neutral-400 transition-colors hover:bg-white/[0.04] hover:text-white"
+                    >
+                        Withdraw
+                    </button>
                 </div>
             )}
         </div>

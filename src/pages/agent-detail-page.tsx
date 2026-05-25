@@ -426,33 +426,33 @@ export function AgentDetailPage() {
                 {isOwner && (
                     <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:justify-end sm:gap-3">
                         {!isRevoked && (
-                            <>
-                                <button
-                                    onClick={() => setShowFund(true)}
-                                    className="order-1 w-full rounded-full bg-amber-500 px-6 py-2.5 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400 sm:order-none sm:w-auto"
-                                >
-                                    Fund
-                                </button>
-                                <button
-                                    onClick={() => setShowWithdraw(true)}
-                                    className="order-2 w-full rounded-full border border-white/[0.1] px-6 py-2.5 text-sm text-neutral-400 transition-colors hover:bg-white/[0.04] hover:text-white sm:order-none sm:w-auto"
-                                >
-                                    Withdraw
-                                </button>
-                                <button
-                                    onClick={() => setShowRevoke(true)}
-                                    className="order-4 w-full rounded-full border border-red-500/25 bg-red-500/10 px-6 py-2.5 text-sm text-red-300 transition-colors hover:border-red-500/50 hover:bg-red-500/20 hover:text-red-200 sm:order-none sm:w-auto"
-                                >
-                                    Revoke
-                                </button>
-                            </>
+                            <button
+                                onClick={() => setShowFund(true)}
+                                className="order-1 w-full rounded-full bg-amber-500 px-6 py-2.5 text-sm font-medium text-on-accent transition-colors hover:bg-amber-400 sm:order-none sm:w-auto"
+                            >
+                                Fund
+                            </button>
                         )}
+                        <button
+                            onClick={() => setShowWithdraw(true)}
+                            className="order-2 w-full rounded-full border border-white/[0.1] px-6 py-2.5 text-sm text-neutral-400 transition-colors hover:bg-white/[0.04] hover:text-white sm:order-none sm:w-auto"
+                        >
+                            Withdraw
+                        </button>
                         <button
                             onClick={() => setShowChangePublicKey(true)}
                             className="order-3 w-full rounded-full border border-white/[0.1] px-6 py-2.5 text-sm text-neutral-300 transition-colors hover:bg-white/[0.04] hover:text-white sm:order-none sm:w-auto"
                         >
                             Change key
                         </button>
+                        {!isRevoked && (
+                            <button
+                                onClick={() => setShowRevoke(true)}
+                                className="order-4 w-full rounded-full border border-red-500/25 bg-red-500/10 px-6 py-2.5 text-sm text-red-300 transition-colors hover:border-red-500/50 hover:bg-red-500/20 hover:text-red-200 sm:order-none sm:w-auto"
+                            >
+                                Revoke
+                            </button>
+                        )}
                     </div>
                 )}
             </div>

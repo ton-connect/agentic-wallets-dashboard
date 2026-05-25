@@ -116,6 +116,8 @@ export function useAgents() {
     const markManyKnown = useAgentsStore((s) => s.markManyKnown);
     const pendingAgents = useAgentsStore((s) => s.pendingAgents);
     const removePendingAgent = useAgentsStore((s) => s.removePendingAgent);
+    const operatorKeyOverrides = useAgentsStore((s) => s.operatorKeyOverrides);
+    const clearOperatorKeyOverrideIfMatches = useAgentsStore((s) => s.clearOperatorKeyOverrideIfMatches);
 
     const chainStateCandidates = useMemo(() => nftsResponse?.nfts ?? [], [nftsResponse]);
 
@@ -253,9 +255,13 @@ export function useAgents() {
             const fallbackOriginPublicKey =
                 parseBigint(getAttribute(nft, 'origin_operator_public_key')) ?? fallbackPublicKey;
 
-            const publicKey = chain?.publicKey ?? fallbackPublicKey;
+            const chainPublicKey = chain?.publicKey ?? fallbackPublicKey;
+            const overrideKey = operatorKeyOverrides[normalizeTonAddress(nft.address) ?? nft.address];
+            const publicKey = overrideKey !== undefined ? BigInt(overrideKey) : chainPublicKey;
             const originPublicKey = chain?.originPublicKey ?? fallbackOriginPublicKey;
-            const status: AgentWallet['status'] = chain ? (chain.publicKey === 0n ? 'revoked' : 'active') : 'active';
+            const status: AgentWallet['status'] = chain || overrideKey !== undefined
+                ? (publicKey === 0n ? 'revoked' : 'active')
+                : 'active';
 
             return {
                 id: nft.address,
@@ -294,7 +300,24 @@ export function useAgents() {
             seen.add(key);
             return true;
         });
-    }, [chainStateCandidates, chainState, knownAgentIds, pendingAgentsForOwner]);
+    }, [chainStateCandidates, chainState, knownAgentIds, pendingAgentsForOwner, operatorKeyOverrides]);
+
+    useEffect(() => {
+        if (Object.keys(operatorKeyOverrides).length === 0) {
+            return;
+        }
+
+        for (const [address, chainEntry] of Object.entries(chainState)) {
+            const normalizedAddress = normalizeTonAddress(address) ?? address;
+            const override = operatorKeyOverrides[normalizedAddress];
+            if (override === undefined) {
+                continue;
+            }
+            if (chainEntry.publicKey.toString() === override) {
+                clearOperatorKeyOverrideIfMatches(normalizedAddress, chainEntry.publicKey);
+            }
+        }
+    }, [chainState, operatorKeyOverrides, clearOperatorKeyOverrideIfMatches]);
 
     const activeAgents = useMemo(() => agents.filter((a) => a.status === 'active'), [agents]);
     const revokedAgents = useMemo(() => agents.filter((a) => a.status === 'revoked'), [agents]);

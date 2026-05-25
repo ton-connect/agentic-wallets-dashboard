@@ -14,6 +14,7 @@ import { useAddress, useAppKit, useNetwork, useSendTransaction } from '@ton/appk
 import { getJettonWalletAddressFromClient, getJettonsFromClient, getNftsFromClient, parseUnits } from '@ton/walletkit';
 
 import type { AgentWallet } from '../types';
+import { useAgentsStore } from '../store/agents-store';
 import {
     cellToBase64,
     buildRenameAgentTransaction,
@@ -92,6 +93,7 @@ export function useAgentOperations() {
 
     const { mutateAsync: sendTransaction, isPending: isSendTransactionPending } = useSendTransaction();
     const [activeOperations, setActiveOperations] = useState(0);
+    const setOperatorKeyOverride = useAgentsStore((s) => s.setOperatorKeyOverride);
 
     const runWithPending = useCallback(async <T>(operation: () => Promise<T>): Promise<T> => {
         setActiveOperations((current) => current + 1);
@@ -279,6 +281,7 @@ export function useAgentOperations() {
             const receipts = await sendAgentMessages(operationMessages);
             await waitForTransactionConfirmations(receipts);
             await waitForPublicKey(agent.address, 0n);
+            setOperatorKeyOverride(agent.address, 0n);
             if (removedExtensions.length > 0) {
                 await waitForRemovedExtensions(agent.address, removedExtensions);
             }
@@ -310,6 +313,7 @@ export function useAgentOperations() {
             const receipts = await sendAgentMessages(operationMessages);
             await waitForTransactionConfirmations(receipts);
             await waitForPublicKey(agent.address, newPublicKey);
+            setOperatorKeyOverride(agent.address, newPublicKey);
             if (removedExtensions.length > 0) {
                 await waitForRemovedExtensions(agent.address, removedExtensions);
             }

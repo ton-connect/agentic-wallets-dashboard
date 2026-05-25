@@ -16,12 +16,15 @@ interface AgentsState {
     knownAgentIds: string[];
     pendingDeploymentNoticeAgentIds: string[];
     pendingAgents: PendingAgentWallet[];
+    operatorKeyOverrides: Record<string, string>;
     markKnown: (id: string) => void;
     markManyKnown: (ids: string[]) => void;
     queueDeploymentNotice: (id: string) => void;
     consumeDeploymentNotice: (id: string) => void;
     upsertPendingAgent: (agent: PendingAgentWallet) => void;
     removePendingAgent: (id: string, networkChainId?: string) => void;
+    setOperatorKeyOverride: (address: string, publicKey: bigint) => void;
+    clearOperatorKeyOverrideIfMatches: (address: string, publicKey: bigint) => void;
 }
 
 function normalizeAgentId(id: string): string {
@@ -38,6 +41,7 @@ export const useAgentsStore = create<AgentsState>()(
             knownAgentIds: [],
             pendingDeploymentNoticeAgentIds: [],
             pendingAgents: [],
+            operatorKeyOverrides: {},
             markKnown: (id) => {
                 set((state) => {
                     if (state.knownAgentIds.includes(id)) {
@@ -132,6 +136,42 @@ export const useAgentsStore = create<AgentsState>()(
                     const pendingAgents = [...state.pendingAgents];
                     pendingAgents[existingIndex] = nextAgent;
                     return { pendingAgents };
+                });
+            },
+            setOperatorKeyOverride: (address, publicKey) => {
+                const normalizedId = normalizeAgentId(address);
+                if (!normalizedId) {
+                    return;
+                }
+
+                const nextValue = publicKey.toString();
+                set((state) => {
+                    if (state.operatorKeyOverrides[normalizedId] === nextValue) {
+                        return state;
+                    }
+                    return {
+                        operatorKeyOverrides: {
+                            ...state.operatorKeyOverrides,
+                            [normalizedId]: nextValue,
+                        },
+                    };
+                });
+            },
+            clearOperatorKeyOverrideIfMatches: (address, publicKey) => {
+                const normalizedId = normalizeAgentId(address);
+                if (!normalizedId) {
+                    return;
+                }
+
+                const expectedValue = publicKey.toString();
+                set((state) => {
+                    const existing = state.operatorKeyOverrides[normalizedId];
+                    if (existing === undefined || existing !== expectedValue) {
+                        return state;
+                    }
+                    const next = { ...state.operatorKeyOverrides };
+                    delete next[normalizedId];
+                    return { operatorKeyOverrides: next };
                 });
             },
             removePendingAgent: (id, networkChainId) => {
